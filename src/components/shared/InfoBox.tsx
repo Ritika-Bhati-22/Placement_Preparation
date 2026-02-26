@@ -1,5 +1,5 @@
 import React from "react";
-import { InfoBoxProps } from "../../types";
+import type { InfoBoxProps } from "../../types";
 
 const colorMap: Record<string, { bg: string; border: string; title: string }> = {
   blue:   { bg: "rgba(91,141,246,0.07)",  border: "rgba(91,141,246,0.18)",  title: "#5B8DF6" },

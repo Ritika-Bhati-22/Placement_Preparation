@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { C } from "../../constants/colors";
-import { ChipProps } from "../../types";
+import type { ChipProps } from "../../types";
 
 const Chip: React.FC<ChipProps> = ({ children, color, borderColor, onClick }) => {
   const [hov, setHov] = useState(false);

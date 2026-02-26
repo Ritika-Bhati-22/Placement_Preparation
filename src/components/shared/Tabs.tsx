@@ -1,5 +1,5 @@
 import React from "react";
-import { C } from "../../constants/colors";
+import type { C } from "../../constants/colors";
 import { TabsProps } from "../../types";
 
 const Tabs: React.FC<TabsProps> = ({ items, active, onChange }) => {
