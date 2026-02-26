@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import type { C } from "../../constants/colors";
+import { C } from "../../constants/colors";
 import { AI_RESPONSES } from "../../constants/aiResponses";
 import { Message } from "../../types";
 import Card from "../shared/Card";

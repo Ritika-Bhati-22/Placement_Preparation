@@ -1,5 +1,5 @@
 import React from "react";
-import type { C } from "../../constants/colors";
+import { C } from "../../constants/colors";
 import { NavProps } from "../../types";
 
 const NAV_ITEMS = [

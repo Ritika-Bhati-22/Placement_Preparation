@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { C } from "../../constants/colors";
+import { C } from "../../constants/colors";
 import { DSA_DATA, DIFF_COLORS } from "../../constants/dsaData";
 import Card from "../shared/Card";
 import StatCard from "../shared/StatCard";
