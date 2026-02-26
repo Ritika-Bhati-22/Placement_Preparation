@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { C } from "../../constants/colors";
+import type { C } from "../../constants/colors";
 import Card from "../shared/Card";
 import InfoBox from "../shared/InfoBox";
 import Chip from "../shared/Chip";
