@@ -1,0 +1,17 @@
+export const C = {
+  bg: "#04070f",
+  surface: "rgba(255,255,255,0.028)",
+  surface2: "rgba(255,255,255,0.05)",
+  border: "rgba(255,255,255,0.075)",
+  borderBright: "rgba(255,255,255,0.14)",
+  accent: "#5B8DF6",
+  accent2: "#8B5CF6",
+  accent3: "#10D98C",
+  accent4: "#F59E0B",
+  accent5: "#F25252",
+  accent6: "#F472B6",
+  accent7: "#22D3EE",
+  text: "#EEF2FF",
+  text2: "#8892B0",
+  muted: "#3D4A6B",
+};
