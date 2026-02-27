@@ -3,38 +3,39 @@ import { C } from "../../constants/colors";
 import { AI_RESPONSES } from "../../constants/aiResponses";
 import { Message } from "../../types";
 import Card from "../shared/Card";
-import Chip from "../shared/Chip";
 import Button from "../shared/Button";
 
-// ── Chat Message ──────────────────────────────────────────────────────────
 const ChatMsg: React.FC<{ msg: Message }> = ({ msg }) => (
   <div style={{
-    display: "flex", gap: 9,
+    display: "flex", gap: 10,
     alignItems: "flex-start",
     flexDirection: msg.type === "user" ? "row-reverse" : "row",
+    marginBottom: 12,
   }}>
     <div style={{
-      width: 28, height: 28, borderRadius: 9, flexShrink: 0,
+      width: 32, height: 32, borderRadius: 10,
+      flexShrink: 0,
       background: msg.type === "user"
-        ? "rgba(91,141,246,0.15)"
-        : "rgba(139,92,246,0.15)",
+        ? "linear-gradient(135deg, rgba(108,142,245,0.2), rgba(167,139,250,0.15))"
+        : "linear-gradient(135deg, rgba(167,139,250,0.2), rgba(108,142,245,0.15))",
       border: `1px solid ${msg.type === "user"
-        ? "rgba(91,141,246,0.2)"
-        : "rgba(139,92,246,0.2)"}`,
+        ? "rgba(108,142,245,0.25)"
+        : "rgba(167,139,250,0.25)"}`,
       display: "flex", alignItems: "center",
-      justifyContent: "center", fontSize: 13,
+      justifyContent: "center", fontSize: 14,
+      fontWeight: 700, color: C.accent,
     }}>
-      {msg.type === "user" ? "R" : "🤖"}
+      {msg.type === "user" ? "U" : "🤖"}
     </div>
     <div
       style={{
-        padding: "10px 13px", borderRadius: 13,
-        fontSize: 12.5, lineHeight: 1.65, maxWidth: "86%",
+        padding: "12px 16px", borderRadius: 14,
+        fontSize: 13, lineHeight: 1.7, maxWidth: "84%",
         background: msg.type === "user"
-          ? "rgba(91,141,246,0.1)"
-          : "rgba(255,255,255,0.03)",
+          ? "linear-gradient(135deg, rgba(108,142,245,0.12), rgba(167,139,250,0.08))"
+          : "rgba(255,255,255,0.035)",
         border: `1px solid ${msg.type === "user"
-          ? "rgba(91,141,246,0.18)"
+          ? "rgba(108,142,245,0.2)"
           : C.border}`,
       }}
       dangerouslySetInnerHTML={{ __html: msg.text }}
@@ -42,24 +43,15 @@ const ChatMsg: React.FC<{ msg: Message }> = ({ msg }) => (
   </div>
 );
 
-// ── Main Page ─────────────────────────────────────────────────────────────
 const Chatbot: React.FC = () => {
   const [msgs, setMsgs] = useState<Message[]>([
     {
       type: "ai",
-      text: "Namaste Ritika! 👋 I'm your AI placement assistant. Ask me about:<br/><br/>🐍 Python, ML, SQL, DSA concepts<br/>💬 HR question answers<br/>🏢 Company patterns (TCS, Infosys, Wipro)<br/>📄 Resume & ATS tips<br/>💰 Salary negotiation<br/><br/>What's your placement doubt today?",
-    },
-    {
-      type: "user",
-      text: "What is TCS NQT pattern?",
-    },
-    {
-      type: "ai",
-      text: "<strong>TCS NQT Pattern:</strong><br/><br/><strong>Section 1 — Cognitive (65 min)</strong><br/>• Verbal (24 min) · Reasoning (30 min) · Numerical (30 min)<br/><br/><strong>Section 2 — Programming Logic (15 min)</strong><br/>• Flowcharts, pseudocode<br/><br/><strong>Section 3 — Coding (45 min)</strong><br/>• 2 problems · Any language<br/><br/>💡 Focus on speed in verbal + quant. Practice LeetCode Easy/Medium.",
+      text: "Hello! 👋 I am your AI Placement Assistant.<br/><br/>I can help you with:<br/>🐍 Python, ML, SQL, DSA concepts<br/>💬 HR question answers<br/>🏢 Company exam patterns (TCS, Infosys, Wipro)<br/>📄 Resume and ATS tips<br/>💰 Salary negotiation tips<br/><br/>What would you like to know?",
     },
   ]);
-
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,15 +59,15 @@ const Chatbot: React.FC = () => {
   }, [msgs]);
 
   const send = (text: string) => {
-    if (!text.trim()) return;
+    if (!text.trim() || loading) return;
     const newMsgs: Message[] = [...msgs, { type: "user", text }];
     setMsgs(newMsgs);
     setInput("");
+    setLoading(true);
 
     setTimeout(() => {
       const lower = text.toLowerCase();
-      let resp =
-        "Great question! Based on your DS profile with Python, ML, and SQL skills, I'd suggest checking the Interview Prep section. Which specific company or concept would you like to know more about?";
+      let resp = "That is a great question! I can help you with Python, ML, SQL, DSA concepts, HR questions, company exam patterns, and placement tips. Could you be more specific about what you would like to know?";
       for (const key of Object.keys(AI_RESPONSES)) {
         if (lower.includes(key)) {
           resp = AI_RESPONSES[key];
@@ -83,70 +75,104 @@ const Chatbot: React.FC = () => {
         }
       }
       setMsgs(m => [...m, { type: "ai", text: resp }]);
-    }, 650);
+      setLoading(false);
+    }, 800);
   };
 
   const quickQuestions = [
-    'How to answer "tell me about yourself"?',
-    "What is Infosys InfyTQ exam pattern?",
+    "What is TCS NQT exam pattern?",
+    "How to answer tell me about yourself?",
+    "What is Infosys InfyTQ pattern?",
     "How to negotiate salary as fresher?",
-    "What is overfitting in machine learning?",
-    "Difference between SQL join types?",
+    "What is overfitting in ML?",
+    "Difference between SQL JOIN types?",
     "How to prepare for Wipro NLTH?",
-  ];
-
-  const resumeChips: [string, string, string, string][] = [
-    ["Python Interview Qs",   C.accent,  "rgba(91,141,246,0.2)",  "Common Python interview questions for data science"],
-    ["ML Questions",          C.accent2, "rgba(139,92,246,0.2)",  "Machine learning algorithm interview questions"],
-    ["SQL Questions",         C.accent7, "rgba(34,211,238,0.2)",  "Top SQL interview questions for data analyst"],
-    ["Explain Projects",      C.accent3, "rgba(16,217,140,0.2)",  "How to explain Fake News Detection project in interview"],
-    ["XGBoost Questions",     C.accent4, "rgba(245,158,11,0.2)",  "How to explain XGBoost in data science interview"],
+    "What are common Python interview questions?",
   ];
 
   return (
     <div className="fade-up">
-      {/* Header */}
       <div style={{
-        fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: 26, fontWeight: 700,
-        letterSpacing: -0.8, marginBottom: 3,
+        fontFamily: "'Outfit', sans-serif",
+        fontSize: 26, fontWeight: 800,
+        letterSpacing: -0.8, marginBottom: 4,
       }}>
         🤖 AI Placement Chatbot
       </div>
-      <div style={{ color: C.text2, fontSize: 13, marginBottom: 22 }}>
-        Ask anything — technical doubts, HR tips, company patterns — 24/7
+      <div style={{ color: C.text2, fontSize: 13, marginBottom: 24 }}>
+        Ask anything about placement preparation — available 24/7
       </div>
 
       <div style={{
         display: "grid",
-        gridTemplateColumns: "1fr 300px",
+        gridTemplateColumns: "1fr 290px",
         gap: 16, alignItems: "start",
       }}>
         {/* Chat Window */}
         <Card style={{
-          height: 540,
+          height: 560,
           display: "flex",
           flexDirection: "column",
         }}>
           <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+            display: "flex", alignItems: "center",
+            gap: 10, marginBottom: 4,
           }}>
-            💬 Chat with Placement Preparation AI
+            <div style={{
+              width: 10, height: 10, borderRadius: "50%",
+              background: C.accent3,
+              boxShadow: `0 0 8px ${C.accent3}`,
+              animation: "pulse 2s infinite",
+            }} />
+            <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 15, fontWeight: 700,
+            }}>
+              AI Assistant
+            </div>
           </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-            Type your doubt and press Enter
+          <div style={{ fontSize: 12, color: C.text2, marginBottom: 16 }}>
+            Type your question and press Enter or click Send
           </div>
 
           {/* Messages */}
           <div style={{
             flex: 1, overflowY: "auto",
-            display: "flex", flexDirection: "column",
-            gap: 10, marginBottom: 12, paddingRight: 4,
+            paddingRight: 6, marginBottom: 16,
           }}>
             {msgs.map((m, i) => (
               <ChatMsg key={i} msg={m} />
             ))}
+            {loading && (
+              <div style={{
+                display: "flex", gap: 10,
+                alignItems: "flex-start", marginBottom: 12,
+              }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: 10,
+                  background: "rgba(167,139,250,0.15)",
+                  border: "1px solid rgba(167,139,250,0.25)",
+                  display: "flex", alignItems: "center",
+                  justifyContent: "center", fontSize: 14,
+                }}>
+                  🤖
+                </div>
+                <div style={{
+                  padding: "12px 16px", borderRadius: 14,
+                  background: "rgba(255,255,255,0.035)",
+                  border: `1px solid ${C.border}`,
+                  display: "flex", gap: 5, alignItems: "center",
+                }}>
+                  {[0, 1, 2].map(i => (
+                    <div key={i} style={{
+                      width: 6, height: 6, borderRadius: "50%",
+                      background: C.accent2,
+                      animation: `pulse 1s infinite ${i * 0.2}s`,
+                    }} />
+                  ))}
+                </div>
+              </div>
+            )}
             <div ref={endRef} />
           </div>
 
@@ -156,33 +182,45 @@ const Chatbot: React.FC = () => {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === "Enter" && send(input)}
-              placeholder="Type your doubt... (Enter to send)"
+              placeholder="Ask your placement question..."
               style={{
                 flex: 1,
                 background: "rgba(255,255,255,0.04)",
                 border: `1px solid ${C.border}`,
-                borderRadius: 10, padding: "9px 13px",
+                borderRadius: 12, padding: "11px 16px",
                 color: C.text, fontSize: 13, outline: "none",
+                transition: "border-color 0.2s",
               }}
+              onFocus={e =>
+                (e.target.style.borderColor = "rgba(108,142,245,0.5)")
+              }
+              onBlur={e =>
+                (e.target.style.borderColor = C.border)
+              }
             />
-            <Button onClick={() => send(input)}>Send →</Button>
+            <Button onClick={() => send(input)}>
+              Send →
+            </Button>
           </div>
         </Card>
 
         {/* Right Panel */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {/* Quick Questions */}
+        <div style={{
+          display: "flex", flexDirection: "column", gap: 14,
+        }}>
           <Card>
             <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 15, fontWeight: 700, marginBottom: 4,
             }}>
               ⚡ Quick Questions
             </div>
             <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-              Click to instantly ask
+              Click to ask instantly
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div style={{
+              display: "flex", flexDirection: "column", gap: 6,
+            }}>
               {quickQuestions.map(q => (
                 <button
                   key={q}
@@ -190,39 +228,26 @@ const Chatbot: React.FC = () => {
                   style={{
                     background: "rgba(255,255,255,0.03)",
                     border: `1px solid ${C.border}`,
-                    borderRadius: 9, padding: "8px 12px",
+                    borderRadius: 10, padding: "9px 13px",
                     color: C.text2, fontSize: 12,
                     textAlign: "left", cursor: "pointer",
-                    fontFamily: "inherit", transition: "all 0.15s",
+                    fontFamily: "inherit",
+                    transition: "all 0.18s",
+                    lineHeight: 1.5,
+                  }}
+                  onMouseEnter={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background = "rgba(108,142,245,0.08)";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = "rgba(108,142,245,0.25)";
+                    (e.currentTarget as HTMLButtonElement).style.color = C.text;
+                  }}
+                  onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.background = "rgba(255,255,255,0.03)";
+                    (e.currentTarget as HTMLButtonElement).style.borderColor = C.border;
+                    (e.currentTarget as HTMLButtonElement).style.color = C.text2;
                   }}
                 >
                   {q}
                 </button>
-              ))}
-            </div>
-          </Card>
-
-          {/* Resume Chips */}
-          <Card>
-            <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 14.5, fontWeight: 700, marginBottom: 2,
-            }}>
-              📌 From Your Resume
-            </div>
-            <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-              Ask interview questions for your skills
-            </div>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
-              {resumeChips.map(([label, color, border, question]) => (
-                <Chip
-                  key={label}
-                  color={color}
-                  borderColor={border}
-                  onClick={() => send(question)}
-                >
-                  {label}
-                </Chip>
               ))}
             </div>
           </Card>

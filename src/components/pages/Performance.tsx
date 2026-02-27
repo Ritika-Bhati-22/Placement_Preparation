@@ -1,25 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { C } from "../../constants/colors";
 import Card from "../shared/Card";
-import StatCard from "../shared/StatCard";
 import InfoBox from "../shared/InfoBox";
 import Tabs from "../shared/Tabs";
 import Button from "../shared/Button";
-import { MCQQuestionProps } from "../../types";
 
-// ── Timer ──────────────────────────────────────────────────────────────────
+// ── Timer ─────────────────────────────────────────────────────────────────
 const TimerDisplay: React.FC = () => {
-  const [t, setT] = useState(2693);
+  const [t, setT] = useState(2700);
   useEffect(() => {
-    const id = setInterval(() => setT(prev => prev > 0 ? prev - 1 : 0), 1000);
+    const id = setInterval(() =>
+      setT(prev => prev > 0 ? prev - 1 : 0), 1000);
     return () => clearInterval(id);
   }, []);
   const m = Math.floor(t / 60);
   const s = t % 60;
   return (
     <span style={{
-      fontFamily: "'Space Grotesk', sans-serif",
-      fontWeight: 800, fontSize: 20,
+      fontFamily: "'Outfit', sans-serif",
+      fontWeight: 800, fontSize: 22,
       color: t < 300 ? C.accent5 : C.accent4,
     }}>
       {m}:{String(s).padStart(2, "0")}
@@ -27,10 +26,14 @@ const TimerDisplay: React.FC = () => {
   );
 };
 
-// ── MCQ Question ───────────────────────────────────────────────────────────
-const MCQQuestion: React.FC<MCQQuestionProps> = ({
-  tags, q, opts, correct, onAnswer,
-}) => {
+// ── MCQ Question ──────────────────────────────────────────────────────────
+const MCQQuestion: React.FC<{
+  tags: [string, string][];
+  q: string;
+  opts: string[];
+  correct: number;
+  onAnswer: (correct: boolean) => void;
+}> = ({ tags, q, opts, correct, onAnswer }) => {
   const [chosen, setChosen] = useState<number | null>(null);
 
   const handle = (i: number) => {
@@ -43,13 +46,12 @@ const MCQQuestion: React.FC<MCQQuestionProps> = ({
     <div style={{
       background: "rgba(255,255,255,0.025)",
       border: `1px solid ${C.border}`,
-      borderRadius: 13, padding: 18, marginBottom: 12,
+      borderRadius: 14, padding: 20, marginBottom: 12,
     }}>
-      {/* Tags */}
-      <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+      <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
         {tags.map(([label, color]) => (
           <span key={label} style={{
-            fontSize: 10, padding: "2px 9px",
+            fontSize: 10, padding: "3px 10px",
             borderRadius: 20, fontWeight: 700,
             background: `${color}18`, color,
           }}>
@@ -57,49 +59,55 @@ const MCQQuestion: React.FC<MCQQuestionProps> = ({
           </span>
         ))}
       </div>
-
-      {/* Question */}
       <div style={{
-        fontSize: 13, fontWeight: 500,
-        marginBottom: 14, lineHeight: 1.65,
-        fontFamily: "'Space Grotesk', sans-serif",
+        fontSize: 14, fontWeight: 600,
+        marginBottom: 16, lineHeight: 1.6,
+        fontFamily: "'Outfit', sans-serif",
       }}>
         {q}
       </div>
-
-      {/* Options */}
       <div style={{
         display: "grid",
         gridTemplateColumns: "1fr 1fr",
         gap: 8,
       }}>
         {opts.map((opt, i) => {
-          let bg     = "rgba(255,255,255,0.02)";
+          let bg     = "rgba(255,255,255,0.025)";
           let border = C.border;
           let color  = C.text2;
-
           if (chosen !== null) {
             if (i === correct) {
-              bg = "rgba(16,217,140,0.1)";
-              border = "rgba(16,217,140,0.3)";
+              bg = "rgba(52,211,153,0.1)";
+              border = "rgba(52,211,153,0.35)";
               color = C.accent3;
             } else if (i === chosen) {
-              bg = "rgba(242,82,82,0.1)";
-              border = "rgba(242,82,82,0.3)";
+              bg = "rgba(248,113,113,0.1)";
+              border = "rgba(248,113,113,0.35)";
               color = C.accent5;
             }
           }
-
           return (
             <div
               key={i}
               onClick={() => handle(i)}
               style={{
-                padding: "10px 13px", borderRadius: 9,
+                padding: "11px 14px", borderRadius: 10,
                 border: `1px solid ${border}`,
-                cursor: "pointer", fontSize: 12,
-                background: bg, color,
-                transition: "all 0.15s",
+                cursor: chosen === null ? "pointer" : "default",
+                fontSize: 13, background: bg, color,
+                transition: "all 0.18s", lineHeight: 1.5,
+              }}
+              onMouseEnter={e => {
+                if (chosen === null) {
+                  (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.05)";
+                  (e.currentTarget as HTMLDivElement).style.borderColor = C.borderBright;
+                }
+              }}
+              onMouseLeave={e => {
+                if (chosen === null) {
+                  (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.025)";
+                  (e.currentTarget as HTMLDivElement).style.borderColor = C.border;
+                }
               }}
             >
               {opt}
@@ -111,43 +119,10 @@ const MCQQuestion: React.FC<MCQQuestionProps> = ({
   );
 };
 
-// ── ATSSite (reused for history) ───────────────────────────────────────────
-const HistoryItem: React.FC<{
-  name: string; meta: string;
-  score: string; color: string;
-}> = ({ name, meta, score, color }) => (
-  <div style={{
-    display: "flex", alignItems: "center",
-    justifyContent: "space-between",
-    padding: "13px 15px",
-    background: "rgba(255,255,255,0.025)",
-    border: `1px solid ${C.border}`,
-    borderRadius: 12, marginBottom: 9,
-  }}>
-    <div>
-      <div style={{
-        fontWeight: 600, fontSize: 13,
-        fontFamily: "'Space Grotesk', sans-serif",
-      }}>
-        {name}
-      </div>
-      <div style={{ fontSize: 10.5, color: C.text2, marginTop: 2 }}>
-        {meta}
-      </div>
-    </div>
-    <div style={{
-      fontFamily: "'Space Grotesk', sans-serif",
-      fontSize: 22, fontWeight: 700, color,
-    }}>
-      {score}
-    </div>
-  </div>
-);
-
-// ── Main Page ──────────────────────────────────────────────────────────────
+// ── Main Page ─────────────────────────────────────────────────────────────
 const Performance: React.FC = () => {
   const [tab, setTab] = useState("Overview");
-  const [score, setScore] = useState({ correct: 2, total: 3 });
+  const [score, setScore] = useState({ correct: 0, total: 0 });
 
   const handleAnswer = (correct: boolean) => {
     setScore(s => ({
@@ -158,16 +133,15 @@ const Performance: React.FC = () => {
 
   return (
     <div className="fade-up">
-      {/* Header */}
       <div style={{
-        fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: 26, fontWeight: 700,
-        letterSpacing: -0.8, marginBottom: 3,
+        fontFamily: "'Outfit', sans-serif",
+        fontSize: 26, fontWeight: 800,
+        letterSpacing: -0.8, marginBottom: 4,
       }}>
         📊 My Performance
       </div>
-      <div style={{ color: C.text2, fontSize: 13, marginBottom: 22 }}>
-        Analyze your performance through coding tests and MCQ tests
+      <div style={{ color: C.text2, fontSize: 13, marginBottom: 24 }}>
+        Test your knowledge with coding tests and MCQ tests
       </div>
 
       <Tabs
@@ -180,73 +154,34 @@ const Performance: React.FC = () => {
       {tab === "Overview" && (
         <div className="fade-up">
           <div style={{
-            background: "linear-gradient(135deg,rgba(91,141,246,0.08),rgba(139,92,246,0.05))",
-            border: "1px solid rgba(91,141,246,0.18)",
-            borderRadius: 16, padding: 24, marginBottom: 16,
+            background: "linear-gradient(135deg, rgba(108,142,245,0.08), rgba(167,139,250,0.05))",
+            border: "1px solid rgba(108,142,245,0.18)",
+            borderRadius: 18, padding: "32px 36px",
+            marginBottom: 20, textAlign: "center",
           }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
             <div style={{
-              display: "flex", alignItems: "center",
-              gap: 24, flexWrap: "wrap",
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 22, fontWeight: 800,
+              letterSpacing: -0.5, marginBottom: 8,
             }}>
-              <div>
-                <div style={{
-                  fontSize: 10.5, color: C.text2, fontWeight: 700,
-                  letterSpacing: 1.2, textTransform: "uppercase",
-                  marginBottom: 8,
-                }}>
-                  Overall Score
-                </div>
-                <div style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: 50, fontWeight: 700, letterSpacing: -3,
-                  background: `linear-gradient(130deg,${C.accent},${C.accent2})`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  lineHeight: 1,
-                }}>
-                  71%
-                </div>
-              </div>
-              <div style={{ flex: 1, minWidth: 240 }}>
-                {[
-                  ["Python Skills", 78, C.accent],
-                  ["ML Concepts",   65, C.accent2],
-                  ["SQL",           72, C.accent7],
-                  ["DSA",           55, C.accent4],
-                  ["HR Questions",  68, C.accent3],
-                ].map(([label, val, color]) => (
-                  <div key={label as string} style={{
-                    display: "flex", alignItems: "center",
-                    gap: 10, marginBottom: 10,
-                  }}>
-                    <span style={{
-                      width: 115, fontSize: 12,
-                      color: C.text2, flexShrink: 0,
-                    }}>
-                      {label}
-                    </span>
-                    <div style={{
-                      flex: 1, height: 5,
-                      background: "rgba(255,255,255,0.05)",
-                      borderRadius: 5, overflow: "hidden",
-                    }}>
-                      <div style={{
-                        height: "100%",
-                        width: `${val}%`,
-                        background: color as string,
-                        borderRadius: 5,
-                      }} />
-                    </div>
-                    <span style={{
-                      width: 38, textAlign: "right",
-                      fontWeight: 700, fontSize: 12,
-                      color: color as string,
-                    }}>
-                      {val}%
-                    </span>
-                  </div>
-                ))}
-              </div>
+              No Tests Taken Yet
+            </div>
+            <div style={{
+              fontSize: 13, color: C.text2,
+              lineHeight: 1.7, maxWidth: 400,
+              margin: "0 auto 24px",
+            }}>
+              Take a coding test or MCQ test to see your performance
+              analytics, scores, and improvement areas
+            </div>
+            <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+              <Button onClick={() => setTab("Coding Test")}>
+                💻 Start Coding Test
+              </Button>
+              <Button variant="purple" onClick={() => setTab("MCQ Test")}>
+                📝 Start MCQ Test
+              </Button>
             </div>
           </div>
 
@@ -255,53 +190,54 @@ const Performance: React.FC = () => {
             gridTemplateColumns: "repeat(3,1fr)",
             gap: 14,
           }}>
-            <Card onClick={() => setTab("Coding Test")}>
-              <div style={{ fontSize: 32, marginBottom: 10 }}>💻</div>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 14.5, fontWeight: 700, marginBottom: 2,
-              }}>
-                Coding Test
-              </div>
-              <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-                Resume-based Python, ML, SQL problems. 45 min limit.
-              </div>
-              <Button full onClick={() => setTab("Coding Test")}>
-                Start Coding Test →
-              </Button>
-            </Card>
-
-            <Card onClick={() => setTab("MCQ Test")}>
-              <div style={{ fontSize: 32, marginBottom: 10 }}>📝</div>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 14.5, fontWeight: 700, marginBottom: 2,
-              }}>
-                MCQ Test
-              </div>
-              <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-                30 questions based on your resume skills. Timed.
-              </div>
-              <Button variant="purple" full onClick={() => setTab("MCQ Test")}>
-                Start MCQ Test →
-              </Button>
-            </Card>
-
-            <Card onClick={() => setTab("History")}>
-              <div style={{ fontSize: 32, marginBottom: 10 }}>📈</div>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 14.5, fontWeight: 700, marginBottom: 2,
-              }}>
-                Test History
-              </div>
-              <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-                All past tests, scores, and improvement tracking.
-              </div>
-              <Button variant="secondary" full onClick={() => setTab("History")}>
-                View History →
-              </Button>
-            </Card>
+            {[
+              {
+                icon: "💻", title: "Coding Test",
+                desc: "3 coding problems based on common interview topics. 45 min time limit.",
+                btn: "Start Coding Test",
+                variant: "primary" as const,
+                tab: "Coding Test",
+              },
+              {
+                icon: "📝", title: "MCQ Test",
+                desc: "10 multiple choice questions on Python, ML, SQL and DSA concepts.",
+                btn: "Start MCQ Test",
+                variant: "purple" as const,
+                tab: "MCQ Test",
+              },
+              {
+                icon: "📈", title: "Test History",
+                desc: "View all past test results, scores and track your improvement over time.",
+                btn: "View History",
+                variant: "secondary" as const,
+                tab: "History",
+              },
+            ].map(item => (
+              <Card key={item.title} onClick={() => setTab(item.tab)}>
+                <div style={{ fontSize: 34, marginBottom: 12 }}>
+                  {item.icon}
+                </div>
+                <div style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 15, fontWeight: 700, marginBottom: 6,
+                }}>
+                  {item.title}
+                </div>
+                <div style={{
+                  fontSize: 12, color: C.text2,
+                  lineHeight: 1.6, marginBottom: 16,
+                }}>
+                  {item.desc}
+                </div>
+                <Button
+                  variant={item.variant}
+                  full
+                  onClick={() => setTab(item.tab)}
+                >
+                  {item.btn} →
+                </Button>
+              </Card>
+            ))}
           </div>
         </div>
       )}
@@ -310,114 +246,121 @@ const Performance: React.FC = () => {
       {tab === "Coding Test" && (
         <div className="fade-up">
           <InfoBox color="purple"
-            title="💻 Coding Test — Based on Ritika's Resume"
-            style={{ marginBottom: 18 }}>
-            3 problems from YOUR skills: Python, ML, SQL. Time: 45 min.
+            title="💻 Coding Test — 3 Problems"
+            style={{ marginBottom: 20 }}>
+            Solve all 3 problems within 45 minutes. Use any language
+            you are comfortable with.
           </InfoBox>
 
           <div style={{
             display: "grid",
-            gridTemplateColumns: "1fr 380px",
+            gridTemplateColumns: "1fr 360px",
             gap: 16,
           }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{
+              display: "flex",
+              flexDirection: "column", gap: 12,
+            }}>
               {[
-                ["Problem 1 · Python + Pandas · Medium",
-                 "Write a function to find top 3 students by average marks from a DataFrame with columns: name, math, science, english."],
-                ["Problem 2 · Machine Learning · Easy",
-                 "Write code to train a Logistic Regression model using Scikit-learn and print the accuracy on test data."],
-                ["Problem 3 · SQL · Medium",
-                 "Find employees earning more than the average salary in their department. Table: employees(id, name, dept, salary)"],
-              ].map(([num, text], i) => (
+                {
+                  num: "Problem 1 · Easy",
+                  color: C.accent3,
+                  text: "Write a function that takes an array of numbers and returns the sum of all even numbers.",
+                  rows: 4,
+                },
+                {
+                  num: "Problem 2 · Medium",
+                  color: C.accent4,
+                  text: "Given a string, find the longest substring without repeating characters and return its length.",
+                  rows: 4,
+                },
+                {
+                  num: "Problem 3 · Hard",
+                  color: C.accent5,
+                  text: "Given a list of intervals, merge all overlapping intervals and return the merged list.",
+                  rows: 5,
+                },
+              ].map((p, i) => (
                 <div key={i} style={{
                   background: "rgba(255,255,255,0.025)",
                   border: `1px solid ${C.border}`,
-                  borderRadius: 13, padding: 17,
+                  borderRadius: 14, padding: 20,
                 }}>
                   <div style={{
-                    fontSize: 10, color: C.muted, marginBottom: 7,
-                    fontWeight: 700, textTransform: "uppercase",
-                    letterSpacing: 0.6,
+                    display: "flex", alignItems: "center",
+                    gap: 8, marginBottom: 10,
                   }}>
-                    {num}
+                    <span style={{
+                      fontSize: 10, padding: "3px 10px",
+                      borderRadius: 20, fontWeight: 700,
+                      background: `${p.color}18`, color: p.color,
+                    }}>
+                      {p.num}
+                    </span>
                   </div>
                   <div style={{
                     fontSize: 13, fontWeight: 500,
-                    marginBottom: 12, lineHeight: 1.65,
+                    marginBottom: 14, lineHeight: 1.7, color: C.text,
                   }}>
-                    {text}
+                    {p.text}
                   </div>
                   <textarea
-                    rows={i === 2 ? 3 : 4}
-                    placeholder="Write your code here..."
+                    rows={p.rows}
+                    placeholder="Write your solution here..."
                     style={{
                       width: "100%",
-                      background: "rgba(255,255,255,0.03)",
+                      background: "rgba(0,0,0,0.4)",
                       border: `1px solid ${C.border}`,
-                      borderRadius: 9, padding: "9px 13px",
-                      color: C.text, fontSize: 12,
+                      borderRadius: 10, padding: "12px 14px",
+                      color: "#86efac", fontSize: 12.5,
+                      fontFamily: "'JetBrains Mono', monospace",
                       outline: "none", resize: "none",
+                      lineHeight: 1.8,
                     }}
                   />
                 </div>
               ))}
-              <Button
-                full
-                onClick={() => alert(
-                  "🎉 Submitted!\n\nP1: 9/10 ✅\nP2: 8/10 ✅\nP3: 6/10 ⚠\n\nOverall: 77%"
-                )}
-              >
+              <Button full onClick={() =>
+                alert("🎉 Test Submitted!\n\nResults will appear in History tab.")
+              }>
                 Submit Coding Test →
               </Button>
             </div>
 
-            <Card>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 14.5, fontWeight: 700, marginBottom: 2,
-              }}>
-                ⏱ Test Info
-              </div>
-              <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-                Current session
-              </div>
-              <div style={{
-                background: "rgba(245,158,11,0.06)",
-                border: "1px solid rgba(245,158,11,0.15)",
-                borderRadius: 10, padding: "10px 14px", marginBottom: 14,
-              }}>
+            <div style={{
+              display: "flex", flexDirection: "column", gap: 14,
+            }}>
+              <Card>
                 <div style={{
-                  display: "flex", justifyContent: "space-between",
-                  alignItems: "center",
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 15, fontWeight: 700, marginBottom: 4,
                 }}>
-                  <span style={{ fontSize: 12.5, color: C.text2 }}>
-                    Time Remaining
+                  ⏱ Timer
+                </div>
+                <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
+                  Time remaining
+                </div>
+                <div style={{
+                  background: "rgba(251,191,36,0.06)",
+                  border: "1px solid rgba(251,191,36,0.18)",
+                  borderRadius: 12, padding: "16px 20px",
+                  display: "flex", justifyContent: "space-between",
+                  alignItems: "center", marginBottom: 16,
+                }}>
+                  <span style={{ fontSize: 13, color: C.text2 }}>
+                    Remaining
                   </span>
                   <TimerDisplay />
                 </div>
-              </div>
-              <div style={{
-                display: "flex", justifyContent: "space-between",
-                fontSize: 12.5, marginBottom: 10,
-              }}>
-                <span style={{ color: C.text2 }}>Problems</span>
-                <span style={{ fontWeight: 600 }}>3 total</span>
-              </div>
-              <div style={{
-                display: "flex", justifyContent: "space-between",
-                fontSize: 12.5, marginBottom: 16,
-              }}>
-                <span style={{ color: C.text2 }}>Based on</span>
-                <span style={{ fontWeight: 600, color: C.accent }}>
-                  Ritika's Resume
-                </span>
-              </div>
-              <InfoBox color="amber" title="💡 Tips" style={{ marginBottom: 0 }}>
-                • Correctness first, then optimize<br />
-                • Add comments to your code<br />
-                • Handle edge cases
-              </InfoBox>
-            </Card>
+                <InfoBox color="blue" title="📌 Instructions"
+                  style={{ marginBottom: 0 }}>
+                  • Write clean and readable code<br />
+                  • Add comments where needed<br />
+                  • Handle edge cases<br />
+                  • Test before submitting
+                </InfoBox>
+              </Card>
+            </div>
           </div>
         </div>
       )}
@@ -426,20 +369,21 @@ const Performance: React.FC = () => {
       {tab === "MCQ Test" && (
         <div className="fade-up">
           <InfoBox color="blue"
-            title="📝 MCQ Test — 10 Questions · Ritika's Resume Skills"
-            style={{ marginBottom: 18 }}>
-            Auto-generated from: Python, ML, SQL, Data Analysis. Time: 15 min.
+            title="📝 MCQ Test — 3 Sample Questions"
+            style={{ marginBottom: 20 }}>
+            Answer all questions. Each correct answer adds to your score.
+            Results shown after submission.
           </InfoBox>
 
           <div style={{
             display: "grid",
-            gridTemplateColumns: "1fr 320px",
+            gridTemplateColumns: "1fr 300px",
             gap: 16,
           }}>
             <div>
               <MCQQuestion
-                tags={[[" Python", C.accent], ["Medium", C.accent4]]}
-                q="Q1. Which Pandas method removes duplicate rows?"
+                tags={[["Python", C.accent], ["Easy", C.accent3]]}
+                q="Q1. Which method is used to remove duplicate rows in a Pandas DataFrame?"
                 opts={[
                   "A. df.unique()",
                   "B. df.drop_duplicates()",
@@ -450,86 +394,100 @@ const Performance: React.FC = () => {
                 onAnswer={handleAnswer}
               />
               <MCQQuestion
-                tags={[["ML", C.accent2], ["Easy", C.accent3]]}
-                q="Q2. XGBoost stands for?"
+                tags={[["Machine Learning", C.accent2], ["Medium", C.accent4]]}
+                q="Q2. Which algorithm builds multiple decision trees and merges them to get a more accurate prediction?"
                 opts={[
-                  "A. Extra Gradient Boost",
-                  "B. Extreme Gradient Boosting",
-                  "C. Extended Gradient Boosting",
-                  "D. None of the above",
-                ]}
-                correct={1}
-                onAnswer={handleAnswer}
-              />
-              <MCQQuestion
-                tags={[["SQL", C.accent7], ["Medium", C.accent4]]}
-                q="Q3. Which clause filters groups after aggregation?"
-                opts={[
-                  "A. WHERE",
-                  "B. GROUP BY",
-                  "C. HAVING",
-                  "D. FILTER",
+                  "A. Linear Regression",
+                  "B. KNN",
+                  "C. Random Forest",
+                  "D. Naive Bayes",
                 ]}
                 correct={2}
                 onAnswer={handleAnswer}
               />
-              <Button
-                full
-                onClick={() => alert(
-                  "📊 Submitted!\n\nCorrect: 8/10\nAccuracy: 80%\n\nStrong: Python, ML\nImprove: SQL"
-                )}
-              >
+              <MCQQuestion
+                tags={[["SQL", C.accent7], ["Medium", C.accent4]]}
+                q="Q3. Which SQL clause is used to filter results after GROUP BY aggregation?"
+                opts={[
+                  "A. WHERE",
+                  "B. FILTER",
+                  "C. ORDER BY",
+                  "D. HAVING",
+                ]}
+                correct={3}
+                onAnswer={handleAnswer}
+              />
+              <Button full onClick={() =>
+                alert(`📊 Test Submitted!\n\nCorrect: ${score.correct}/${score.total}\nAccuracy: ${score.total > 0 ? Math.round(score.correct / score.total * 100) : 0}%`)
+              }>
                 Submit MCQ Test →
               </Button>
             </div>
 
-            <Card>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 14.5, fontWeight: 700, marginBottom: 2,
-              }}>
-                📊 Live Score
-              </div>
-              <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-                Updates as you answer
-              </div>
-              <div style={{
-                fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 54, fontWeight: 700,
-                color: C.accent, letterSpacing: -3,
-                marginBottom: 8, lineHeight: 1,
-              }}>
-                {score.correct}/{score.total}
-              </div>
-              <div style={{
-                fontSize: 12.5, color: C.text2, marginBottom: 14,
-              }}>
-                Questions answered
-              </div>
-              <div style={{
-                height: 7,
-                background: "rgba(255,255,255,0.05)",
-                borderRadius: 5, overflow: "hidden", marginBottom: 8,
-              }}>
+            <div style={{
+              display: "flex", flexDirection: "column", gap: 14,
+            }}>
+              <Card>
                 <div style={{
-                  height: "100%",
-                  width: `${Math.round(score.correct / score.total * 100)}%`,
-                  background: `linear-gradient(90deg,${C.accent3},#059669)`,
-                  borderRadius: 5,
-                }} />
-              </div>
-              <div style={{
-                fontSize: 11, color: C.accent3,
-                fontWeight: 700, marginBottom: 14,
-              }}>
-                Accuracy: {Math.round(score.correct / score.total * 100)}%
-              </div>
-              <InfoBox color="green" title="✅ Correct so far"
-                style={{ marginBottom: 0 }}>
-                Q1: df.drop_duplicates() ✓<br />
-                Q2: Extreme Gradient Boosting ✓
-              </InfoBox>
-            </Card>
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 15, fontWeight: 700, marginBottom: 4,
+                }}>
+                  📊 Live Score
+                </div>
+                <div style={{ fontSize: 12, color: C.text2, marginBottom: 16 }}>
+                  Updates as you answer
+                </div>
+                <div style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 52, fontWeight: 800,
+                  color: C.accent, letterSpacing: -2,
+                  marginBottom: 4, lineHeight: 1,
+                }}>
+                  {score.correct}/{score.total}
+                </div>
+                <div style={{
+                  fontSize: 12, color: C.text2, marginBottom: 16,
+                }}>
+                  Questions answered
+                </div>
+                <div style={{
+                  height: 6,
+                  background: "rgba(255,255,255,0.05)",
+                  borderRadius: 5, overflow: "hidden", marginBottom: 8,
+                }}>
+                  <div style={{
+                    height: "100%",
+                    width: `${score.total > 0
+                      ? Math.round(score.correct / score.total * 100)
+                      : 0}%`,
+                    background: `linear-gradient(90deg, ${C.accent3}, #059669)`,
+                    borderRadius: 5, transition: "width 0.5s ease",
+                  }} />
+                </div>
+                <div style={{
+                  fontSize: 12, color: C.accent3, fontWeight: 700,
+                }}>
+                  Accuracy: {score.total > 0
+                    ? Math.round(score.correct / score.total * 100)
+                    : 0}%
+                </div>
+              </Card>
+
+              <Card>
+                <div style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 15, fontWeight: 700, marginBottom: 4,
+                }}>
+                  💡 Tips
+                </div>
+                <div style={{ fontSize: 12, color: C.text2, lineHeight: 1.7 }}>
+                  • Read each question carefully<br />
+                  • Eliminate wrong options first<br />
+                  • Trust your first instinct<br />
+                  • Review before submitting
+                </div>
+              </Card>
+            </div>
           </div>
         </div>
       )}
@@ -539,34 +497,35 @@ const Performance: React.FC = () => {
         <div className="fade-up">
           <Card>
             <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center",
+              padding: "60px 20px", textAlign: "center",
             }}>
-              📈 Test History
+              <div style={{ fontSize: 52, marginBottom: 16 }}>📈</div>
+              <div style={{
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: 20, fontWeight: 800,
+                marginBottom: 8,
+              }}>
+                No Test History Yet
+              </div>
+              <div style={{
+                fontSize: 13, color: C.text2,
+                lineHeight: 1.7, maxWidth: 360,
+                marginBottom: 24,
+              }}>
+                Complete a coding test or MCQ test to see your history,
+                scores and performance trends here
+              </div>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button onClick={() => setTab("Coding Test")}>
+                  💻 Take Coding Test
+                </Button>
+                <Button variant="purple" onClick={() => setTab("MCQ Test")}>
+                  📝 Take MCQ Test
+                </Button>
+              </div>
             </div>
-            <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-              All past performance tests
-            </div>
-            <HistoryItem
-              name="📝 MCQ Test — Python + ML"
-              meta="Feb 24, 2026 · 15 min · 10 questions"
-              score="8/10" color={C.accent3}
-            />
-            <HistoryItem
-              name="💻 Coding Test — Resume Based"
-              meta="Feb 20, 2026 · 45 min · 3 problems"
-              score="2/3" color={C.accent4}
-            />
-            <HistoryItem
-              name="📝 MCQ Test — SQL Focus"
-              meta="Feb 15, 2026 · 10 min · 10 questions"
-              score="6/10" color={C.accent2}
-            />
-            <HistoryItem
-              name="💻 Coding Test — Python"
-              meta="Feb 10, 2026 · 30 min · 2 problems"
-              score="2/2" color={C.accent3}
-            />
           </Card>
         </div>
       )}

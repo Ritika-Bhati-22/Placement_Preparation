@@ -2,25 +2,33 @@ import React, { useState } from "react";
 import { C } from "../../constants/colors";
 import Card from "../shared/Card";
 import InfoBox from "../shared/InfoBox";
-import RingChart from "../shared/RingChart";
-import Chip from "../shared/Chip";
 import Button from "../shared/Button";
 
 const Resume: React.FC = () => {
   const [uploaded, setUploaded] = useState(false);
   const [filename, setFilename] = useState("");
+  const [jobRole, setJobRole] = useState("");
+  const [analyzed, setAnalyzed] = useState(false);
+
+  const handleAnalyze = () => {
+    if (!uploaded) {
+      alert("Please upload your resume first!");
+      return;
+    }
+    setAnalyzed(true);
+  };
 
   return (
     <div className="fade-up">
       <div style={{
-        fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: 26, fontWeight: 700,
-        letterSpacing: -0.8, marginBottom: 3,
+        fontFamily: "'Outfit', sans-serif",
+        fontSize: 26, fontWeight: 800,
+        letterSpacing: -0.8, marginBottom: 4,
       }}>
         📄 Resume Analyzer
       </div>
-      <div style={{ color: C.text2, fontSize: 13, marginBottom: 22 }}>
-        AI extracts skills, scores sections, and gives improvement tips
+      <div style={{ color: C.text2, fontSize: 13, marginBottom: 24 }}>
+        Upload your resume to get AI powered analysis and improvement tips
       </div>
 
       <div style={{
@@ -28,211 +36,212 @@ const Resume: React.FC = () => {
         gridTemplateColumns: "1fr 1fr",
         gap: 16, marginBottom: 16,
       }}>
-        {/* Upload */}
+        {/* Upload Card */}
         <Card>
           <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: 15, fontWeight: 700, marginBottom: 4,
           }}>
             Upload Resume
           </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-            PDF format only
+          <div style={{ fontSize: 12, color: C.text2, marginBottom: 16 }}>
+            PDF format recommended
           </div>
 
+          {/* Drop Zone */}
           <div
             onClick={() => document.getElementById("rfInput")?.click()}
             style={{
               border: `2px dashed ${uploaded
-                ? "rgba(16,217,140,0.4)"
-                : "rgba(91,141,246,0.22)"}`,
-              borderRadius: 14, padding: 36,
+                ? "rgba(52,211,153,0.4)"
+                : "rgba(108,142,245,0.25)"}`,
+              borderRadius: 16, padding: "40px 20px",
               textAlign: "center", cursor: "pointer",
               background: uploaded
-                ? "rgba(16,217,140,0.04)"
-                : "rgba(91,141,246,0.025)",
-              transition: "all 0.2s",
+                ? "rgba(52,211,153,0.04)"
+                : "rgba(108,142,245,0.03)",
+              transition: "all 0.25s",
+            }}
+            onMouseEnter={e => {
+              if (!uploaded) {
+                (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(108,142,245,0.5)";
+                (e.currentTarget as HTMLDivElement).style.background = "rgba(108,142,245,0.07)";
+              }
+            }}
+            onMouseLeave={e => {
+              if (!uploaded) {
+                (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(108,142,245,0.25)";
+                (e.currentTarget as HTMLDivElement).style.background = "rgba(108,142,245,0.03)";
+              }
             }}
           >
-            <div style={{ fontSize: 36, marginBottom: 10 }}>
-              {uploaded ? "✅" : "📄"}
+            <div style={{ fontSize: 40, marginBottom: 12 }}>
+              {uploaded ? "✅" : "📤"}
             </div>
             <div style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 14.5, fontWeight: 700, marginBottom: 5,
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 15, fontWeight: 700, marginBottom: 6,
             }}>
               {uploaded ? filename : "Drop your Resume here"}
             </div>
             <div style={{ fontSize: 12, color: C.text2 }}>
-              {uploaded ? "Uploaded successfully" : "or click to browse · PDF only"}
+              {uploaded
+                ? "File uploaded successfully"
+                : "Click to browse · PDF, DOC, DOCX"}
             </div>
             <input
               id="rfInput"
               type="file"
-              accept=".pdf"
+              accept=".pdf,.doc,.docx"
               style={{ display: "none" }}
               onChange={e => {
                 if (e.target.files?.[0]) {
                   setFilename(e.target.files[0].name);
                   setUploaded(true);
+                  setAnalyzed(false);
                 }
               }}
             />
           </div>
 
-          <div style={{ marginTop: 14 }}>
-            <div style={{ marginBottom: 13 }}>
+          <div style={{ marginTop: 16 }}>
+            <div style={{ marginBottom: 14 }}>
               <div style={{
                 fontSize: 11, color: C.text2,
-                fontWeight: 600, marginBottom: 5,
+                fontWeight: 600, marginBottom: 6,
+                textTransform: "uppercase", letterSpacing: 0.5,
               }}>
-                Target Job Role (optional)
+                Target Job Role
               </div>
               <input
-                placeholder="e.g. Data Scientist, ML Engineer"
+                value={jobRole}
+                onChange={e => setJobRole(e.target.value)}
+                placeholder="e.g. Data Scientist, SDE, ML Engineer"
                 style={{
                   width: "100%",
                   background: "rgba(255,255,255,0.04)",
                   border: `1px solid ${C.border}`,
-                  borderRadius: 10, padding: "9px 13px",
+                  borderRadius: 10, padding: "10px 14px",
                   color: C.text, fontSize: 13, outline: "none",
+                  transition: "border-color 0.2s",
                 }}
+                onFocus={e =>
+                  (e.target.style.borderColor = "rgba(108,142,245,0.5)")
+                }
+                onBlur={e =>
+                  (e.target.style.borderColor = C.border)
+                }
               />
             </div>
-            <Button full onClick={() => alert("✅ Resume analyzed!")}>
+            <Button full onClick={handleAnalyze}>
               🔍 Analyze Resume
             </Button>
           </div>
         </Card>
 
-        {/* Score */}
+        {/* Result Card */}
         <Card>
           <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: 15, fontWeight: 700, marginBottom: 4,
           }}>
-            Resume Score
+            Analysis Result
           </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-            AI-powered section-wise analysis
+          <div style={{ fontSize: 12, color: C.text2, marginBottom: 16 }}>
+            AI powered section wise scoring
           </div>
 
-          <div style={{
-            display: "flex", alignItems: "center",
-            gap: 20, marginBottom: 18,
-          }}>
-            <RingChart value={74} color={C.accent} />
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 9 }}>
-              {[
-                ["Skills",     85, C.accent],
-                ["Projects",   78, C.accent2],
-                ["Experience", 60, C.accent3],
-                ["Education",  82, C.accent4],
-                ["Format",     68, C.accent6],
-              ].map(([label, val, color]) => (
-                <div key={label as string} style={{
-                  display: "flex", alignItems: "center",
-                  gap: 9, fontSize: 11,
-                }}>
-                  <span style={{ color: C.text2, width: 76 }}>{label}</span>
-                  <div style={{
-                    flex: 1, height: 4,
-                    background: "rgba(255,255,255,0.05)",
-                    borderRadius: 4, overflow: "hidden",
-                  }}>
-                    <div style={{
-                      height: "100%",
-                      width: `${val}%`,
-                      background: color as string,
-                      borderRadius: 4,
-                    }} />
-                  </div>
-                  <span style={{ fontWeight: 700, color: C.text }}>{val}</span>
-                </div>
-              ))}
+          {!analyzed ? (
+            <div style={{
+              display: "flex", flexDirection: "column",
+              alignItems: "center", justifyContent: "center",
+              padding: "50px 20px", textAlign: "center",
+            }}>
+              <div style={{ fontSize: 48, marginBottom: 16 }}>📊</div>
+              <div style={{
+                fontFamily: "'Outfit', sans-serif",
+                fontSize: 15, fontWeight: 700, marginBottom: 8,
+              }}>
+                No Analysis Yet
+              </div>
+              <div style={{ fontSize: 12, color: C.text2, lineHeight: 1.6 }}>
+                Upload your resume and click Analyze to see your score,
+                extracted skills, and improvement suggestions
+              </div>
             </div>
-          </div>
-
-          <InfoBox color="red" title="⚠ Suggestions to Improve">
-            • Add GitHub links to all projects<br />
-            • Quantify achievements (e.g. "reduced load time by 40%")<br />
-            • Add LinkedIn profile URL<br />
-            • Use strong action verbs: Built, Designed, Optimized
-          </InfoBox>
+          ) : (
+            <div>
+              <InfoBox color="green" title="✅ Resume Analyzed Successfully">
+                Your resume has been analyzed. Here are the results based
+                on your uploaded file{jobRole ? ` for ${jobRole} role` : ""}.
+              </InfoBox>
+              <InfoBox color="blue" title="📌 Next Steps">
+                • Check ATS Score to match with job descriptions<br />
+                • Review Interview Prep for topic wise questions<br />
+                • Practice DSA problems daily
+              </InfoBox>
+              <InfoBox color="amber" title="💡 Quick Tips">
+                • Add GitHub links to all projects<br />
+                • Quantify achievements with numbers<br />
+                • Use strong action verbs: Built, Designed, Optimized
+              </InfoBox>
+            </div>
+          )}
         </Card>
       </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr",
-        gap: 16,
-      }}>
-        {/* Skills */}
+      {/* How it works */}
+      {!analyzed && (
         <Card>
           <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: 15, fontWeight: 700, marginBottom: 4,
           }}>
-            🔍 Extracted Skills
+            How It Works
           </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-            Auto-detected using NLP
+          <div style={{ fontSize: 12, color: C.text2, marginBottom: 20 }}>
+            3 simple steps to analyze your resume
           </div>
           <div style={{
-            display: "flex", flexWrap: "wrap",
-            gap: 7, marginBottom: 14,
+            display: "grid",
+            gridTemplateColumns: "repeat(3,1fr)",
+            gap: 16,
           }}>
             {[
-              ["Python",          C.accent,  "rgba(91,141,246,0.2)"],
-              ["Machine Learning",C.accent3, "rgba(16,217,140,0.2)"],
-              ["SQL",             C.accent2, "rgba(139,92,246,0.2)"],
-              ["Data Analysis",   C.accent4, "rgba(245,158,11,0.2)"],
-              ["Pandas",          C.accent7, "rgba(34,211,238,0.2)"],
-              ["Scikit-learn",    C.accent,  ""],
-              ["TensorFlow",      C.accent5, ""],
-              ["Matplotlib",      "",        ""],
-              ["Git",             "",        ""],
-              ["Flask",           "",        ""],
-            ].map(([s, c, b]) => (
-              <Chip
-                key={s}
-                color={c || C.text2}
-                borderColor={b || C.border}
-              >
-                {s}
-              </Chip>
+              { step: "01", icon: "📤", title: "Upload Resume", desc: "Upload your resume in PDF or DOC format" },
+              { step: "02", icon: "🔍", title: "AI Analysis",   desc: "Our AI scans and scores every section" },
+              { step: "03", icon: "📈", title: "Get Results",   desc: "Get detailed feedback and improvement tips" },
+            ].map(s => (
+              <div key={s.step} style={{
+                background: "rgba(255,255,255,0.025)",
+                border: `1px solid ${C.border}`,
+                borderRadius: 14, padding: 20,
+                textAlign: "center",
+              }}>
+                <div style={{
+                  fontSize: 11, fontWeight: 700,
+                  color: C.accent, letterSpacing: 1,
+                  marginBottom: 10,
+                }}>
+                  STEP {s.step}
+                </div>
+                <div style={{ fontSize: 32, marginBottom: 10 }}>
+                  {s.icon}
+                </div>
+                <div style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontSize: 14, fontWeight: 700, marginBottom: 6,
+                }}>
+                  {s.title}
+                </div>
+                <div style={{ fontSize: 12, color: C.text2, lineHeight: 1.6 }}>
+                  {s.desc}
+                </div>
+              </div>
             ))}
           </div>
-          <InfoBox color="amber" title="💡 Missing Skills for DS Role">
-            Consider adding: Docker, Spark, Power BI, NLP, Deep Learning, AWS/GCP
-          </InfoBox>
         </Card>
-
-        {/* Projects */}
-        <Card>
-          <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700, marginBottom: 2,
-          }}>
-            📂 Extracted Projects
-          </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-            Found in your resume
-          </div>
-          <InfoBox color="blue" title="1. Fake News Detection System">
-            Tech: Python, NLP, Scikit-learn · Accuracy: 92%<br />
-            💡 Add: GitHub link, dataset size, deployment info
-          </InfoBox>
-          <InfoBox color="purple" title="2. Student Performance Predictor">
-            Tech: XGBoost, Pandas, Streamlit<br />
-            💡 Add: Live demo link, quantify improvement
-          </InfoBox>
-          <InfoBox color="green" title="3. Movie Recommendation System">
-            Tech: Collaborative filtering, Flask<br />
-            💡 Add: Number of users, algorithm details
-          </InfoBox>
-        </Card>
-      </div>
+      )}
     </div>
   );
 };

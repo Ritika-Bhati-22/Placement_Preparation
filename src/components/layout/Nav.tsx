@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { C } from "../../constants/colors";
-import { NavProps } from "../../types";
+
+interface NavProps {
+  active: string;
+  onNav: (page: string) => void;
+}
 
 const NAV_ITEMS = [
   { id: "dashboard",   label: "Dashboard" },
@@ -16,50 +20,61 @@ const Nav: React.FC<NavProps> = ({ active, onNav }) => {
   return (
     <nav style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 200,
-      display: "flex", alignItems: "center", justifyContent: "space-between",
-      padding: "0 28px", height: 56,
-      background: "rgba(4,7,15,0.85)",
-      backdropFilter: "blur(24px) saturate(1.5)",
+      display: "flex", alignItems: "center",
+      justifyContent: "space-between",
+      padding: "0 32px", height: 60,
+      background: "rgba(7,8,16,0.88)",
+      backdropFilter: "blur(28px) saturate(1.6)",
       borderBottom: `1px solid ${C.border}`,
     }}>
       {/* Logo */}
       <div style={{
-        fontFamily: "'Space Grotesk', sans-serif",
-        fontWeight: 700, fontSize: 18, letterSpacing: -0.5,
-        background: `linear-gradient(130deg, ${C.accent} 20%, ${C.accent2})`,
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        display: "flex", alignItems: "center", gap: 8,
+        fontFamily: "'Outfit', sans-serif",
+        fontWeight: 800, fontSize: 19,
+        letterSpacing: -0.5,
+        display: "flex", alignItems: "center", gap: 10,
       }}>
+        <div style={{
+          width: 32, height: 32, borderRadius: 10,
+          background: "linear-gradient(135deg, #6C8EF5, #A78BFA)",
+          display: "flex", alignItems: "center",
+          justifyContent: "center", fontSize: 16,
+          boxShadow: "0 4px 14px rgba(108,142,245,0.35)",
+        }}>
+          🎯
+        </div>
         <span style={{
-          width: 8, height: 8, borderRadius: "50%",
-          background: C.accent3,
-          boxShadow: `0 0 10px ${C.accent3}`,
-          display: "inline-block",
-          WebkitTextFillColor: "unset",
-          animation: "pulse 2s infinite",
-        }} />
-        Placement Preparation
+          background: "linear-gradient(130deg, #F1F5FF 30%, #A78BFA)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }}>
+          Placement Prep
+        </span>
       </div>
 
       {/* Nav Links */}
-      <div style={{ display: "flex", gap: 2 }}>
+      <div style={{
+        display: "flex", gap: 2,
+        background: "rgba(255,255,255,0.03)",
+        border: `1px solid ${C.border}`,
+        borderRadius: 12, padding: 4,
+      }}>
         {NAV_ITEMS.map(item => (
           <button
             key={item.id}
             onClick={() => onNav(item.id)}
             style={{
               background: active === item.id
-                ? "rgba(91,141,246,0.12)"
+                ? "linear-gradient(135deg, rgba(108,142,245,0.2), rgba(167,139,250,0.15))"
                 : "transparent",
               border: active === item.id
-                ? "1px solid rgba(91,141,246,0.2)"
+                ? "1px solid rgba(108,142,245,0.25)"
                 : "1px solid transparent",
               borderRadius: 8,
-              padding: "5px 11px",
+              padding: "6px 13px",
               color: active === item.id ? C.text : C.text2,
-              fontSize: 12.5, fontWeight: 500,
-              cursor: "pointer", transition: "all 0.15s",
+              fontSize: 12.5, fontWeight: active === item.id ? 600 : 400,
+              cursor: "pointer", transition: "all 0.18s",
               fontFamily: "inherit",
             }}
           >
@@ -69,16 +84,24 @@ const Nav: React.FC<NavProps> = ({ active, onNav }) => {
       </div>
 
       {/* User */}
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span style={{ fontSize: 13, color: C.text2 }}>Ritika</span>
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{
-          width: 30, height: 30, borderRadius: "50%",
-          background: `linear-gradient(135deg, ${C.accent}, ${C.accent2})`,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          fontWeight: 700, fontSize: 13, color: "white",
-          boxShadow: `0 0 0 2px rgba(91,141,246,0.3)`,
+          fontSize: 12, color: C.text2,
+          background: "rgba(255,255,255,0.05)",
+          border: `1px solid ${C.border}`,
+          padding: "5px 12px", borderRadius: 20,
         }}>
-          R
+          Student
+        </div>
+        <div style={{
+          width: 34, height: 34, borderRadius: "50%",
+          background: "linear-gradient(135deg, #6C8EF5, #A78BFA)",
+          display: "flex", alignItems: "center",
+          justifyContent: "center",
+          fontWeight: 700, fontSize: 14, color: "white",
+          boxShadow: "0 0 0 2px rgba(108,142,245,0.3), 0 4px 12px rgba(108,142,245,0.25)",
+        }}>
+          S
         </div>
       </div>
     </nav>

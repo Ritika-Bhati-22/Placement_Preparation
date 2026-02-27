@@ -1,15 +1,19 @@
 import React from "react";
 import { C } from "../../constants/colors";
-import { SidebarProps } from "../../types";
+
+interface SidebarProps {
+  active: string;
+  onNav: (page: string) => void;
+}
 
 const SB_ITEMS = [
-  { id: "dashboard",   icon: "🏠", label: "Dashboard",       section: "Main" },
-  { id: "resume",      icon: "📄", label: "Resume Analyzer", badge: "74",  badgeColor: C.accent3 },
-  { id: "ats",         icon: "🎯", label: "ATS Score",       badge: "New", badgeColor: C.accent4 },
-  { id: "prep",        icon: "🧠", label: "Interview Prep" },
-  { id: "dsa",         icon: "💻", label: "DSA Practice",    badge: "50+", badgeColor: C.accent,  section: "Practice" },
-  { id: "performance", icon: "📊", label: "My Performance" },
-  { id: "chatbot",     icon: "🤖", label: "AI Chatbot",      dot: true,    section: "AI" },
+  { id: "dashboard",   icon: "🏠", label: "Dashboard",       section: "Main"     },
+  { id: "resume",      icon: "📄", label: "Resume Analyzer", section: null       },
+  { id: "ats",         icon: "🎯", label: "ATS Score",       section: null       },
+  { id: "prep",        icon: "🧠", label: "Interview Prep",  section: null       },
+  { id: "dsa",         icon: "💻", label: "DSA Practice",    section: "Practice" },
+  { id: "performance", icon: "📊", label: "Performance",     section: null       },
+  { id: "chatbot",     icon: "🤖", label: "AI Chatbot",      section: "AI"       },
 ];
 
 const Sidebar: React.FC<SidebarProps> = ({ active, onNav }) => {
@@ -17,15 +21,15 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onNav }) => {
 
   return (
     <aside style={{
-      width: 228,
-      minHeight: "calc(100vh - 56px)",
-      background: "rgba(8,13,26,0.65)",
+      width: 220,
+      minHeight: "calc(100vh - 60px)",
+      background: "rgba(7,8,16,0.6)",
       backdropFilter: "blur(20px)",
       borderRight: `1px solid ${C.border}`,
-      padding: "14px 9px",
-      display: "flex", flexDirection: "column", gap: 1,
-      position: "sticky", top: 56,
-      height: "calc(100vh - 56px)",
+      padding: "20px 10px",
+      display: "flex", flexDirection: "column",
+      position: "sticky", top: 60,
+      height: "calc(100vh - 60px)",
       overflowY: "auto",
     }}>
       {SB_ITEMS.map(item => {
@@ -38,9 +42,9 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onNav }) => {
             {showSection && (
               <div style={{
                 fontSize: 9.5, fontWeight: 700,
-                letterSpacing: 1.8, color: C.muted,
+                letterSpacing: 2, color: C.muted,
                 textTransform: "uppercase",
-                padding: "14px 10px 5px",
+                padding: "16px 12px 6px",
               }}>
                 {item.section}
               </div>
@@ -48,47 +52,41 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onNav }) => {
             <button
               onClick={() => onNav(item.id)}
               style={{
-                display: "flex", alignItems: "center", gap: 8,
-                padding: "8px 10px", borderRadius: 10, width: "100%",
-                background: isActive ? "rgba(91,141,246,0.1)" : "transparent",
+                display: "flex", alignItems: "center", gap: 10,
+                padding: "10px 12px", borderRadius: 12,
+                width: "100%", marginBottom: 2,
+                background: isActive
+                  ? "linear-gradient(135deg, rgba(108,142,245,0.15), rgba(167,139,250,0.1))"
+                  : "transparent",
                 border: isActive
-                  ? "1px solid rgba(91,141,246,0.2)"
+                  ? "1px solid rgba(108,142,245,0.22)"
                   : "1px solid transparent",
-                color: isActive ? C.accent : C.text2,
-                fontSize: 13, fontWeight: 500,
-                cursor: "pointer", transition: "all 0.15s",
+                color: isActive ? C.text : C.text2,
+                fontSize: 13, fontWeight: isActive ? 600 : 400,
+                cursor: "pointer", transition: "all 0.18s",
                 textAlign: "left", fontFamily: "inherit",
               }}
             >
               <div style={{
-                width: 27, height: 27, borderRadius: 7, flexShrink: 0,
+                width: 30, height: 30, borderRadius: 9,
                 background: isActive
-                  ? "rgba(91,141,246,0.15)"
-                  : "rgba(255,255,255,0.04)",
+                  ? "linear-gradient(135deg, rgba(108,142,245,0.25), rgba(167,139,250,0.2))"
+                  : "rgba(255,255,255,0.05)",
                 display: "flex", alignItems: "center",
-                justifyContent: "center", fontSize: 13,
+                justifyContent: "center", fontSize: 14,
+                boxShadow: isActive
+                  ? "0 4px 12px rgba(108,142,245,0.2)"
+                  : "none",
+                transition: "all 0.18s",
               }}>
                 {item.icon}
               </div>
-
               <span style={{ flex: 1 }}>{item.label}</span>
-
-              {item.badge && (
-                <span style={{
-                  fontSize: 10, padding: "2px 7px",
-                  borderRadius: 20, fontWeight: 700,
-                  background: `${item.badgeColor}18`,
-                  color: item.badgeColor,
-                }}>
-                  {item.badge}
-                </span>
-              )}
-
-              {item.dot && (
-                <span style={{
+              {isActive && (
+                <div style={{
                   width: 6, height: 6, borderRadius: "50%",
-                  background: C.accent5,
-                  boxShadow: `0 0 6px ${C.accent5}`,
+                  background: C.accent,
+                  boxShadow: `0 0 8px ${C.accent}`,
                 }} />
               )}
             </button>
@@ -96,38 +94,23 @@ const Sidebar: React.FC<SidebarProps> = ({ active, onNav }) => {
         );
       })}
 
-      {/* Progress Card */}
-      <div style={{ marginTop: "auto", paddingTop: 14 }}>
+      {/* Bottom tip */}
+      <div style={{ marginTop: "auto", paddingTop: 20 }}>
         <div style={{
-          background: "rgba(91,141,246,0.06)",
-          border: "1px solid rgba(91,141,246,0.14)",
-          borderRadius: 12, padding: 14,
+          background: "linear-gradient(135deg, rgba(108,142,245,0.08), rgba(167,139,250,0.06))",
+          border: "1px solid rgba(108,142,245,0.15)",
+          borderRadius: 14, padding: 16,
+          textAlign: "center",
         }}>
+          <div style={{ fontSize: 24, marginBottom: 8 }}>🚀</div>
           <div style={{
-            fontSize: 12.5, fontWeight: 700, marginBottom: 3,
-            fontFamily: "'Space Grotesk', sans-serif",
+            fontSize: 12, fontWeight: 600, marginBottom: 4,
+            fontFamily: "'Outfit', sans-serif",
           }}>
-            Placement Ready?
+            Start Your Journey
           </div>
-          <div style={{
-            fontSize: 10.5, color: C.text2,
-            marginBottom: 10, lineHeight: 1.5,
-          }}>
-            Complete all modules to maximize your chances
-          </div>
-          <div style={{
-            height: 6, background: "rgba(255,255,255,0.05)",
-            borderRadius: 5, overflow: "hidden", marginBottom: 6,
-          }}>
-            <div style={{
-              height: "100%", width: "58%",
-              background: `linear-gradient(90deg, ${C.accent}, ${C.accent2})`,
-              borderRadius: 5,
-            }} />
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span style={{ fontSize: 10.5, color: C.text2 }}>Progress</span>
-            <span style={{ fontSize: 10.5, color: C.accent, fontWeight: 700 }}>58%</span>
+          <div style={{ fontSize: 11, color: C.text2, lineHeight: 1.5 }}>
+            Upload resume to get your personalized prep plan
           </div>
         </div>
       </div>

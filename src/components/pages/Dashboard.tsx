@@ -1,8 +1,6 @@
 import React from "react";
 import { C } from "../../constants/colors";
 import Card from "../shared/Card";
-import StatCard from "../shared/StatCard";
-import ProgBar from "../shared/ProgBar";
 import Button from "../shared/Button";
 
 interface DashboardProps {
@@ -11,195 +9,208 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
   const modules = [
-    { label: "📄 Resume Analyzer",   pct: 74, color: C.accent,  page: "resume",      badge: "74%" },
-    { label: "🎯 ATS Score Checker", pct: 60, color: C.accent4, page: "ats",         badge: "Checked" },
-    { label: "🧠 Interview Prep",    pct: 45, color: C.accent2, page: "prep",        badge: "45%" },
-    { label: "💻 DSA Practice",      pct: 24, color: C.accent3, page: "dsa",         badge: "47/200" },
-    { label: "📊 My Performance",    pct: 40, color: C.accent6, page: "performance", badge: "2 Tests" },
-    { label: "🤖 AI Chatbot",        pct: 55, color: C.accent7, page: "chatbot",     badge: "55%" },
+    { icon: "📄", label: "Resume Analyzer",  desc: "Upload & analyze your resume",         page: "resume",      color: C.accent  },
+    { icon: "🎯", label: "ATS Score",         desc: "Check ATS compatibility",              page: "ats",         color: C.accent4 },
+    { icon: "🧠", label: "Interview Prep",    desc: "Topic wise preparation",               page: "prep",        color: C.accent2 },
+    { icon: "💻", label: "DSA Practice",      desc: "Practice coding problems",             page: "dsa",         color: C.accent3 },
+    { icon: "📊", label: "My Performance",    desc: "Track your test scores",               page: "performance", color: C.accent6 },
+    { icon: "🤖", label: "AI Chatbot",        desc: "Ask placement doubts 24/7",            page: "chatbot",     color: C.accent7 },
   ];
 
-  const activity = [
-    { dot: C.accent3, text: "Solved 15 Python MCQs — scored <strong style='color:#EEF2FF'>87%</strong>",        time: "2 hours ago" },
-    { dot: C.accent,  text: "Resume score improved <strong style='color:#EEF2FF'>66 → 74</strong>",             time: "2 days ago" },
-    { dot: C.accent4, text: "ATS checked on Jobscan — <strong style='color:#EEF2FF'>68% match</strong>",        time: "3 days ago" },
-    { dot: C.accent2, text: "Interview Prep — <strong style='color:#EEF2FF'>OOP topic</strong> completed",      time: "4 days ago" },
-    { dot: C.accent5, text: "DSA — solved <strong style='color:#EEF2FF'>Binary Search</strong>",                time: "5 days ago" },
+  const tips = [
+    { icon: "📄", text: "Upload your resume to get started" },
+    { icon: "🎯", text: "Check ATS score against job descriptions" },
+    { icon: "🧠", text: "Practice interview questions daily" },
+    { icon: "💻", text: "Solve at least 2 DSA problems per day" },
   ];
 
   return (
     <div className="fade-up">
-      {/* Page Header */}
+      {/* Hero */}
       <div style={{
-        fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: 26, fontWeight: 700,
-        letterSpacing: -0.8, marginBottom: 3,
+        background: "linear-gradient(135deg, rgba(108,142,245,0.1), rgba(167,139,250,0.07))",
+        border: "1px solid rgba(108,142,245,0.18)",
+        borderRadius: 20, padding: "36px 40px",
+        marginBottom: 24, position: "relative", overflow: "hidden",
       }}>
-        Welcome back, Ritika 👋
-      </div>
-      <div style={{ color: C.text2, fontSize: 13, marginBottom: 22 }}>
-        Your placement prep overview — 3 companies visiting next month
-      </div>
-
-      {/* Hero Band */}
-      <div style={{
-        background: "linear-gradient(135deg,rgba(91,141,246,0.09),rgba(139,92,246,0.06))",
-        border: "1px solid rgba(91,141,246,0.18)",
-        borderRadius: 18, padding: "28px 32px", marginBottom: 20,
-        display: "flex", alignItems: "center",
-        justifyContent: "space-between", gap: 20,
-        position: "relative", overflow: "hidden",
-      }}>
+        {/* Glow */}
         <div style={{
-          position: "absolute", top: -60, right: -60,
-          width: 220, height: 220,
-          background: "radial-gradient(circle,rgba(91,141,246,0.12),transparent 70%)",
+          position: "absolute", top: -80, right: -80,
+          width: 280, height: 280,
+          background: "radial-gradient(circle, rgba(108,142,245,0.15), transparent 70%)",
+          borderRadius: "50%", pointerEvents: "none",
+        }} />
+        <div style={{
+          position: "absolute", bottom: -60, left: -60,
+          width: 200, height: 200,
+          background: "radial-gradient(circle, rgba(167,139,250,0.1), transparent 70%)",
           borderRadius: "50%", pointerEvents: "none",
         }} />
 
-        <div>
-          <div style={{
-            fontSize: 10.5, color: C.text2, fontWeight: 700,
-            letterSpacing: 1.2, textTransform: "uppercase", marginBottom: 6,
-          }}>
-            Overall Selection Probability
-          </div>
-          <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 58, fontWeight: 700, letterSpacing: -3,
-            background: `linear-gradient(130deg,${C.accent},${C.accent2})`,
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            lineHeight: 1,
-          }}>
-            73%
-          </div>
-          <div style={{
-            display: "flex", alignItems: "center",
-            gap: 10, marginTop: 10, flexWrap: "wrap",
-          }}>
-            <span style={{
-              display: "inline-flex", alignItems: "center", gap: 5,
-              fontSize: 11, fontWeight: 600, padding: "3px 10px",
-              borderRadius: 20,
-              background: "rgba(16,217,140,0.1)", color: C.accent3,
-              border: "1px solid rgba(16,217,140,0.2)",
+        <div style={{
+          display: "flex", alignItems: "center",
+          justifyContent: "space-between", gap: 20,
+        }}>
+          <div>
+            <div style={{
+              fontSize: 11, fontWeight: 700,
+              letterSpacing: 2, textTransform: "uppercase",
+              color: C.accent, marginBottom: 10,
             }}>
-              ✅ Likely Selected
-            </span>
-            <span style={{ fontSize: 12, color: C.text2 }}>
-              Improve communication to reach 85%+
-            </span>
-          </div>
-          <div style={{ display: "flex", gap: 7, marginTop: 12, flexWrap: "wrap" }}>
-            {["TCS", "Infosys", "Wipro"].map(c => (
-              <span key={c} style={{
-                fontSize: 11, padding: "3px 11px", borderRadius: 20,
-                fontWeight: 600,
-                background: "rgba(255,255,255,0.04)",
-                border: `1px solid ${C.border}`, color: C.text2,
+              Welcome to
+            </div>
+            <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 34, fontWeight: 800,
+              letterSpacing: -1, marginBottom: 10,
+              lineHeight: 1.2,
+            }}>
+              Placement Preparation
+              <br />
+              <span style={{
+                background: "linear-gradient(130deg, #6C8EF5, #A78BFA)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
               }}>
-                {c}
+                Dashboard
               </span>
-            ))}
+            </div>
+            <div style={{
+              fontSize: 14, color: C.text2,
+              lineHeight: 1.6, maxWidth: 420,
+            }}>
+              Your complete placement preparation hub. Upload your resume
+              to get a personalized prep plan and start your journey! 🚀
+            </div>
           </div>
-        </div>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, flexShrink: 0 }}>
-          <Button onClick={() => onNav("resume")}>📄 Analyze Resume</Button>
-          <Button variant="secondary" onClick={() => onNav("prep")}>🧠 Start Prep</Button>
+          <div style={{
+            display: "flex", flexDirection: "column",
+            gap: 10, flexShrink: 0,
+          }}>
+            <Button onClick={() => onNav("resume")}>
+              📄 Upload Resume
+            </Button>
+            <Button variant="secondary" onClick={() => onNav("chatbot")}>
+              🤖 Ask AI Chatbot
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Modules Grid */}
+      <div style={{
+        fontFamily: "'Outfit', sans-serif",
+        fontSize: 11, fontWeight: 700,
+        letterSpacing: 2, textTransform: "uppercase",
+        color: C.muted, marginBottom: 14,
+      }}>
+        All Modules
+      </div>
+
       <div style={{
         display: "grid",
-        gridTemplateColumns: "repeat(4,1fr)",
-        gap: 13, marginBottom: 16,
+        gridTemplateColumns: "repeat(3, 1fr)",
+        gap: 14, marginBottom: 24,
       }}>
-        <StatCard label="Resume Score"      value={74}    change="↑ +8 since last update" color="blue"   />
-        <StatCard label="Questions Solved"  value={342}   change="↑ 12 today"             color="purple" />
-        <StatCard label="Practice Accuracy" value="68%"   change="↑ +3% this week"        color="green"  />
-        <StatCard label="DSA Solved"        value={47}    change="↑ 5 this week"           color="amber"  />
+        {modules.map(m => (
+          <div
+            key={m.page}
+            onClick={() => onNav(m.page)}
+            style={{
+              background: C.surface,
+              border: `1px solid ${C.border}`,
+              borderRadius: 16, padding: "22px",
+              cursor: "pointer", transition: "all 0.2s",
+              position: "relative", overflow: "hidden",
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLDivElement).style.border = `1px solid ${m.color}40`;
+              (e.currentTarget as HTMLDivElement).style.transform = "translateY(-3px)";
+              (e.currentTarget as HTMLDivElement).style.boxShadow = `0 12px 32px rgba(0,0,0,0.3)`;
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLDivElement).style.border = `1px solid ${C.border}`;
+              (e.currentTarget as HTMLDivElement).style.transform = "translateY(0)";
+              (e.currentTarget as HTMLDivElement).style.boxShadow = "none";
+            }}
+          >
+            <div style={{
+              position: "absolute", top: 0, left: 0, right: 0, height: 2,
+              background: `linear-gradient(90deg, ${m.color}, transparent)`,
+              borderRadius: "16px 16px 0 0",
+            }} />
+            <div style={{
+              width: 44, height: 44, borderRadius: 12,
+              background: `${m.color}18`,
+              border: `1px solid ${m.color}30`,
+              display: "flex", alignItems: "center",
+              justifyContent: "center", fontSize: 20,
+              marginBottom: 14,
+              boxShadow: `0 4px 14px ${m.color}20`,
+            }}>
+              {m.icon}
+            </div>
+            <div style={{
+              fontFamily: "'Outfit', sans-serif",
+              fontSize: 15, fontWeight: 700, marginBottom: 5,
+            }}>
+              {m.label}
+            </div>
+            <div style={{ fontSize: 12, color: C.text2, lineHeight: 1.5 }}>
+              {m.desc}
+            </div>
+            <div style={{
+              marginTop: 16, fontSize: 12,
+              color: m.color, fontWeight: 600,
+              display: "flex", alignItems: "center", gap: 4,
+            }}>
+              Open →
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Bottom Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+      {/* Tips */}
+      <div style={{
+        fontFamily: "'Outfit', sans-serif",
+        fontSize: 11, fontWeight: 700,
+        letterSpacing: 2, textTransform: "uppercase",
+        color: C.muted, marginBottom: 14,
+      }}>
+        Getting Started Tips
+      </div>
 
-        {/* Module Progress */}
-        <Card>
-          <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700,
-            marginBottom: 2,
+      <div style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(4, 1fr)",
+        gap: 12,
+      }}>
+        {tips.map((tip, i) => (
+          <div key={i} style={{
+            background: C.surface,
+            border: `1px solid ${C.border}`,
+            borderRadius: 14, padding: 16,
+            display: "flex", alignItems: "flex-start", gap: 12,
           }}>
-            🗂 Module Progress
-          </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-            Click any to jump in
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
-            {modules.map(m => (
-              <div
-                key={m.label}
-                onClick={() => onNav(m.page)}
-                style={{ cursor: "pointer" }}
-              >
-                <div style={{
-                  display: "flex", justifyContent: "space-between",
-                  fontSize: 12.5, marginBottom: 5, alignItems: "center",
-                }}>
-                  <span>{m.label}</span>
-                  <span style={{
-                    color: m.color, fontWeight: 700,
-                    fontFamily: "'Space Grotesk', sans-serif",
-                  }}>
-                    {m.badge}
-                  </span>
-                </div>
-                <ProgBar value={m.pct} color={m.color} />
-              </div>
-            ))}
-          </div>
-        </Card>
-
-        {/* Recent Activity */}
-        <Card>
-          <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700, marginBottom: 2,
-          }}>
-            ⚡ Recent Activity
-          </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-            Last 7 days
-          </div>
-          {activity.map((a, i) => (
-            <div key={i} style={{
-              display: "flex", alignItems: "flex-start", gap: 10,
-              padding: "10px 0",
-              borderBottom: i < activity.length - 1
-                ? "1px solid rgba(255,255,255,0.04)"
-                : "none",
+            <div style={{
+              width: 34, height: 34, borderRadius: 9,
+              background: "rgba(108,142,245,0.1)",
+              border: "1px solid rgba(108,142,245,0.2)",
+              display: "flex", alignItems: "center",
+              justifyContent: "center", fontSize: 16,
+              flexShrink: 0,
             }}>
-              <div style={{
-                width: 7, height: 7, borderRadius: "50%",
-                background: a.dot,
-                boxShadow: `0 0 6px ${a.dot}`,
-                marginTop: 5, flexShrink: 0,
-              }} />
-              <div>
-                <div
-                  style={{ fontSize: 12.5, lineHeight: 1.5 }}
-                  dangerouslySetInnerHTML={{ __html: a.text }}
-                />
-                <div style={{ fontSize: 10.5, color: C.muted, marginTop: 2 }}>
-                  {a.time}
-                </div>
-              </div>
+              {tip.icon}
             </div>
-          ))}
-        </Card>
+            <div style={{
+              fontSize: 12, color: C.text2,
+              lineHeight: 1.6, paddingTop: 2,
+            }}>
+              {tip.text}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

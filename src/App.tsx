@@ -33,14 +33,14 @@ const App: React.FC = () => {
       <div style={{
         display: "flex",
         minHeight: "100vh",
-        paddingTop: 56,
+        paddingTop: 60,
         position: "relative",
         zIndex: 1,
       }}>
         <Sidebar active={page} onNav={setPage} />
         <main style={{
           flex: 1,
-          padding: "26px 28px",
+          padding: "28px 32px",
           overflowY: "auto",
           minWidth: 0,
         }}>

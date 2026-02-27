@@ -9,35 +9,25 @@ const InterviewPrep: React.FC = () => {
   const data = PREP_DATA[topic];
 
   const topics = [
-    { id: "python", icon: "🐍", iconBg: "rgba(91,141,246,0.12)",  name: "Python (Core)",    sub: "OOP, Decorators, Generators, GIL",       pct: "72%", pctColor: C.accent  },
-    { id: "ml",     icon: "🤖", iconBg: "rgba(139,92,246,0.12)",  name: "Machine Learning", sub: "Algorithms, Overfitting, Evaluation",     pct: "55%", pctColor: C.accent2 },
-    { id: "sql",    icon: "🗄️", iconBg: "rgba(34,211,238,0.12)",  name: "SQL & Databases",  sub: "Joins, Subqueries, Indexing",            pct: "48%", pctColor: C.accent7 },
-    { id: "stats",  icon: "📊", iconBg: "rgba(16,217,140,0.12)",  name: "Statistics",       sub: "Hypothesis testing, Distributions",      pct: "30%", pctColor: C.accent3 },
-    { id: "hr",     icon: "💬", iconBg: "rgba(245,158,11,0.12)",  name: "HR & Behavioral",  sub: "Personalized answers for your profile",  pct: "65%", pctColor: C.accent4 },
+    { id: "python", icon: "🐍", iconBg: "rgba(108,142,245,0.12)", name: "Python (Core)",    sub: "OOP, Decorators, Generators, GIL",      pctColor: C.accent  },
+    { id: "ml",     icon: "🤖", iconBg: "rgba(167,139,250,0.12)", name: "Machine Learning", sub: "Algorithms, Overfitting, Evaluation",    pctColor: C.accent2 },
+    { id: "sql",    icon: "🗄️", iconBg: "rgba(56,189,248,0.12)",  name: "SQL & Databases",  sub: "Joins, Subqueries, Indexing",           pctColor: C.accent7 },
+    { id: "stats",  icon: "📊", iconBg: "rgba(52,211,153,0.12)",  name: "Statistics",       sub: "Hypothesis testing, Distributions",     pctColor: C.accent3 },
+    { id: "hr",     icon: "💬", iconBg: "rgba(251,191,36,0.12)",  name: "HR & Behavioral",  sub: "Common HR questions and best answers",  pctColor: C.accent4 },
   ];
 
   return (
     <div className="fade-up">
-      {/* Header */}
       <div style={{
-        fontFamily: "'Space Grotesk', sans-serif",
-        fontSize: 26, fontWeight: 700,
-        letterSpacing: -0.8, marginBottom: 3,
+        fontFamily: "'Outfit', sans-serif",
+        fontSize: 26, fontWeight: 800,
+        letterSpacing: -0.8, marginBottom: 4,
       }}>
         🧠 Interview Preparation
       </div>
-      <div style={{ color: C.text2, fontSize: 13, marginBottom: 22 }}>
-        Personalized prep plan from your resume
+      <div style={{ color: C.text2, fontSize: 13, marginBottom: 24 }}>
+        Topic wise interview questions and answers
       </div>
-
-      <InfoBox color="blue" title="📄 Prep Based on Ritika's Resume"
-        style={{ marginBottom: 18 }}>
-        Detected skills:{" "}
-        <strong style={{ color: C.text }}>
-          Python, Machine Learning, SQL, Data Analysis, Flask, XGBoost
-        </strong>
-        . All questions are tailored to your profile.
-      </InfoBox>
 
       <div style={{
         display: "grid",
@@ -47,12 +37,12 @@ const InterviewPrep: React.FC = () => {
         {/* Topic List */}
         <Card>
           <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: 15, fontWeight: 700, marginBottom: 4,
           }}>
-            📚 Your Personalized Topics
+            📚 Select Topic
           </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
+          <div style={{ fontSize: 12, color: C.text2, marginBottom: 16 }}>
             Click any topic to view questions
           </div>
 
@@ -65,30 +55,46 @@ const InterviewPrep: React.FC = () => {
                 style={{
                   display: "flex", alignItems: "center",
                   justifyContent: "space-between",
-                  padding: "13px 14px",
+                  padding: "14px 16px",
                   background: isActive
-                    ? "rgba(91,141,246,0.08)"
+                    ? "linear-gradient(135deg, rgba(108,142,245,0.1), rgba(167,139,250,0.07))"
                     : "rgba(255,255,255,0.025)",
                   border: `1px solid ${isActive
-                    ? "rgba(91,141,246,0.2)"
+                    ? "rgba(108,142,245,0.25)"
                     : C.border}`,
-                  borderRadius: 12, marginBottom: 8,
-                  cursor: "pointer", transition: "all 0.18s",
+                  borderRadius: 13, marginBottom: 8,
+                  cursor: "pointer", transition: "all 0.2s",
+                  transform: isActive ? "translateX(4px)" : "none",
+                }}
+                onMouseEnter={e => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.04)";
+                    (e.currentTarget as HTMLDivElement).style.borderColor = C.borderBright;
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!isActive) {
+                    (e.currentTarget as HTMLDivElement).style.background = "rgba(255,255,255,0.025)";
+                    (e.currentTarget as HTMLDivElement).style.borderColor = C.border;
+                  }
                 }}
               >
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div style={{
-                    width: 33, height: 33, borderRadius: 9,
+                    width: 36, height: 36, borderRadius: 10,
                     background: t.iconBg,
                     display: "flex", alignItems: "center",
-                    justifyContent: "center", fontSize: 15,
+                    justifyContent: "center", fontSize: 16,
+                    boxShadow: isActive ? `0 4px 12px ${t.pctColor}25` : "none",
+                    transition: "all 0.2s",
                   }}>
                     {t.icon}
                   </div>
                   <div>
                     <div style={{
-                      fontWeight: 600, fontSize: 13, marginBottom: 1,
-                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontWeight: 600, fontSize: 13, marginBottom: 2,
+                      fontFamily: "'Outfit', sans-serif",
+                      color: isActive ? C.text : C.text,
                     }}>
                       {t.name}
                     </div>
@@ -97,15 +103,14 @@ const InterviewPrep: React.FC = () => {
                     </div>
                   </div>
                 </div>
-                <div style={{ textAlign: "right" }}>
+                {isActive && (
                   <div style={{
-                    fontFamily: "'Space Grotesk', sans-serif",
-                    fontSize: 18, fontWeight: 700, color: t.pctColor,
-                  }}>
-                    {t.pct}
-                  </div>
-                  <div style={{ fontSize: 10, color: C.text2 }}>Ready</div>
-                </div>
+                    width: 8, height: 8, borderRadius: "50%",
+                    background: t.pctColor,
+                    boxShadow: `0 0 10px ${t.pctColor}`,
+                    flexShrink: 0,
+                  }} />
+                )}
               </div>
             );
           })}
@@ -114,55 +119,77 @@ const InterviewPrep: React.FC = () => {
         {/* Questions */}
         <Card>
           <div style={{
-            fontFamily: "'Space Grotesk', sans-serif",
-            fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+            fontFamily: "'Outfit', sans-serif",
+            fontSize: 15, fontWeight: 700, marginBottom: 4,
           }}>
             {data.title}
           </div>
-          <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-            From your resume · Commonly asked in DS/ML interviews
+          <div style={{ fontSize: 12, color: C.text2, marginBottom: 16 }}>
+            Commonly asked in interviews
           </div>
-          {data.qs.map((q, i) => (
-            <InfoBox key={i} color={q.c as any} title={q.t}>
-              {q.a}
-            </InfoBox>
-          ))}
+          <div style={{ overflowY: "auto", maxHeight: 420 }}>
+            {data.qs.map((q, i) => (
+              <InfoBox key={i} color={q.c as any} title={q.t}>
+                {q.a}
+              </InfoBox>
+            ))}
+          </div>
         </Card>
       </div>
 
       {/* HR Section */}
       <Card>
         <div style={{
-          fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 14.5, fontWeight: 700, marginBottom: 2,
+          fontFamily: "'Outfit', sans-serif",
+          fontSize: 15, fontWeight: 700, marginBottom: 4,
         }}>
-          🗣 HR Questions — Personalized for Ritika
+          🗣 Common HR Questions
         </div>
-        <div style={{ fontSize: 12, color: C.text2, marginBottom: 14 }}>
-          Tailored answers based on your projects and skills
+        <div style={{ fontSize: 12, color: C.text2, marginBottom: 20 }}>
+          Most frequently asked HR questions with sample answers
         </div>
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(3,1fr)",
           gap: 14,
         }}>
-          <InfoBox color="blue" title='"Tell me about yourself"'
-            style={{ marginBottom: 0 }}>
-            "I'm a final year CS student with strong Python and ML skills.
-            I've built 3 projects including a Fake News Detector with 92%
-            accuracy."
-          </InfoBox>
-          <InfoBox color="purple" title='"Describe your best project"'
-            style={{ marginBottom: 0 }}>
-            <strong>STAR:</strong> S: News misinformation T: Build detector
-            A: Used NLP + Scikit-learn R: 92% accuracy, deployed on Flask
-          </InfoBox>
-          <InfoBox color="green" title='"What are your strengths?"'
-            style={{ marginBottom: 0 }}>
-            "I translate data into insights. My XGBoost project identified
-            at-risk students with 87% accuracy — helping teams intervene
-            early."
-          </InfoBox>
+          {[
+            {
+              color: "blue" as const,
+              q: '"Tell me about yourself"',
+              a: "Introduce yourself with your education, key skills, and 1-2 major projects. Keep it under 90 seconds. End with why you are excited about this role.",
+            },
+            {
+              color: "purple" as const,
+              q: '"What is your greatest strength?"',
+              a: "Pick a strength relevant to the job. Back it up with a specific example from your projects or academics. Quantify results if possible.",
+            },
+            {
+              color: "green" as const,
+              q: '"Where do you see yourself in 5 years?"',
+              a: "Show ambition but stay realistic. Mention skill growth, leadership, and how the company fits your long term goals.",
+            },
+            {
+              color: "amber" as const,
+              q: '"Why should we hire you?"',
+              a: "Connect your skills directly to the job requirements. Mention your projects, problem solving ability, and eagerness to contribute.",
+            },
+            {
+              color: "red" as const,
+              q: '"What is your weakness?"',
+              a: "Pick a real but improvable weakness. Show self awareness and mention the steps you are taking to improve it.",
+            },
+            {
+              color: "blue" as const,
+              q: '"Do you have any questions for us?"',
+              a: "Always say yes! Ask about team culture, growth opportunities, day to day responsibilities, or tech stack they use.",
+            },
+          ].map((item, i) => (
+            <InfoBox key={i} color={item.color} title={item.q}
+              style={{ marginBottom: 0 }}>
+              {item.a}
+            </InfoBox>
+          ))}
         </div>
       </Card>
     </div>
