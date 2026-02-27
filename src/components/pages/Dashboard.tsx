@@ -1,6 +1,5 @@
 import React from "react";
 import { C } from "../../constants/colors";
-import Card from "../shared/Card";
 import Button from "../shared/Button";
 
 interface DashboardProps {
