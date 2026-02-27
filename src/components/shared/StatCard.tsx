@@ -1,6 +1,6 @@
 import React from "react";
 import { C } from "../../constants/colors";
-import { StatCardProps } from "../../types";
+import type { StatCardProps } from "../../types";
 
 const colorMap: Record<string, string> = {
   blue:   C.accent,

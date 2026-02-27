@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { C } from "../../constants/colors";
-import  { CardProps } from "../../types";
+import  type { CardProps } from "../../types";
 
 const Card: React.FC<CardProps> = ({ children, style = {}, onClick }) => {
   const [hovered, setHovered] = useState(false);

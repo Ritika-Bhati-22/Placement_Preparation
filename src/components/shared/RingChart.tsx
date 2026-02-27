@@ -1,6 +1,6 @@
 import React from "react";
-import { RingChartProps } from "../../types";
-import  type { C } from "../../constants/colors";
+import type { RingChartProps } from "../../types";
+import { C } from "../../constants/colors";
 
 const RingChart: React.FC<RingChartProps> = ({ value, color, size = 88 }) => {
   const r = (size / 2) - 8;
