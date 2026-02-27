@@ -1,5 +1,6 @@
 import React from "react";
 import { C } from "../../constants/colors";
+import Card from "../shared/Card";
 import Button from "../shared/Button";
 
 interface DashboardProps {
@@ -8,12 +9,12 @@ interface DashboardProps {
 
 const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
   const modules = [
-    { icon: "📄", label: "Resume Analyzer",  desc: "Upload & analyze your resume",         page: "resume",      color: C.accent  },
-    { icon: "🎯", label: "ATS Score",         desc: "Check ATS compatibility",              page: "ats",         color: C.accent4 },
-    { icon: "🧠", label: "Interview Prep",    desc: "Topic wise preparation",               page: "prep",        color: C.accent2 },
-    { icon: "💻", label: "DSA Practice",      desc: "Practice coding problems",             page: "dsa",         color: C.accent3 },
-    { icon: "📊", label: "My Performance",    desc: "Track your test scores",               page: "performance", color: C.accent6 },
-    { icon: "🤖", label: "AI Chatbot",        desc: "Ask placement doubts 24/7",            page: "chatbot",     color: C.accent7 },
+    { icon: "📄", label: "Resume Analyzer",  desc: "Upload & analyze your resume",    page: "resume",      color: C.accent  },
+    { icon: "🎯", label: "ATS Score",         desc: "Check ATS compatibility",         page: "ats",         color: C.accent4 },
+    { icon: "🧠", label: "Interview Prep",    desc: "Topic wise preparation",          page: "prep",        color: C.accent2 },
+    { icon: "💻", label: "DSA Practice",      desc: "Practice coding problems",        page: "dsa",         color: C.accent3 },
+    { icon: "📊", label: "My Performance",    desc: "Track your test scores",          page: "performance", color: C.accent6 },
+    { icon: "🤖", label: "AI Chatbot",        desc: "Ask placement doubts 24/7",       page: "chatbot",     color: C.accent7 },
   ];
 
   const tips = [
@@ -29,40 +30,34 @@ const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
       <div style={{
         background: "linear-gradient(135deg, rgba(108,142,245,0.1), rgba(167,139,250,0.07))",
         border: "1px solid rgba(108,142,245,0.18)",
-        borderRadius: 20, padding: "36px 40px",
+        borderRadius: 20, padding: "28px 24px",
         marginBottom: 24, position: "relative", overflow: "hidden",
       }}>
-        {/* Glow */}
         <div style={{
           position: "absolute", top: -80, right: -80,
           width: 280, height: 280,
           background: "radial-gradient(circle, rgba(108,142,245,0.15), transparent 70%)",
           borderRadius: "50%", pointerEvents: "none",
         }} />
-        <div style={{
-          position: "absolute", bottom: -60, left: -60,
-          width: 200, height: 200,
-          background: "radial-gradient(circle, rgba(167,139,250,0.1), transparent 70%)",
-          borderRadius: "50%", pointerEvents: "none",
-        }} />
 
         <div style={{
           display: "flex", alignItems: "center",
-          justifyContent: "space-between", gap: 20,
+          justifyContent: "space-between", gap: 16,
+          flexWrap: "wrap",
         }}>
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div style={{
               fontSize: 11, fontWeight: 700,
               letterSpacing: 2, textTransform: "uppercase",
-              color: C.accent, marginBottom: 10,
+              color: C.accent, marginBottom: 8,
             }}>
               Welcome to
             </div>
             <div style={{
               fontFamily: "'Outfit', sans-serif",
-              fontSize: 34, fontWeight: 800,
-              letterSpacing: -1, marginBottom: 10,
-              lineHeight: 1.2,
+              fontSize: "clamp(22px, 4vw, 34px)",
+              fontWeight: 800, letterSpacing: -1,
+              marginBottom: 10, lineHeight: 1.2,
             }}>
               Placement Preparation
               <br />
@@ -75,11 +70,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
               </span>
             </div>
             <div style={{
-              fontSize: 14, color: C.text2,
-              lineHeight: 1.6, maxWidth: 420,
+              fontSize: 13, color: C.text2,
+              lineHeight: 1.6, maxWidth: 400,
             }}>
               Your complete placement preparation hub. Upload your resume
-              to get a personalized prep plan and start your journey! 🚀
+              to get a personalized prep plan! 🚀
             </div>
           </div>
 
@@ -97,9 +92,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
         </div>
       </div>
 
-      {/* Modules Grid */}
+      {/* Modules */}
       <div style={{
-        fontFamily: "'Outfit', sans-serif",
         fontSize: 11, fontWeight: 700,
         letterSpacing: 2, textTransform: "uppercase",
         color: C.muted, marginBottom: 14,
@@ -107,11 +101,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
         All Modules
       </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(3, 1fr)",
-        gap: 14, marginBottom: 24,
-      }}>
+      <div className="grid-3" style={{ marginBottom: 24 }}>
         {modules.map(m => (
           <div
             key={m.page}
@@ -119,7 +109,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
             style={{
               background: C.surface,
               border: `1px solid ${C.border}`,
-              borderRadius: 16, padding: "22px",
+              borderRadius: 16, padding: "20px",
               cursor: "pointer", transition: "all 0.2s",
               position: "relative", overflow: "hidden",
             }}
@@ -145,24 +135,22 @@ const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
               border: `1px solid ${m.color}30`,
               display: "flex", alignItems: "center",
               justifyContent: "center", fontSize: 20,
-              marginBottom: 14,
-              boxShadow: `0 4px 14px ${m.color}20`,
+              marginBottom: 12,
             }}>
               {m.icon}
             </div>
             <div style={{
               fontFamily: "'Outfit', sans-serif",
-              fontSize: 15, fontWeight: 700, marginBottom: 5,
+              fontSize: 14, fontWeight: 700, marginBottom: 4,
             }}>
               {m.label}
             </div>
-            <div style={{ fontSize: 12, color: C.text2, lineHeight: 1.5 }}>
+            <div style={{ fontSize: 12, color: C.text2, lineHeight: 1.5, marginBottom: 12 }}>
               {m.desc}
             </div>
             <div style={{
-              marginTop: 16, fontSize: 12,
-              color: m.color, fontWeight: 600,
-              display: "flex", alignItems: "center", gap: 4,
+              fontSize: 12, color: m.color,
+              fontWeight: 600,
             }}>
               Open →
             </div>
@@ -172,7 +160,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
 
       {/* Tips */}
       <div style={{
-        fontFamily: "'Outfit', sans-serif",
         fontSize: 11, fontWeight: 700,
         letterSpacing: 2, textTransform: "uppercase",
         color: C.muted, marginBottom: 14,
@@ -180,11 +167,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onNav }) => {
         Getting Started Tips
       </div>
 
-      <div style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gap: 12,
-      }}>
+      <div className="grid-4">
         {tips.map((tip, i) => (
           <div key={i} style={{
             background: C.surface,
