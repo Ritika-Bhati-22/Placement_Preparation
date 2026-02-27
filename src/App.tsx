@@ -1,1065 +1,1274 @@
 import { useState, useEffect, useRef } from "react";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
-const LANGUAGES = ["JavaScript","Python","C++","Java","C","Go","Rust","TypeScript","Ruby","Swift","Kotlin","PHP","C#","Scala","R"];
+// ═══════════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════════
+const LANGS = ["JavaScript","Python","C++","Java","C","Go","Rust","TypeScript","Ruby","Swift","Kotlin","PHP","C#","Scala","R"];
 
 const BADGES = [
-  { id:"first_solve", name:"First Blood",    icon:"🩸", desc:"Solve your first problem" },
-  { id:"streak_3",    name:"On Fire",         icon:"🔥", desc:"3 day streak" },
-  { id:"streak_7",    name:"Week Warrior",    icon:"⚔️",  desc:"7 day streak" },
-  { id:"streak_30",   name:"Legend",          icon:"👑", desc:"30 day streak" },
-  { id:"solve_10",    name:"Tenacious",       icon:"💪", desc:"Solve 10 problems" },
-  { id:"solve_50",    name:"Grinder",         icon:"⚙️",  desc:"Solve 50 problems" },
-  { id:"solve_100",   name:"Century",         icon:"💎", desc:"Solve 100 problems" },
-  { id:"interview_5", name:"Interview Ready", icon:"🎯", desc:"Answer 5 interview Qs" },
-  { id:"ats_80",      name:"ATS Champion",    icon:"📊", desc:"ATS score above 80" },
-  { id:"resume_done", name:"Resume Pro",      icon:"📄", desc:"Built your first resume" },
-  { id:"course_done", name:"Scholar",         icon:"🎓", desc:"Complete a course module" },
+  {id:"first_solve", name:"First Blood",    icon:"🩸", desc:"Solve your first problem"},
+  {id:"streak_3",    name:"On Fire",         icon:"🔥", desc:"3-day streak"},
+  {id:"streak_7",    name:"Week Warrior",    icon:"⚔️",  desc:"7-day streak"},
+  {id:"streak_30",   name:"Legend",          icon:"👑", desc:"30-day streak"},
+  {id:"solve_10",    name:"Tenacious",       icon:"💪", desc:"Solve 10 problems"},
+  {id:"solve_50",    name:"Grinder",         icon:"⚙️",  desc:"Solve 50 problems"},
+  {id:"solve_100",   name:"Century",         icon:"💎", desc:"Solve 100 problems"},
+  {id:"interview_5", name:"Interview Ready", icon:"🎯", desc:"Answer 5 interview Qs"},
+  {id:"ats_80",      name:"ATS Champion",    icon:"📊", desc:"ATS score ≥80"},
+  {id:"resume_done", name:"Resume Pro",      icon:"📄", desc:"Built first resume"},
+  {id:"course_5",    name:"Scholar",         icon:"🎓", desc:"5 course topics done"},
 ];
 
 const PROBLEMS = [
-  { id:1,  title:"Two Sum",                                    tags:["Array","Hash Map"],          diff:"Easy",   desc:"Given array nums and integer target, return indices of two numbers that add up to target.",             example:"Input: nums=[2,7,11,15], target=9\nOutput: [0,1]" },
-  { id:2,  title:"Reverse String",                             tags:["String","Two Pointers"],     diff:"Easy",   desc:"Write a function that reverses a string. Input is given as an array of characters.",                   example:"Input: ['h','e','l','l','o']\nOutput: ['o','l','l','e','h']" },
-  { id:3,  title:"FizzBuzz",                                   tags:["Math","String"],             diff:"Easy",   desc:"Return 'FizzBuzz' if divisible by 3&5, 'Fizz' by 3, 'Buzz' by 5, else the number as string.",        example:"Input: n=5\nOutput: ['1','2','Fizz','4','Buzz']" },
-  { id:4,  title:"Valid Parentheses",                          tags:["Stack","String"],            diff:"Easy",   desc:"Given string with '(){}[]', determine if the input string is valid.",                                 example:"Input: '()[]{}\'\nOutput: true" },
-  { id:5,  title:"Best Time to Buy and Sell Stock",            tags:["Array","Greedy"],            diff:"Easy",   desc:"Find maximum profit by choosing a single buy day and a later sell day.",                             example:"Input: [7,1,5,3,6,4]\nOutput: 5" },
-  { id:6,  title:"Longest Substring Without Repeating Chars",  tags:["Sliding Window","Hash Map"], diff:"Medium", desc:"Find the length of the longest substring without repeating characters.",                            example:"Input: 'abcabcbb'\nOutput: 3" },
-  { id:7,  title:"Merge Intervals",                            tags:["Array","Sorting"],           diff:"Medium", desc:"Merge all overlapping intervals and return non-overlapping intervals array.",                         example:"Input: [[1,3],[2,6],[8,10]]\nOutput: [[1,6],[8,10]]" },
-  { id:8,  title:"Binary Tree Level Order Traversal",          tags:["BFS","Tree"],                diff:"Medium", desc:"Return level order traversal of binary tree node values.",                                           example:"Input: [3,9,20,null,null,15,7]\nOutput: [[3],[9,20],[15,7]]" },
-  { id:9,  title:"Kth Largest Element in Array",               tags:["Heap","Quick Select"],       diff:"Medium", desc:"Find the kth largest element in an unsorted array.",                                                 example:"Input: nums=[3,2,1,5,6,4], k=2\nOutput: 5" },
-  { id:10, title:"Coin Change",                                 tags:["DP"],                        diff:"Medium", desc:"Find fewest number of coins to make amount. Return -1 if not possible.",                            example:"Input: coins=[1,5,11], amount=11\nOutput: 3" },
-  { id:11, title:"Median of Two Sorted Arrays",                 tags:["Binary Search","D&C"],       diff:"Hard",   desc:"Find median of two sorted arrays. Required: O(log(m+n)).",                                           example:"Input: [1,3],[2]\nOutput: 2.0" },
-  { id:12, title:"Trapping Rain Water",                         tags:["Two Pointers","Stack"],      diff:"Hard",   desc:"Given elevation map, compute how much water it can trap after raining.",                             example:"Input: [0,1,0,2,1,0,1,3,2,1,2,1]\nOutput: 6" },
+  {id:1, title:"Two Sum",                       tags:["Array","Hash Map"],       diff:"Easy",   desc:"Return indices of two numbers that add up to target.", example:"Input: nums=[2,7,11,15], target=9\nOutput: [0,1]"},
+  {id:2, title:"Valid Parentheses",             tags:["Stack","String"],         diff:"Easy",   desc:"Determine if bracket string is valid.", example:"Input: '()[]{}'\nOutput: true"},
+  {id:3, title:"Best Time to Buy/Sell Stock",   tags:["Array","Greedy"],         diff:"Easy",   desc:"Find max profit with one buy and one sell.", example:"Input: [7,1,5,3,6,4]\nOutput: 5"},
+  {id:4, title:"Longest Substring No Repeats",  tags:["Sliding Window"],         diff:"Medium", desc:"Length of longest substring without repeating chars.", example:"Input: 'abcabcbb'\nOutput: 3"},
+  {id:5, title:"Merge Intervals",               tags:["Array","Sorting"],        diff:"Medium", desc:"Merge all overlapping intervals.", example:"Input: [[1,3],[2,6],[8,10]]\nOutput: [[1,6],[8,10]]"},
+  {id:6, title:"Binary Tree Level Order",       tags:["BFS","Tree"],             diff:"Medium", desc:"Level-order traversal of binary tree.", example:"Input: [3,9,20,null,null,15,7]\nOutput: [[3],[9,20],[15,7]]"},
+  {id:7, title:"Coin Change",                   tags:["DP"],                     diff:"Medium", desc:"Fewest coins to make amount. -1 if impossible.", example:"Input: coins=[1,5,11], amount=11\nOutput: 3"},
+  {id:8, title:"Median of Two Sorted Arrays",   tags:["Binary Search"],          diff:"Hard",   desc:"Find median in O(log(m+n)).", example:"Input: [1,3],[2]\nOutput: 2.0"},
+  {id:9, title:"Trapping Rain Water",           tags:["Two Pointers","Stack"],   diff:"Hard",   desc:"Compute water trapped between bars.", example:"Input: [0,1,0,2,1,0,1,3,2,1,2,1]\nOutput: 6"},
 ];
 
-const IQ = [
-  { id:1,  cat:"DSA",           q:"Explain BFS vs DFS — when would you use each?",                       hint:"Traversal, shortest paths, memory." },
-  { id:2,  cat:"System Design", q:"How would you design a URL shortener like bit.ly?",                    hint:"Hashing, DB, scalability, redirects." },
-  { id:3,  cat:"OOP",           q:"Explain SOLID principles with real-world examples.",                   hint:"SRP, OCP, LSP, ISP, DIP." },
-  { id:4,  cat:"OS",            q:"Difference between process and thread?",                               hint:"Memory, context switch, overhead." },
-  { id:5,  cat:"Database",      q:"What is indexing and how does it improve performance?",                hint:"B-tree, hash index, write trade-offs." },
-  { id:6,  cat:"React",         q:"Explain React reconciliation algorithm and Virtual DOM.",              hint:"Diffing, keys, fiber architecture." },
-  { id:7,  cat:"HR",            q:"Tell about a team conflict. How did you resolve it?",                  hint:"STAR method." },
-  { id:8,  cat:"Networking",    q:"What happens when you type google.com in browser?",                    hint:"DNS, TCP, HTTP, TLS, rendering." },
-  { id:9,  cat:"JavaScript",    q:"Explain event loop, call stack, microtasks, macrotasks.",              hint:"Promise queue vs setTimeout queue." },
-  { id:10, cat:"HR",            q:"Why should we hire you? What makes you different?",                    hint:"Unique strengths + company alignment." },
-  { id:11, cat:"DSA",           q:"What is the difference between array and linked list?",               hint:"Memory, access time, insertion/deletion." },
-  { id:12, cat:"System Design", q:"Design a notification system like WhatsApp push notifications.",       hint:"Message queues, WebSockets, mobile push." },
+const BTECH_QUESTIONS = [
+  {id:1,  sub:"OS",   q:"Explain FCFS, SJF, Round Robin scheduling algorithms.",         hint:"Compare fairness, turnaround, CPU utilization"},
+  {id:2,  sub:"OS",   q:"What is deadlock? Explain 4 conditions and prevention.",         hint:"Mutual exclusion, Hold&Wait, No preemption, Circular wait"},
+  {id:3,  sub:"DBMS", q:"Explain normalization: 1NF, 2NF, 3NF, BCNF with examples.",    hint:"Each form reduces a specific redundancy"},
+  {id:4,  sub:"DBMS", q:"Difference between SQL JOIN types with examples.",               hint:"INNER, LEFT, RIGHT, FULL OUTER"},
+  {id:5,  sub:"CN",   q:"Explain TCP vs UDP — when would you use each?",                 hint:"Reliability, ordering, connection overhead"},
+  {id:6,  sub:"CN",   q:"What is OSI model? Explain all 7 layers.",                      hint:"Physical, DataLink, Network, Transport, Session, Presentation, Application"},
+  {id:7,  sub:"OOP",  q:"Explain the 4 pillars of OOP with real-world examples.",        hint:"Encapsulation, Abstraction, Inheritance, Polymorphism"},
+  {id:8,  sub:"OOP",  q:"Difference between abstract class and interface?",              hint:"Implementation, instantiation, multiple inheritance"},
+  {id:9,  sub:"DSA",  q:"Explain Big-O notation. Give examples for O(1), O(n), O(n²).", hint:"Time vs space, best/worst/avg case"},
+  {id:10, sub:"DSA",  q:"When to use HashMap vs TreeMap vs LinkedHashMap?",             hint:"Ordering, time complexity, use-cases"},
+  {id:11, sub:"CN",   q:"What happens when you type google.com in browser?",             hint:"DNS→TCP→HTTP/TLS→Server→Render"},
+  {id:12, sub:"DBMS", q:"What is indexing? Types of indexes?",                           hint:"B-tree, Hash, Clustered vs Non-clustered"},
 ];
 
-const COURSES = [
-  { id:"mdn",     name:"MDN Web Docs",        url:"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide", icon:"📚", color:"#1a73e8", tag:"JavaScript", topics:["Variables & Types","Functions","Promises & Async","DOM Manipulation","Fetch API","ES6+ Features"] },
-  { id:"gfg",     name:"GeeksforGeeks DSA",   url:"https://www.geeksforgeeks.org/data-structures/",               icon:"🌿", color:"#2f8d46", tag:"DSA",        topics:["Arrays & Strings","Linked Lists","Trees & Graphs","Dynamic Programming","Sorting Algorithms","Recursion"] },
-  { id:"gfg-sys", name:"GFG System Design",   url:"https://www.geeksforgeeks.org/system-design-tutorial/",        icon:"⚙️",  color:"#059669", tag:"System Design",topics:["Load Balancing","Database Sharding","Caching Strategies","CAP Theorem","Microservices","API Design"] },
-  { id:"w3",      name:"W3Schools",            url:"https://www.w3schools.com/",                                   icon:"🎓", color:"#04aa6d", tag:"Web Dev",    topics:["HTML5 Basics","CSS Flexbox & Grid","Responsive Design","Bootstrap","SQL Basics","Python Intro"] },
-  { id:"fcc",     name:"freeCodeCamp",         url:"https://www.freecodecamp.org/learn/",                          icon:"🔥", color:"#f1be32", tag:"Full Stack",  topics:["Responsive Web Design","JavaScript Algorithms","Front End Dev","APIs & Microservices","Data Visualization","Quality Assurance"] },
-  { id:"odin",    name:"The Odin Project",     url:"https://www.theodinproject.com/paths",                         icon:"⚔️",  color:"#d14000", tag:"Full Stack",  topics:["Web Dev Foundations","JavaScript Path","React Path","Node.js Path","Databases","Ruby on Rails"] },
-  { id:"cs50",    name:"CS50 Harvard",         url:"https://cs50.harvard.edu/x/",                                  icon:"🏛️", color:"#a41034", tag:"CS Fundamentals",topics:["C Language","Arrays & Memory","Data Structures","Python","SQL","Web Dev with Flask"] },
-  { id:"jsi",     name:"JavaScript.info",      url:"https://javascript.info/",                                     icon:"💛", color:"#d97706", tag:"JavaScript",  topics:["JS Fundamentals","Objects & Prototypes","Classes","Async JS","Browser APIs","Node.js Basics"] },
-  { id:"road",    name:"Roadmap.sh",           url:"https://roadmap.sh/",                                          icon:"🗺️", color:"#8b5cf6", tag:"Career Path", topics:["Frontend Roadmap","Backend Roadmap","DevOps Path","React Path","Node.js Path","SQL Roadmap"] },
-];
+const TOPICS_BY_LANG = {
+  "JavaScript": ["Variables & Scope","Functions & Closures","Promises & Async/Await","DOM Manipulation","Event Loop","ES6+ Features","Prototypes & Classes","Error Handling","Fetch API","Modules"],
+  "Python":     ["Variables & Data Types","Functions & Lambda","List Comprehensions","OOP in Python","Decorators","File I/O","Error Handling","Generators","Async Python","Standard Library"],
+  "C++":        ["Pointers & References","Memory Management","STL Containers","Templates","OOP Concepts","Operator Overloading","Lambdas","Smart Pointers","Concurrency","Algorithms"],
+  "Java":       ["JVM Architecture","OOP in Java","Collections Framework","Exception Handling","Generics","Multithreading","Streams API","Design Patterns","Spring Boot Basics","JUnit Testing"],
+  "DSA":        ["Arrays & Strings","Linked Lists","Stacks & Queues","Trees & BST","Graphs & BFS/DFS","Sorting Algorithms","Binary Search","Dynamic Programming","Greedy Algorithms","Backtracking"],
+  "System Design": ["Load Balancing","DB Sharding","Caching Strategies","CAP Theorem","Microservices","API Design","Message Queues","Rate Limiting","Consistent Hashing","Distributed Systems"],
+  "Web Dev":    ["HTML5 Semantics","CSS Flexbox & Grid","Responsive Design","JavaScript DOM","React Basics","Node.js & Express","REST APIs","SQL/NoSQL","Auth & JWT","Deployment"],
+};
 
 const LATEX_TEMPLATE = `\\documentclass[letterpaper,11pt]{article}
-\\usepackage{latexsym,fullpage,titlesec,marvosym,verbatim,hyperref,fancyhdr,tabularx,enumitem,xcolor}
-\\pagestyle{fancy}\\fancyhf{}\\fancyfoot{}
-\\renewcommand{\\headrulewidth}{0pt}\\renewcommand{\\footrulewidth}{0pt}
+\\usepackage{latexsym,fullpage,titlesec,hyperref,fancyhdr,tabularx,enumitem,xcolor}
+\\pagestyle{fancy}\\fancyhf{}\\fancyfoot{}\\renewcommand{\\headrulewidth}{0pt}
 \\urlstyle{same}\\raggedbottom\\raggedright\\setlength{\\tabcolsep}{0in}
 \\titleformat{\\section}{\\vspace{-4pt}\\scshape\\raggedright\\large}{}{0em}{}[\\color{black}\\titlerule\\vspace{-5pt}]
 \\begin{document}
 \\begin{tabular*}{\\textwidth}{l@{\\extracolsep{\\fill}}r}
-  \\textbf{\\Large YOUR NAME} & Email: your@email.com \\\\
+  \\textbf{\\Large YOUR NAME} & Email: you@email.com \\\\
   LinkedIn: linkedin.com/in/you & GitHub: github.com/you \\\\
 \\end{tabular*}
-\\section{Education}
-\\textbf{Your University} \\hfill City \\\\
-\\textit{B.Tech Computer Science} \\hfill \\textit{2021--2025} \\\\ CGPA: 8.5/10
-\\section{Skills}
-\\textbf{Languages:} Python, JavaScript, C++ \\\\
-\\textbf{Frameworks:} React, Node.js, FastAPI \\\\
-\\textbf{Tools:} Git, Docker, AWS, MongoDB
-\\section{Projects}
-\\textbf{Project Name} \\hfill \\textit{React, Node.js} \\\\
-\\textit{github.com/project}
-\\begin{itemize}[leftmargin=*]
-  \\item Built X that improved Y by Z\\%
-\\end{itemize}
-\\section{Experience}
-\\textbf{Company} \\hfill \\textit{Jun--Aug 2024} \\\\
-\\textit{Software Intern}
-\\begin{itemize}[leftmargin=*]
-  \\item Developed X using Y, improving performance by Z\\%
-\\end{itemize}
-\\section{Achievements}
-\\begin{itemize}[leftmargin=*]
-  \\item Competitive programming / hackathon win
-\\end{itemize}
+\\section{Education}\\textbf{Your University} \\hfill City \\\\
+\\textit{B.Tech CS} \\hfill \\textit{2021--2025} \\\\ CGPA: 8.5/10
+\\section{Skills}\\textbf{Languages:} Python, JS, C++ \\\\ \\textbf{Frameworks:} React, Node.js \\\\ \\textbf{Tools:} Git, Docker
+\\section{Projects}\\textbf{Project} \\hfill \\textit{React, Node.js}\\\\\\begin{itemize}[leftmargin=*]\\item Built X improved Y by Z\\%\\end{itemize}
+\\section{Experience}\\textbf{Company} \\hfill \\textit{Jun--Aug 2024}\\\\\\textit{SDE Intern}\\begin{itemize}[leftmargin=*]\\item Developed X using Y\\end{itemize}
+\\section{Achievements}\\begin{itemize}[leftmargin=*]\\item Achievement\\end{itemize}
 \\end{document}`;
 
-// ─── AI ───────────────────────────────────────────────────────────────────────
-async function ai(messages, system = "") {
-  const body = { model:"claude-sonnet-4-20250514", max_tokens:1000, messages };
+// ═══════════════════════════════════════════════════
+//  AI
+// ═══════════════════════════════════════════════════
+async function callAI(messages, system = "") {
+  const body = { model: "claude-sonnet-4-20250514", max_tokens: 1200, messages };
   if (system) body.system = system;
   const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
   });
   const d = await r.json();
   return d.content?.map(b => b.text || "").join("") || "Error. Please try again.";
 }
 
-// ─── Storage ──────────────────────────────────────────────────────────────────
-const saveUsers = (u) => { try { localStorage.setItem("df_users", JSON.stringify(u)); } catch {} };
-const loadUsers = () => { try { return JSON.parse(localStorage.getItem("df_users") || "{}"); } catch { return {}; } };
-const defaultProgress = () => ({ streak:0, lastActive:"", totalSolved:0, interviewAnswered:0, xp:0, earnedBadges:[], solvedIds:[], atsScore:null, resumeBuilt:false, lcProgress:0, hrProgress:0, completedTopics:[] });
+// ═══════════════════════════════════════════════════
+//  STORAGE
+// ═══════════════════════════════════════════════════
+const SU = u => { try { localStorage.setItem("df3", JSON.stringify(u)); } catch {} };
+const LU = () => { try { return JSON.parse(localStorage.getItem("df3") || "{}"); } catch { return {}; } };
+const DP = () => ({
+  streak:0, lastActive:"", totalSolved:0, interviewAnswered:0, xp:0,
+  earnedBadges:[], solvedIds:[], atsScore:null, resumeBuilt:false,
+  completedTopics:[], lcProgress:0, hrProgress:0, history:[],
+});
 
-// ─── Design ───────────────────────────────────────────────────────────────────
-const C = { bg:"#0f1117", sidebar:"#13151f", card:"#1a1d2e", border:"#252840", accent:"#6366f1", text:"#e2e8f0", muted:"#64748b", navBg:"#0d0f1a" };
+// ═══════════════════════════════════════════════════
+//  DESIGN — Rich Deep Dark Theme
+// ═══════════════════════════════════════════════════
+const T = {
+  bg:       "#070b14",
+  sidebar:  "#0a0f1e",
+  card:     "#0d1526",
+  cardHov:  "#111c33",
+  border:   "#162035",
+  border2:  "#1e2d4a",
+  accent:   "#4f8ef7",
+  accentV:  "#7c5cf6",
+  text:     "#e8edf8",
+  textSub:  "#8899bb",
+  textMuted:"#4a5a7a",
+  green:    "#22d3a0",
+  yellow:   "#f5c542",
+  orange:   "#f97d50",
+  red:      "#f45b5b",
+  pink:     "#e879a0",
+};
 
-// ─── NEW Sidebar Nav — 5 clear sections ───────────────────────────────────────
-const NAV = [
-  { section:"MAIN", items:[
-    { id:"dashboard", label:"Dashboard",    icon:"🏠" },
-  ]},
-  { section:"🎯 INTERVIEW PREP", items:[
-    { id:"interview",      label:"Interview Qs",     icon:"🧠" },
-    { id:"mock",           label:"Mock Interview",   icon:"🎤" },
-    { id:"ats",            label:"ATS Score",        icon:"📊" },
-  ]},
-  { section:"💻 CODING", items:[
-    { id:"practice",   label:"DSA Practice",    icon:"🖥️" },
-    { id:"aiq",        label:"AI Questions",    icon:"🤖" },
-    { id:"leetcode",   label:"LeetCode",        icon:"🔗" },
-    { id:"hackerrank", label:"HackerRank",      icon:"🏆" },
-    { id:"codeforces", label:"Codeforces",      icon:"⚡" },
-  ]},
-  { section:"📄 RESUME", items:[
-    { id:"resume_build",   label:"Build Resume",     icon:"✨" },
-    { id:"resume_analyze", label:"Analyze Resume",   icon:"🔍" },
-    { id:"resume_tailor",  label:"Tailor for Job",   icon:"🎯" },
-  ]},
-  { section:"📚 COURSES", items:[
-    { id:"courses",   label:"All Courses",      icon:"🎓" },
-    { id:"mdn_learn", label:"MDN — Web Dev",    icon:"📘" },
-    { id:"gfg_learn", label:"GFG — DSA",        icon:"🌿" },
-  ]},
-  { section:"AI", items:[
-    { id:"chat", label:"AI Chatbot", icon:"💬" },
-  ]},
+// ═══════════════════════════════════════════════════
+//  NAV CONFIG
+// ═══════════════════════════════════════════════════
+const SECTIONS = [
+  { key:"courses",   label:"Courses",   icon:"📚", color:"#f5c542",
+    tabs:[{id:"c_ai",label:"AI Notes",icon:"✦"},{id:"c_mdn",label:"MDN Docs",icon:"◈"},{id:"c_gfg",label:"GeeksForGeeks",icon:"◉"}]},
+  { key:"coding",    label:"Coding",    icon:"⌨",  color:"#22d3a0",
+    tabs:[{id:"cd_lc",label:"LeetCode",icon:"◈"},{id:"cd_hr",label:"HackerRank",icon:"◉"},{id:"cd_fcc",label:"freeCodeCamp",icon:"◈"},{id:"cd_ai",label:"AI Questions",icon:"✦"},{id:"cd_test",label:"Topic Tests",icon:"◉"}]},
+  { key:"resume",    label:"Resume",    icon:"◧",  color:"#f97d50",
+    tabs:[{id:"r_build",label:"Build Resume",icon:"✦"},{id:"r_ats",label:"ATS Score",icon:"◈"},{id:"r_test",label:"Resume Test",icon:"◉"},{id:"r_update",label:"Company Tailor",icon:"◧"}]},
+  { key:"interview", label:"Interview", icon:"✎",  color:"#7c5cf6",
+    tabs:[{id:"i_hr",label:"HR Questions",icon:"✦"},{id:"i_btech",label:"B.Tech Subjects",icon:"◈"}]},
+  { key:"progress",  label:"Progress",  icon:"◎",  color:"#4f8ef7",
+    tabs:[{id:"p_main",label:"My Progress",icon:"◎"}]},
+  { key:"chatbot",   label:"Chatbot",   icon:"◌",  color:"#e879a0",
+    tabs:[{id:"ch_course",label:"Course Doubts",icon:"✦"},{id:"ch_code",label:"Code Assistant",icon:"◈"}]},
 ];
 
-// ─── ROOT ─────────────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  ROOT
+// ═══════════════════════════════════════════════════
 export default function App() {
-  const [screen, setScreen]     = useState("auth");
-  const [authMode, setAuthMode] = useState("login");
-  const [authName, setAuthName] = useState("");
-  const [authPwd, setAuthPwd]   = useState("");
-  const [authErr, setAuthErr]   = useState("");
-  const [user, setUser]         = useState("");
-  const [progress, setProgress] = useState(defaultProgress());
-  const [tab, setTab]           = useState("dashboard");
-  const [sidebar, setSidebar]   = useState(true);
-  // collapsed sections in sidebar
-  const [collapsed, setCollapsed] = useState({});
+  const [screen,   setScreen]  = useState("auth");
+  const [authMode, setAMode]   = useState("login");
+  const [aName,    setAName]   = useState("");
+  const [aPwd,     setAPwd]    = useState("");
+  const [aErr,     setAErr]    = useState("");
+  const [user,     setUser]    = useState("");
+  const [prog,     setProg]    = useState(DP());
+  const [secKey,   setSK]      = useState("courses");
+  const [tabId,    setTID]     = useState("c_ai");
+  const [sbOpen,   setSB]      = useState(true);
 
-  const saveProgress = (p) => {
-    const users = loadUsers(); users[user] = p; saveUsers(users); setProgress(p);
-  };
-  const checkBadges = (p) => {
+  const saveProg = p => { const u = LU(); u[user] = p; SU(u); setProg(p); };
+  const checkBadges = p => {
     const b = [...(p.earnedBadges||[])];
-    const add = (id) => { if (!b.includes(id)) b.push(id); };
-    if (p.totalSolved>=1)          add("first_solve");
-    if (p.streak>=3)               add("streak_3");
-    if (p.streak>=7)               add("streak_7");
-    if (p.streak>=30)              add("streak_30");
-    if (p.totalSolved>=10)         add("solve_10");
-    if (p.totalSolved>=50)         add("solve_50");
-    if (p.totalSolved>=100)        add("solve_100");
-    if (p.interviewAnswered>=5)    add("interview_5");
-    if ((p.atsScore||0)>=80)       add("ats_80");
-    if (p.resumeBuilt)             add("resume_done");
-    if ((p.completedTopics||[]).length>=1) add("course_done");
-    return { ...p, earnedBadges:b };
+    const add = id => { if (!b.includes(id)) b.push(id); };
+    if (p.totalSolved>=1)  add("first_solve");
+    if (p.streak>=3)       add("streak_3");
+    if (p.streak>=7)       add("streak_7");
+    if (p.streak>=30)      add("streak_30");
+    if (p.totalSolved>=10) add("solve_10");
+    if (p.totalSolved>=50) add("solve_50");
+    if (p.totalSolved>=100)add("solve_100");
+    if (p.interviewAnswered>=5) add("interview_5");
+    if ((p.atsScore||0)>=80)   add("ats_80");
+    if (p.resumeBuilt)         add("resume_done");
+    if ((p.completedTopics||[]).length>=5) add("course_5");
+    return { ...p, earnedBadges: b };
   };
-  const addXP = (amount, extra={}) => {
+  const addXP = (amt, extra={}) => {
     const today = new Date().toDateString();
-    let p = { ...progress, xp:progress.xp+amount, ...extra };
-    if (p.lastActive!==today) p = { ...p, streak:p.streak+1, lastActive:today };
-    saveProgress(checkBadges(p));
+    let p = { ...prog, xp: prog.xp + amt, ...extra };
+    if (p.lastActive !== today) p = { ...p, streak: p.streak+1, lastActive: today };
+    if (amt > 0) p = { ...p, history: [...(p.history||[]), {date:new Date().toISOString(), xp:amt}].slice(-100) };
+    saveProg(checkBadges(p));
   };
 
   const handleAuth = () => {
-    const name = authName.trim().toLowerCase().replace(/\s+/g,"_");
-    if (!name||!authPwd) { setAuthErr("Naam aur password dono bharo!"); return; }
-    const users = loadUsers();
-    if (authMode==="register") {
-      if (users[name]) { setAuthErr("Ye naam already exist karta hai!"); return; }
-      const nu = { ...defaultProgress(), _pwd:authPwd };
-      users[name]=nu; saveUsers(users);
-      setUser(name); setProgress(nu); setScreen("app");
+    const name = aName.trim().toLowerCase().replace(/\s+/g,"_");
+    if (!name || !aPwd) { setAErr("Please fill both fields."); return; }
+    const users = LU();
+    if (authMode === "register") {
+      if (users[name]) { setAErr("Username exists. Please login."); return; }
+      const nu = { ...DP(), _pwd: aPwd };
+      users[name] = nu; SU(users); setUser(name); setProg(nu); setScreen("app");
     } else {
-      if (!users[name]) { setAuthErr("Account nahi mila. Register karo."); return; }
-      if (users[name]._pwd && users[name]._pwd!==authPwd) { setAuthErr("Password galat hai!"); return; }
-      setUser(name); setProgress(users[name]); setScreen("app");
+      if (!users[name]) { setAErr("Account not found. Register first."); return; }
+      if (users[name]._pwd && users[name]._pwd !== aPwd) { setAErr("Incorrect password."); return; }
+      setUser(name); setProg(users[name]); setScreen("app");
     }
-    setAuthErr("");
+    setAErr("");
   };
-  const logout = () => { setScreen("auth"); setUser(""); setProgress(defaultProgress()); setAuthName(""); setAuthPwd(""); };
-  const toggleCollapse = (section) => setCollapsed(c=>({...c,[section]:!c[section]}));
+  const logout = () => { setScreen("auth"); setUser(""); setProg(DP()); setAName(""); setAPwd(""); };
+  const goSec = key => { setSK(key); setTID(SECTIONS.find(s=>s.key===key)?.tabs[0]?.id || ""); };
+  const curSec = SECTIONS.find(s=>s.key===secKey);
 
-  // ── Auth Screen ──────────────────────────────────────────────────────────────
-  if (screen==="auth") return (
-    <div style={{minHeight:"100vh",background:"radial-gradient(ellipse at 30% 20%,#1e1b4b,#0f1117)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Inter','Segoe UI',sans-serif",padding:"20px"}}>
-      <div style={{width:"100%",maxWidth:"400px"}}>
-        <div style={{textAlign:"center",marginBottom:"28px"}}>
-          <div style={{fontSize:"44px"}}>⚡</div>
-          <h1 style={{fontSize:"26px",fontWeight:800,color:"#e2e8f0",margin:"8px 0 4px"}}>DevForge</h1>
-          <p style={{color:"#64748b",fontSize:"13px"}}>Your complete coding career platform</p>
+  // ── AUTH ──────────────────────────────────────────
+  if (screen === "auth") return (
+    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Sora','Segoe UI',sans-serif",padding:"20px",position:"relative",overflow:"hidden"}}>
+      {/* BG glow orbs */}
+      <div style={{position:"absolute",width:"500px",height:"500px",borderRadius:"50%",background:"radial-gradient(circle,#4f8ef720 0%,transparent 70%)",top:"-100px",left:"-100px",pointerEvents:"none"}}/>
+      <div style={{position:"absolute",width:"400px",height:"400px",borderRadius:"50%",background:"radial-gradient(circle,#7c5cf620 0%,transparent 70%)",bottom:"-80px",right:"-80px",pointerEvents:"none"}}/>
+      <div style={{width:"100%",maxWidth:"380px",position:"relative",zIndex:1}}>
+        <div style={{textAlign:"center",marginBottom:"32px"}}>
+          <div style={{width:"56px",height:"56px",borderRadius:"16px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"24px",margin:"0 auto 14px",boxShadow:"0 8px 32px #4f8ef740"}}>⚡</div>
+          <h1 style={{fontSize:"24px",fontWeight:800,color:T.text,margin:"0 0 6px",letterSpacing:"-0.5px"}}>DevForge</h1>
+          <p style={{color:T.textMuted,fontSize:"13px"}}>Complete Placement Preparation Platform</p>
         </div>
-        <div style={{background:"#1a1d2e",border:"1px solid #252840",borderRadius:"16px",padding:"28px"}}>
-          <h2 style={{color:"#e2e8f0",fontSize:"18px",fontWeight:700,marginBottom:"20px",textAlign:"center"}}>
-            {authMode==="login"?"Wapas aao! 👋":"Account banao 🚀"}
+        <div style={{background:"linear-gradient(135deg,#0d1526,#111c33)",border:`1px solid ${T.border2}`,borderRadius:"20px",padding:"28px",backdropFilter:"blur(20px)",boxShadow:"0 24px 80px #00000080"}}>
+          <h2 style={{color:T.text,fontSize:"16px",fontWeight:700,marginBottom:"22px",textAlign:"center"}}>
+            {authMode==="login" ? "Welcome back 👋" : "Create your account 🚀"}
           </h2>
-          <div style={{marginBottom:"12px"}}>
-            <label style={Lbl}>Naam</label>
-            <input style={Inp} value={authName} onChange={e=>setAuthName(e.target.value)} placeholder="apna naam..." onKeyDown={e=>e.key==="Enter"&&handleAuth()} />
-          </div>
-          <div style={{marginBottom:"12px"}}>
-            <label style={Lbl}>Password</label>
-            <input type="password" style={Inp} value={authPwd} onChange={e=>setAuthPwd(e.target.value)} placeholder="password..." onKeyDown={e=>e.key==="Enter"&&handleAuth()} />
-          </div>
-          {authErr && <div style={{background:"#450a0a",border:"1px solid #ef4444",borderRadius:"8px",padding:"10px",color:"#fca5a5",fontSize:"13px",marginBottom:"12px"}}>{authErr}</div>}
-          <button onClick={handleAuth} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",border:"none",borderRadius:"10px",color:"#fff",fontWeight:700,fontSize:"15px",cursor:"pointer",fontFamily:"inherit"}}>
-            {authMode==="login"?"Login →":"Register →"}
+          {[["Username",aName,setAName,"text","your_username"],["Password",aPwd,setAPwd,"password","••••••••"]].map(([lbl,val,set,type,ph])=>(
+            <div key={lbl} style={{marginBottom:"14px"}}>
+              <label style={{display:"block",fontSize:"11px",color:T.textSub,marginBottom:"6px",fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase"}}>{lbl}</label>
+              <input type={type} value={val} onChange={e=>set(e.target.value)} placeholder={ph} onKeyDown={e=>e.key==="Enter"&&handleAuth()}
+                style={{width:"100%",padding:"11px 14px",background:"#07111f",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"14px",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
+                onFocus={e=>e.target.style.borderColor="#4f8ef7"} onBlur={e=>e.target.style.borderColor=T.border2}/>
+            </div>
+          ))}
+          {aErr && <div style={{background:"#2d0a0a",border:"1px solid #f45b5b44",borderRadius:"8px",padding:"10px 12px",color:"#f45b5b",fontSize:"13px",marginBottom:"14px"}}>{aErr}</div>}
+          <button onClick={handleAuth} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",border:"none",borderRadius:"10px",color:"#fff",fontWeight:700,fontSize:"14px",cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #4f8ef740",letterSpacing:"0.02em"}}>
+            {authMode==="login" ? "Sign In →" : "Create Account →"}
           </button>
-          <p style={{textAlign:"center",marginTop:"14px",color:"#64748b",fontSize:"13px"}}>
-            {authMode==="login"?"Account nahi? ":"Already account hai? "}
-            <span onClick={()=>{setAuthMode(m=>m==="login"?"register":"login");setAuthErr("");}} style={{color:"#818cf8",cursor:"pointer",fontWeight:600}}>
-              {authMode==="login"?"Register":"Login"}
-            </span>
+          <p style={{textAlign:"center",marginTop:"16px",color:T.textMuted,fontSize:"13px"}}>
+            {authMode==="login" ? "No account? " : "Have an account? "}
+            <span onClick={()=>{setAMode(m=>m==="login"?"register":"login");setAErr("");}} style={{color:T.accent,cursor:"pointer",fontWeight:600}}>{authMode==="login"?"Register":"Login"}</span>
           </p>
         </div>
-        <p style={{textAlign:"center",color:"#374151",fontSize:"11px",marginTop:"12px"}}>✅ Progress sirf tumhari — private & secure</p>
       </div>
+      <GS/>
     </div>
   );
 
-  // ── App Shell ────────────────────────────────────────────────────────────────
+  const lv = Math.floor(prog.xp/100)+1;
+
+  // ── APP SHELL ──────────────────────────────────────
   return (
-    <div style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:C.bg,fontFamily:"'Inter','Segoe UI',sans-serif",color:C.text}}>
-      {/* Top Nav */}
-      <nav style={{height:"54px",background:C.navBg,borderBottom:`1px solid ${C.border}`,display:"flex",alignItems:"center",padding:"0 16px",gap:"8px",position:"sticky",top:0,zIndex:200,flexShrink:0}}>
-        <button onClick={()=>setSidebar(s=>!s)} style={{background:"none",border:"none",color:C.muted,cursor:"pointer",fontSize:"18px",padding:"6px",flexShrink:0}}>☰</button>
-        <span style={{fontSize:"18px"}}>⚡</span>
-        <span style={{fontWeight:800,fontSize:"15px",background:"linear-gradient(90deg,#818cf8,#60a5fa)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",flexShrink:0}}>DevForge</span>
-        {/* Quick Nav pills */}
-        <div style={{display:"flex",gap:"2px",overflow:"hidden",flexWrap:"nowrap"}}>
-          {[["dashboard","🏠"],["interview","🎯 Interview"],["practice","💻 Coding"],["courses","📚 Courses"],["resume_build","📄 Resume"],["chat","💬 AI"]].map(([id,lbl])=>(
-            <button key={id} onClick={()=>setTab(id)} style={{padding:"5px 10px",borderRadius:"7px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:600,background:tab===id?"#6366f1":"transparent",color:tab===id?"#fff":"#94a3b8",whiteSpace:"nowrap"}}>
-              {lbl}
+    <div style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:T.bg,fontFamily:"'Sora','Segoe UI',sans-serif",color:T.text}}>
+      {/* ── TOPNAV ── */}
+      <nav style={{height:"54px",background:"#070b14ee",backdropFilter:"blur(20px)",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",padding:"0 16px",gap:"6px",position:"sticky",top:0,zIndex:300,flexShrink:0}}>
+        <button onClick={()=>setSB(s=>!s)} style={{background:"none",border:"none",color:T.textMuted,cursor:"pointer",fontSize:"16px",padding:"6px",flexShrink:0,lineHeight:1}}>
+          {sbOpen ? "◁" : "▷"}
+        </button>
+        <div style={{display:"flex",alignItems:"center",gap:"7px",flexShrink:0,marginRight:"10px"}}>
+          <div style={{width:"26px",height:"26px",borderRadius:"7px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px"}}>⚡</div>
+          <span style={{fontWeight:800,fontSize:"14px",background:"linear-gradient(90deg,#4f8ef7,#7c5cf6)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.3px"}}>DevForge</span>
+        </div>
+        {/* Section pills */}
+        <div style={{display:"flex",gap:"2px"}}>
+          {SECTIONS.map(s=>(
+            <button key={s.key} onClick={()=>goSec(s.key)} style={{padding:"5px 11px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:600,background:secKey===s.key?`${s.color}18`:"transparent",color:secKey===s.key?s.color:T.textMuted,transition:"all 0.15s",borderBottom:secKey===s.key?`2px solid ${s.color}`:"2px solid transparent"}}>
+              {s.icon} {s.label}
             </button>
           ))}
         </div>
-        <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:"8px",flexShrink:0}}>
-          <span style={{fontSize:"12px",color:"#f97316",fontWeight:700}}>🔥{progress.streak}d</span>
-          <span style={{fontSize:"12px",color:"#818cf8",fontWeight:700}}>⚡Lv.{Math.floor(progress.xp/100)+1}</span>
-          <div style={{width:"26px",height:"26px",borderRadius:"50%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",fontWeight:700}}>{user[0]?.toUpperCase()}</div>
-          <button onClick={logout} style={{padding:"5px 10px",borderRadius:"6px",border:`1px solid ${C.border}`,background:"none",color:C.muted,cursor:"pointer",fontSize:"12px",fontFamily:"inherit"}}>Logout</button>
+        <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:"10px",flexShrink:0}}>
+          <div style={{display:"flex",alignItems:"center",gap:"5px",background:T.card,border:`1px solid ${T.border}`,borderRadius:"999px",padding:"4px 10px"}}>
+            <span style={{fontSize:"11px",color:T.orange,fontWeight:700}}>🔥{prog.streak}</span>
+            <div style={{width:"1px",height:"12px",background:T.border}}/>
+            <span style={{fontSize:"11px",color:T.accent,fontWeight:700}}>⚡Lv{lv}</span>
+            <div style={{width:"1px",height:"12px",background:T.border}}/>
+            <span style={{fontSize:"11px",color:T.textMuted,fontWeight:600}}>{prog.xp}xp</span>
+          </div>
+          <div style={{width:"28px",height:"28px",borderRadius:"50%",background:`linear-gradient(135deg,${curSec?.color||T.accent},#7c5cf6)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"11px",fontWeight:800,cursor:"pointer",boxShadow:`0 0 12px ${curSec?.color||T.accent}40`}}>{user[0]?.toUpperCase()}</div>
+          <button onClick={logout} style={{padding:"5px 10px",borderRadius:"7px",border:`1px solid ${T.border}`,background:"none",color:T.textMuted,cursor:"pointer",fontSize:"11px",fontFamily:"inherit"}}>Exit</button>
         </div>
       </nav>
 
       <div style={{display:"flex",flex:1,overflow:"hidden"}}>
-        {/* ── Sidebar ── */}
-        {sidebar && (
-          <aside style={{width:"210px",background:C.sidebar,borderRight:`1px solid ${C.border}`,padding:"12px 8px",overflowY:"auto",flexShrink:0}}>
-            {NAV.map(({section,items})=>(
-              <div key={section} style={{marginBottom:"4px"}}>
-                {/* Section header — clickable to collapse */}
-                <div onClick={()=>toggleCollapse(section)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",fontSize:"10px",fontWeight:700,color:section==="MAIN"||section==="AI"?C.muted:"#818cf8",letterSpacing:"0.08em",padding:"8px 8px 4px",cursor:"pointer",userSelect:"none"}}>
-                  <span>{section}</span>
-                  {section!=="MAIN"&&section!=="AI"&&<span style={{fontSize:"10px",color:C.muted}}>{collapsed[section]?"▶":"▼"}</span>}
-                </div>
-                {!collapsed[section] && items.map(({id,label,icon})=>(
-                  <button key={id} onClick={()=>setTab(id)} style={{width:"100%",display:"flex",alignItems:"center",gap:"8px",padding:"8px 10px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"13px",fontWeight:tab===id?700:400,background:tab===id?"linear-gradient(135deg,#312e81,#1e1b4b)":"transparent",color:tab===id?"#a5b4fc":C.muted,marginBottom:"1px",transition:"all 0.15s",textAlign:"left"}}>
-                    <span style={{fontSize:"14px"}}>{icon}</span>
-                    <span style={{flex:1}}>{label}</span>
-                    {tab===id&&<span style={{width:"5px",height:"5px",borderRadius:"50%",background:"#6366f1",flexShrink:0}}/>}
-                  </button>
-                ))}
+        {/* ── SIDEBAR ── */}
+        {sbOpen && (
+          <aside style={{width:"188px",background:T.sidebar,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",flexShrink:0}}>
+            {/* Section name */}
+            <div style={{padding:"14px 14px 10px",borderBottom:`1px solid ${T.border}`}}>
+              <div style={{fontSize:"10px",fontWeight:700,color:curSec?.color,letterSpacing:"0.12em",textTransform:"uppercase"}}>{curSec?.icon} {curSec?.label}</div>
+            </div>
+            {/* Tabs */}
+            <div style={{padding:"8px 8px",flex:1,overflowY:"auto"}}>
+              {curSec?.tabs.map(t=>(
+                <button key={t.id} onClick={()=>setTID(t.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:"9px",padding:"9px 10px",borderRadius:"9px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"13px",fontWeight:tabId===t.id?700:400,background:tabId===t.id?`${curSec.color}15`:"transparent",color:tabId===t.id?curSec.color:T.textMuted,marginBottom:"2px",textAlign:"left",transition:"all 0.15s"}}>
+                  <span style={{fontSize:"10px",opacity:0.7}}>{t.icon}</span>
+                  <span style={{flex:1,letterSpacing:"-0.1px"}}>{t.label}</span>
+                  {tabId===t.id && <div style={{width:"4px",height:"4px",borderRadius:"50%",background:curSec.color}}/>}
+                </button>
+              ))}
+            </div>
+            {/* XP bar */}
+            <div style={{padding:"12px",borderTop:`1px solid ${T.border}`}}>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:"10px",color:T.textMuted,marginBottom:"5px"}}>
+                <span>Level {lv}</span><span>{prog.xp%100}/100 xp</span>
               </div>
-            ))}
-            {/* XP progress */}
-            <div style={{margin:"12px 4px 0",padding:"12px",background:C.card,borderRadius:"10px",border:`1px solid ${C.border}`}}>
-              <div style={{fontSize:"11px",color:C.muted,marginBottom:"5px"}}>Lv.{Math.floor(progress.xp/100)+1} • {progress.xp%100}/100 XP</div>
-              <div style={{background:"#1e293b",borderRadius:"999px",height:"5px"}}>
-                <div style={{width:`${progress.xp%100}%`,height:"100%",background:"linear-gradient(90deg,#6366f1,#8b5cf6)",borderRadius:"999px"}}/>
+              <div style={{background:"#162035",borderRadius:"999px",height:"4px"}}>
+                <div style={{width:`${prog.xp%100}%`,height:"100%",background:`linear-gradient(90deg,${T.accent},${T.accentV})`,borderRadius:"999px",transition:"width 0.5s"}}/>
               </div>
-              <div style={{fontSize:"11px",color:"#f97316",marginTop:"6px",fontWeight:700}}>🔥{progress.streak}d streak</div>
-              <div style={{fontSize:"10px",color:C.muted,marginTop:"2px"}}>💻{progress.totalSolved} solved • 🏅{progress.earnedBadges.length} badges</div>
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:"8px"}}>
+                <span style={{fontSize:"10px",color:T.orange,fontWeight:700}}>🔥 {prog.streak}d streak</span>
+                <span style={{fontSize:"10px",color:T.textMuted}}>💻 {prog.totalSolved} solved</span>
+              </div>
             </div>
           </aside>
         )}
 
-        {/* ── Main Content ── */}
-        <main style={{flex:1,overflowY:"auto",padding:"24px"}}>
-          {tab==="dashboard"      && <Dashboard progress={progress} setTab={setTab} user={user}/>}
-          {/* Interview section */}
-          {tab==="interview"      && <Interview progress={progress} addXP={addXP}/>}
-          {tab==="mock"           && <MockInterview progress={progress} addXP={addXP}/>}
-          {tab==="ats"            && <ATSScore progress={progress} addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress}/>}
-          {/* Coding section */}
-          {tab==="practice"       && <Practice progress={progress} addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress}/>}
-          {tab==="aiq"            && <AIQuestions progress={progress} addXP={addXP}/>}
-          {tab==="leetcode"       && <ExtSite url="https://leetcode.com" name="LeetCode" color="#f89f1b" links={[["Problems","https://leetcode.com/problemset/"],["Study Plan","https://leetcode.com/study-plan/"],["Explore","https://leetcode.com/explore/"]]} progress={progress} field="lcProgress" addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress}/>}
-          {tab==="hackerrank"     && <ExtSite url="https://hackerrank.com" name="HackerRank" color="#2ec866" links={[["Interview Kit","https://hackerrank.com/interview/preparation-kit"],["Certify","https://hackerrank.com/skills-verification"],["Practice","https://hackerrank.com/domains"]]} progress={progress} field="hrProgress" addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress}/>}
-          {tab==="codeforces"     && <ExtSite url="https://codeforces.com" name="Codeforces" color="#1199ff" links={[["Problemset","https://codeforces.com/problemset"],["Contests","https://codeforces.com/contests"],["Gym","https://codeforces.com/gyms"]]} progress={progress} field="cfProgress" addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress}/>}
-          {/* Resume section */}
-          {tab==="resume_build"   && <ResumeBuild progress={progress} addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress}/>}
-          {tab==="resume_analyze" && <ResumeAnalyze progress={progress} addXP={addXP}/>}
-          {tab==="resume_tailor"  && <ResumeTailor progress={progress} addXP={addXP}/>}
-          {/* Courses */}
-          {tab==="courses"        && <Courses progress={progress} addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress} setTab={setTab}/>}
-          {tab==="mdn_learn"      && <CourseViewer course={COURSES.find(c=>c.id==="mdn")} progress={progress} addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress}/>}
-          {tab==="gfg_learn"      && <CourseViewer course={COURSES.find(c=>c.id==="gfg")} progress={progress} addXP={addXP} checkBadges={checkBadges} saveProgress={saveProgress}/>}
-          {/* AI Chat */}
-          {tab==="chat"           && <Chatbot/>}
+        {/* ── MAIN ── */}
+        <main style={{flex:1,overflowY:"auto",padding:"24px",position:"relative"}}>
+          {/* Ambient background glow */}
+          <div style={{position:"fixed",top:"20%",right:"5%",width:"300px",height:"300px",borderRadius:"50%",background:`radial-gradient(circle,${curSec?.color||T.accent}08 0%,transparent 70%)`,pointerEvents:"none",zIndex:0}}/>
+          <div style={{position:"relative",zIndex:1}}>
+            {tabId==="c_ai"    && <CoursesAI   prog={prog} addXP={addXP}/>}
+            {tabId==="c_mdn"   && <CoursesMDN  prog={prog} addXP={addXP}/>}
+            {tabId==="c_gfg"   && <CoursesGFG  prog={prog} addXP={addXP}/>}
+            {tabId==="cd_lc"   && <ExtSite url="https://leetcode.com" name="LeetCode" color="#f89f1b" links={[["All Problems","https://leetcode.com/problemset/"],["Study Plan","https://leetcode.com/study-plan/"],["Explore","https://leetcode.com/explore/"]]} prog={prog} field="lcProgress" addXP={addXP}/>}
+            {tabId==="cd_hr"   && <ExtSite url="https://hackerrank.com" name="HackerRank" color="#22d3a0" links={[["Interview Kit","https://hackerrank.com/interview/preparation-kit"],["Certify","https://hackerrank.com/skills-verification"],["Practice","https://hackerrank.com/domains"]]} prog={prog} field="hrProgress" addXP={addXP}/>}
+            {tabId==="cd_fcc"  && <FCC prog={prog} addXP={addXP}/>}
+            {tabId==="cd_ai"   && <AIQuestions prog={prog} addXP={addXP}/>}
+            {tabId==="cd_test" && <TopicTest   prog={prog} addXP={addXP}/>}
+            {tabId==="r_build"  && <ResumeBuild  prog={prog} addXP={addXP}/>}
+            {tabId==="r_ats"    && <ResumeATS    prog={prog} addXP={addXP}/>}
+            {tabId==="r_test"   && <ResumeTest   prog={prog} addXP={addXP}/>}
+            {tabId==="r_update" && <ResumeTailor prog={prog} addXP={addXP}/>}
+            {tabId==="i_hr"    && <InterviewHR   prog={prog} addXP={addXP}/>}
+            {tabId==="i_btech" && <InterviewBtech prog={prog} addXP={addXP}/>}
+            {tabId==="p_main"  && <Progress      prog={prog} user={user}/>}
+            {tabId==="ch_course"&& <ChatCourse/>}
+            {tabId==="ch_code"  && <ChatCode/>}
+          </div>
         </main>
       </div>
-      <style>{`
-        *{box-sizing:border-box;margin:0;padding:0;}
-        ::-webkit-scrollbar{width:5px;}
-        ::-webkit-scrollbar-track{background:#0f1117;}
-        ::-webkit-scrollbar-thumb{background:#252840;border-radius:3px;}
-        button:hover:not(:disabled){opacity:0.87;}
-        button:disabled{opacity:0.45;cursor:not-allowed!important;}
-        a{text-decoration:none;}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-        .fade-in{animation:fadeIn 0.3s ease}
-      `}</style>
+      <GS/>
     </div>
   );
 }
 
-// ─── Shared Components ────────────────────────────────────────────────────────
-const Lbl = { display:"block", fontSize:"12px", color:"#94a3b8", marginBottom:"5px", fontWeight:600 };
-const Inp = { width:"100%", padding:"10px 14px", background:"#0f1117", border:"1px solid #252840", borderRadius:"8px", color:"#e2e8f0", fontFamily:"inherit", fontSize:"14px", outline:"none", boxSizing:"border-box" };
+// ═══════════════════════════════════════════════════
+//  GLOBAL STYLES
+// ═══════════════════════════════════════════════════
+function GS(){ return <style>{`
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  ::-webkit-scrollbar{width:4px;}
+  ::-webkit-scrollbar-track{background:${T.bg};}
+  ::-webkit-scrollbar-thumb{background:${T.border2};border-radius:2px;}
+  button:hover:not(:disabled){opacity:0.82;transform:translateY(-1px);}
+  button{transition:all 0.15s;}
+  button:disabled{opacity:0.35;cursor:not-allowed!important;transform:none!important;}
+  a{text-decoration:none;}
+  input,textarea,select{font-family:'Sora','Segoe UI',sans-serif!important;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  .fin{animation:fadeUp 0.22s ease}
+  .card-hover:hover{background:${T.cardHov}!important;border-color:${T.border2}!important;transform:translateY(-2px);}
+  .card-hover{transition:all 0.2s!important;}
+`}</style>; }
 
-function Card({children,style={}}){ return <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:"14px",padding:"20px",...style}}>{children}</div>; }
-function Btn({children,onClick,disabled,color=C.accent,style={}}){ return <button onClick={onClick} disabled={disabled} style={{padding:"9px 18px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"13px",background:`linear-gradient(135deg,${color},${color}bb)`,color:"#fff",transition:"all 0.2s",...style}}>{children}</button>; }
-function Title({children}){ return <h2 style={{fontSize:"20px",fontWeight:800,color:C.text,marginBottom:"16px"}}>{children}</h2>; }
-function AIBox({title,content,color=C.accent}){ return <div style={{marginTop:"14px",padding:"16px",background:"#0f1117",borderRadius:"10px",border:`1px solid ${color}55`}}><div style={{color,fontWeight:700,marginBottom:"8px",fontSize:"14px"}}>{title}</div><p style={{color:"#cbd5e1",fontSize:"14px",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{content}</p></div>; }
-function TA({value,onChange,placeholder,rows=4,readOnly=false}){ return <textarea value={value} onChange={onChange} placeholder={placeholder} readOnly={readOnly} style={{width:"100%",minHeight:`${rows*44}px`,padding:"12px",background:"#0f1117",border:`1px solid ${C.border}`,borderRadius:"8px",color:C.text,fontFamily:"'JetBrains Mono',monospace",fontSize:"13px",outline:"none",resize:"vertical",boxSizing:"border-box"}}/>; }
-const diffColor = d => d==="Easy"?"#22c55e":d==="Medium"?"#f97316":"#ef4444";
-const catCol = { DSA:"#6366f1","System Design":"#ec4899",OOP:"#f59e0b",OS:"#14b8a6",Database:"#8b5cf6",React:"#38bdf8",HR:"#f97316",Networking:"#10b981",JavaScript:"#facc15" };
-
-// ─── Dashboard ────────────────────────────────────────────────────────────────
-function Dashboard({progress,setTab,user}){
-  const lv = Math.floor(progress.xp/100)+1;
-  const sections = [
-    { label:"🎯 Interview Prep", color:"#6366f1", items:[
-      { id:"interview",icon:"🧠",label:"Interview Questions",sub:"Topic-wise Q&A" },
-      { id:"mock",     icon:"🎤",label:"Mock Interview",      sub:"AI-powered simulation" },
-      { id:"ats",      icon:"📊",label:"ATS Score",           sub:"Resume compatibility" },
-    ]},
-    { label:"💻 Coding Practice", color:"#22c55e", items:[
-      { id:"practice",   icon:"🖥️",label:"DSA Practice",    sub:"12+ coding problems" },
-      { id:"aiq",        icon:"🤖",label:"AI Questions",    sub:"Unlimited unique Qs" },
-      { id:"leetcode",   icon:"🔗",label:"LeetCode",        sub:"Track your progress" },
-      { id:"hackerrank", icon:"🏆",label:"HackerRank",      sub:"Get certified" },
-      { id:"codeforces", icon:"⚡",label:"Codeforces",      sub:"Competitive programming" },
-    ]},
-    { label:"📄 Resume", color:"#f97316", items:[
-      { id:"resume_build",  icon:"✨",label:"Build Resume",   sub:"AI LaTeX generator" },
-      { id:"resume_analyze",icon:"🔍",label:"Analyze Resume", sub:"Get detailed feedback" },
-      { id:"resume_tailor", icon:"🎯",label:"Tailor for Job", sub:"Company-specific tuning" },
-    ]},
-    { label:"📚 Courses", color:"#eab308", items:[
-      { id:"courses",  icon:"🎓",label:"All Courses",   sub:"MDN, GFG, freeCodeCamp..." },
-      { id:"mdn_learn",icon:"📘",label:"MDN Web Dev",   sub:"JS, HTML, CSS, APIs" },
-      { id:"gfg_learn",icon:"🌿",label:"GFG DSA",       sub:"Algorithms, DS, CP" },
-    ]},
-  ];
-
+// ═══════════════════════════════════════════════════
+//  SHARED UI COMPONENTS
+// ═══════════════════════════════════════════════════
+function Card({children,style={},className=""}){
+  return <div className={className} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"18px",...style}}>{children}</div>;
+}
+function GCard({children,color=T.accent,style={}}){
+  return <div style={{background:`linear-gradient(135deg,${T.card},${T.cardHov})`,border:`1px solid ${color}30`,borderRadius:"14px",padding:"18px",boxShadow:`0 4px 24px ${color}12`,...style}}>{children}</div>;
+}
+function Btn({children,onClick,disabled,color=T.accent,outline=false,style={}}){
+  return <button onClick={onClick} disabled={disabled} style={{padding:"9px 18px",borderRadius:"9px",border:outline?`1px solid ${color}`:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"13px",background:outline?"transparent":`linear-gradient(135deg,${color},${color}cc)`,color:outline?color:"#fff",letterSpacing:"0.01em",...style}}>{children}</button>;
+}
+function PageTitle({children,color=T.accent}){
   return (
-    <div className="fade-in">
-      {/* Hero */}
-      <div style={{background:"linear-gradient(135deg,#1e1b4b,#1a1d2e)",borderRadius:"16px",padding:"28px 32px",marginBottom:"24px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"16px",border:`1px solid ${C.border}`}}>
+    <div style={{marginBottom:"22px"}}>
+      <h2 style={{fontSize:"20px",fontWeight:800,color:T.text,letterSpacing:"-0.5px"}}>{children}</h2>
+      <div style={{width:"32px",height:"2px",background:`linear-gradient(90deg,${color},transparent)`,marginTop:"6px",borderRadius:"1px"}}/>
+    </div>
+  );
+}
+function Badge2({children,color=T.accent}){
+  return <span style={{fontSize:"11px",fontWeight:700,color,background:`${color}18`,padding:"3px 10px",borderRadius:"999px",display:"inline-block",border:`1px solid ${color}30`}}>{children}</span>;
+}
+function TA({value,onChange,placeholder,rows=4,readOnly=false,style={}}){
+  return <textarea value={value} onChange={onChange} placeholder={placeholder} readOnly={readOnly}
+    style={{width:"100%",minHeight:`${rows*40}px`,padding:"12px",background:"#04080f",border:`1px solid ${T.border2}`,borderRadius:"9px",color:T.text,fontFamily:"'JetBrains Mono','Fira Code',monospace",fontSize:"13px",outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7,...style}}/>;
+}
+function InpField({value,onChange,placeholder,style={},type="text"}){
+  return <input type={type} value={value} onChange={onChange} placeholder={placeholder}
+    style={{padding:"10px 13px",background:"#04080f",border:`1px solid ${T.border2}`,borderRadius:"9px",color:T.text,fontFamily:"inherit",fontSize:"13px",outline:"none",...style}}
+    onFocus={e=>e.target.style.borderColor=T.accent} onBlur={e=>e.target.style.borderColor=T.border2}/>;
+}
+function SelField({value,onChange,options,style={}}){
+  return <select value={value} onChange={e=>onChange(e.target.value)} style={{padding:"9px 13px",background:"#04080f",border:`1px solid ${T.border2}`,borderRadius:"9px",color:T.text,fontFamily:"inherit",fontSize:"13px",outline:"none",...style}}>
+    {options.map(o=><option key={o} value={o}>{o}</option>)}
+  </select>;
+}
+function AIBox({title,content,color=T.accent}){
+  return <div style={{marginTop:"14px",padding:"16px",background:"#04080f",borderRadius:"10px",border:`1px solid ${color}30`,borderLeft:`3px solid ${color}`}}>
+    <div style={{color,fontWeight:700,marginBottom:"8px",fontSize:"12px",letterSpacing:"0.08em",textTransform:"uppercase"}}>{title}</div>
+    <p style={{color:"#b8c8e8",fontSize:"13px",lineHeight:1.85,whiteSpace:"pre-wrap"}}>{content}</p>
+  </div>;
+}
+function EmptyState({icon,title,sub}){
+  return <div style={{textAlign:"center",padding:"60px 20px",color:T.textMuted}}>
+    <div style={{fontSize:"48px",marginBottom:"14px",opacity:0.5}}>{icon}</div>
+    <div style={{fontSize:"15px",fontWeight:600,color:T.textSub,marginBottom:"6px"}}>{title}</div>
+    <div style={{fontSize:"13px"}}>{sub}</div>
+  </div>;
+}
+const dCol = d => d==="Easy"?T.green:d==="Medium"?T.yellow:T.red;
+const subCol = {OS:T.accent,DBMS:T.yellow,CN:T.green,OOP:T.pink,DSA:T.accentV};
+
+// ═══════════════════════════════════════════════════
+//  COURSES — AI NOTES
+// ═══════════════════════════════════════════════════
+function CoursesAI({prog,addXP}){
+  const [lang,setLang]=useState("JavaScript");
+  const [topic,setTopic]=useState(TOPICS_BY_LANG["JavaScript"][0]);
+  const [notes,setNotes]=useState("");
+  const [loading,setLoad]=useState(false);
+  const topics=TOPICS_BY_LANG[lang]||[];
+  useEffect(()=>setTopic(topics[0]),[lang]);
+
+  const generate=async()=>{
+    setLoad(true);setNotes("");
+    const r=await callAI([{role:"user",content:`Create comprehensive study notes on "${topic}" in ${lang}.\n\nStructure:\n## What is it?\n## Why it matters\n## How it works\n\`\`\`${lang.toLowerCase()}\n// Code example here\n\`\`\`\n## Common Interview Questions\n## Key Points to Remember`}],
+      "Expert CS teacher. Write clear, structured study notes with practical code examples. Make it interview-ready.");
+    setNotes(r);setLoad(false);
+    const key=`${lang}_${topic}`;
+    const tops=[...(prog.completedTopics||[])];
+    if(!tops.includes(key)){tops.push(key);addXP(15,{completedTopics:tops});}
+  };
+
+  const done=(prog.completedTopics||[]);
+  const progress=topics.filter(t=>done.includes(`${lang}_${t}`)).length;
+
+  return(
+    <div className="fin">
+      <PageTitle color={T.yellow}>✦ AI Study Notes</PageTitle>
+      <div style={{display:"grid",gridTemplateColumns:"220px 1fr",gap:"16px",alignItems:"start"}}>
+        {/* Left panel */}
         <div>
-          <div style={{fontSize:"11px",fontWeight:700,color:"#818cf8",letterSpacing:"0.12em",marginBottom:"6px"}}>WELCOME BACK</div>
-          <h1 style={{fontSize:"clamp(20px,4vw,30px)",fontWeight:900,color:C.text,marginBottom:"4px"}}>Placement Preparation</h1>
-          <h2 style={{fontSize:"clamp(16px,3vw,22px)",fontWeight:800,color:"#818cf8",marginBottom:"10px"}}>Dashboard</h2>
-          <p style={{color:C.muted,fontSize:"14px"}}>Hey <b style={{color:C.text}}>{user.charAt(0).toUpperCase()+user.slice(1)}</b>! Aaj kya karein? 🚀</p>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
-          <Btn onClick={()=>setTab("resume_build")} style={{padding:"11px 20px"}}>📄 Build Resume</Btn>
-          <Btn onClick={()=>setTab("chat")} color="#ec4899" style={{padding:"11px 20px"}}>💬 Ask AI</Btn>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(110px,1fr))",gap:"10px",marginBottom:"24px"}}>
-        {[["💻",progress.totalSolved,"Solved","#6366f1"],["🔥",`${progress.streak}d`,"Streak","#f97316"],["⚡",`Lv.${lv}`,"Level","#818cf8"],["🎯",progress.interviewAnswered,"Interviews","#22c55e"],["📊",progress.atsScore??"-","ATS Score","#eab308"],["🏅",progress.earnedBadges.length,"Badges","#ec4899"]].map(([ic,val,lbl,col],i)=>(
-          <Card key={i} style={{textAlign:"center",padding:"14px"}}>
-            <div style={{fontSize:"18px",marginBottom:"4px"}}>{ic}</div>
-            <div style={{fontSize:"18px",fontWeight:800,color:col}}>{val}</div>
-            <div style={{fontSize:"10px",color:C.muted}}>{lbl}</div>
+          <Card style={{marginBottom:"12px",padding:"14px"}}>
+            <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"10px"}}>SUBJECT</div>
+            <SelField value={lang} onChange={setLang} options={Object.keys(TOPICS_BY_LANG)} style={{width:"100%"}}/>
           </Card>
-        ))}
-      </div>
-
-      {/* Sections */}
-      {sections.map(sec=>(
-        <div key={sec.label} style={{marginBottom:"24px"}}>
-          <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"12px"}}>
-            <div style={{width:"3px",height:"20px",background:sec.color,borderRadius:"2px"}}/>
-            <h3 style={{fontSize:"16px",fontWeight:700,color:C.text}}>{sec.label}</h3>
-          </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:"12px"}}>
-            {sec.items.map(m=>(
-              <div key={m.id} onClick={()=>setTab(m.id)} style={{background:C.card,border:`1px solid ${C.border}`,borderLeft:`3px solid ${sec.color}`,borderRadius:"10px",padding:"16px",cursor:"pointer",transition:"all 0.2s"}}
-                onMouseEnter={e=>{e.currentTarget.style.background="#1e293b";e.currentTarget.style.transform="translateY(-2px)";}}
-                onMouseLeave={e=>{e.currentTarget.style.background=C.card;e.currentTarget.style.transform="";}}>
-                <div style={{fontSize:"22px",marginBottom:"8px"}}>{m.icon}</div>
-                <div style={{fontWeight:700,fontSize:"14px",marginBottom:"3px"}}>{m.label}</div>
-                <div style={{fontSize:"12px",color:C.muted,marginBottom:"10px"}}>{m.sub}</div>
-                <span style={{fontSize:"12px",color:sec.color,fontWeight:700}}>Open →</span>
-              </div>
-            ))}
-          </div>
+          <Card style={{padding:"12px"}}>
+            <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"8px"}}>TOPICS — {progress}/{topics.length}</div>
+            <div style={{background:T.border,borderRadius:"999px",height:"3px",marginBottom:"10px"}}>
+              <div style={{width:`${topics.length?progress/topics.length*100:0}%`,height:"100%",background:`linear-gradient(90deg,${T.yellow},${T.orange})`,borderRadius:"999px"}}/>
+            </div>
+            {topics.map(t=>{
+              const isDone=done.includes(`${lang}_${t}`);
+              return <button key={t} onClick={()=>setTopic(t)} style={{width:"100%",display:"flex",alignItems:"center",gap:"8px",padding:"8px 9px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",background:topic===t?`${T.yellow}15`:"transparent",color:topic===t?T.yellow:isDone?T.green:T.textMuted,marginBottom:"1px",textAlign:"left"}}>
+                <span style={{width:"13px",height:"13px",borderRadius:"3px",border:`1.5px solid ${isDone?T.green:T.border2}`,background:isDone?T.green:"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"8px",flexShrink:0}}>{isDone?"✓":""}</span>
+                <span style={{flex:1,lineHeight:1.3}}>{t}</span>
+              </button>;
+            })}
+          </Card>
         </div>
-      ))}
-
-      {/* Badges */}
-      <div style={{marginBottom:"8px",display:"flex",alignItems:"center",gap:"8px"}}>
-        <div style={{width:"3px",height:"20px",background:"#f59e0b",borderRadius:"2px"}}/>
-        <h3 style={{fontSize:"16px",fontWeight:700,color:C.text}}>🏅 Your Badges</h3>
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))",gap:"10px"}}>
-        {BADGES.map(b=>{
-          const earned = progress.earnedBadges.includes(b.id);
-          return <Card key={b.id} style={{textAlign:"center",opacity:earned?1:0.35,border:`1px solid ${earned?"#6366f1":C.border}`,padding:"12px"}}><div style={{fontSize:"22px"}}>{b.icon}</div><div style={{fontSize:"11px",fontWeight:700,marginTop:"5px",color:earned?C.text:C.muted}}>{b.name}</div><div style={{fontSize:"10px",color:C.muted,marginTop:"2px"}}>{b.desc}</div></Card>;
-        })}
+        {/* Right panel */}
+        <div>
+          <GCard color={T.yellow} style={{marginBottom:"14px"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"10px"}}>
+              <div>
+                <Badge2 color={T.yellow}>{lang}</Badge2>
+                <h3 style={{fontSize:"16px",fontWeight:700,marginTop:"8px",color:T.text}}>{topic}</h3>
+              </div>
+              <Btn onClick={generate} disabled={loading} color={T.yellow} style={{color:"#000"}}>{loading?"⏳ Generating...":"Generate Notes"}</Btn>
+            </div>
+          </GCard>
+          {loading && <div style={{textAlign:"center",padding:"50px"}}><div style={{fontSize:"36px",animation:"pulse 1s infinite",marginBottom:"12px"}}>📖</div><p style={{color:T.textMuted}}>Generating study notes for {topic}...</p></div>}
+          {notes && <Card className="fin" style={{padding:"20px"}}>
+            <div style={{color:"#c8d8f0",fontSize:"13px",lineHeight:1.9,whiteSpace:"pre-wrap",fontFamily:"inherit"}}>{notes}</div>
+          </Card>}
+          {!notes && !loading && <EmptyState icon="📖" title="Select a topic and generate notes" sub="AI will create comprehensive notes with examples and interview tips"/>}
+        </div>
       </div>
     </div>
   );
 }
 
-// ─── Interview Prep ───────────────────────────────────────────────────────────
-function Interview({progress,addXP}){
-  const [mode,setMode]=useState("general");
-  const [sel,setSel]=useState(null);
-  const [answer,setAnswer]=useState("");
-  const [resumeTxt,setRT]=useState("");
-  const [feedback,setFB]=useState("");
-  const [loading,setLoad]=useState(false);
-  const [catF,setCatF]=useState("All");
-  const cats=["All",...new Set(IQ.map(q=>q.cat))];
-
-  const getFeedback=async()=>{
-    if(!sel)return; setLoad(true);setFB("");
-    const r=await ai([{role:"user",content:`Interview Question: ${sel.q}\n\nCandidate's Answer: ${answer}\n\nProvide:\n1. What's good\n2. What's missing\n3. Ideal answer outline\n4. Score /10`}],
-      "Senior technical interviewer at top tech company. Honest, specific, constructive feedback. Be encouraging.");
-    setFB(r); addXP(30,{interviewAnswered:progress.interviewAnswered+1}); setLoad(false);
-  };
-  const fromResume=async()=>{
-    if(!sel||!resumeTxt.trim())return; setLoad(true);setFB("");
-    const r=await ai([{role:"user",content:`Resume:\n${resumeTxt}\n\nGenerate a strong STAR-format answer for:\n"${sel.q}"\n\nUse specific examples from this candidate's actual resume.`}],
-      "Career coach. Generate specific, compelling interview answers using real experience.");
-    setFB(r); addXP(20,{interviewAnswered:progress.interviewAnswered+1}); setLoad(false);
-  };
-  const filtered=catF==="All"?IQ:IQ.filter(q=>q.cat===catF);
-
-  return (
-    <div className="fade-in">
-      <Title>🧠 Interview Preparation</Title>
-      <div style={{display:"flex",gap:"8px",marginBottom:"20px",flexWrap:"wrap"}}>
-        <Btn onClick={()=>setMode("general")} color={mode==="general"?C.accent:"#1e293b"}>📋 General Questions</Btn>
-        <Btn onClick={()=>setMode("resume")}  color={mode==="resume"?"#8b5cf6":"#1e293b"}>📄 Resume-Based Answers</Btn>
-      </div>
-      {mode==="resume"&&(
-        <Card style={{marginBottom:"16px"}}>
-          <div style={{fontSize:"13px",color:C.muted,fontWeight:600,marginBottom:"8px"}}>Paste your resume — AI will generate answers from YOUR experience:</div>
-          <TA value={resumeTxt} onChange={e=>setRT(e.target.value)} placeholder="Resume content paste karo yahan..." rows={4}/>
-        </Card>
-      )}
-      <div style={{display:"flex",gap:"6px",marginBottom:"14px",flexWrap:"wrap"}}>
-        {cats.map(c=><button key={c} onClick={()=>setCatF(c)} style={{padding:"5px 12px",borderRadius:"999px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:700,background:catF===c?(catCol[c]||C.accent):"#1e293b",color:"#fff",opacity:catF===c?1:0.6}}>{c}</button>)}
-      </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:"12px",marginBottom:"20px"}}>
-        {filtered.map(q=>(
-          <div key={q.id} onClick={()=>{setSel(q);setAnswer("");setFB("");}} style={{padding:"16px",borderRadius:"12px",border:`1px solid ${sel?.id===q.id?"#6366f1":C.border}`,background:sel?.id===q.id?"#1e1b4b":C.card,cursor:"pointer",transition:"all 0.15s"}}>
-            <span style={{fontSize:"11px",fontWeight:700,color:catCol[q.cat]||"#64748b",background:`${catCol[q.cat]||"#64748b"}22`,padding:"3px 10px",borderRadius:"999px"}}>{q.cat}</span>
-            <p style={{fontSize:"14px",color:"#cbd5e1",marginTop:"10px",lineHeight:1.6}}>{q.q}</p>
-            <p style={{fontSize:"11px",color:C.muted,marginTop:"6px"}}>💡 {q.hint}</p>
-          </div>
-        ))}
-      </div>
-      {sel&&(
-        <Card>
-          <h3 style={{fontSize:"14px",fontWeight:700,color:"#a5b4fc",marginBottom:"14px"}}>Q: {sel.q}</h3>
-          {mode==="general"?(
-            <><TA value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Apna answer likho... (HR ke liye STAR method use karo)" rows={4}/><Btn onClick={getFeedback} disabled={loading||!answer.trim()} style={{marginTop:"12px"}}>{loading?"⏳ Analyzing...":"🤖 Get AI Feedback (+30 XP)"}</Btn></>
-          ):(
-            <Btn onClick={fromResume} disabled={loading||!resumeTxt.trim()} color="#8b5cf6">{loading?"⏳ Generating...":"✨ Generate Answer from My Resume (+20 XP)"}</Btn>
-          )}
-          {feedback&&<AIBox title="🎯 AI Feedback" content={feedback} color="#6366f1"/>}
-        </Card>
-      )}
-    </div>
-  );
+// ═══════════════════════════════════════════════════
+//  COURSES — MDN & GFG (shared template)
+// ═══════════════════════════════════════════════════
+function CoursesMDN(){
+  const links=[
+    {l:"JavaScript Guide",u:"https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide"},
+    {l:"HTML Reference",u:"https://developer.mozilla.org/en-US/docs/Web/HTML"},
+    {l:"CSS Reference",u:"https://developer.mozilla.org/en-US/docs/Web/CSS"},
+    {l:"Web APIs",u:"https://developer.mozilla.org/en-US/docs/Web/API"},
+    {l:"Async JS",u:"https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous"},
+    {l:"Fetch API",u:"https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"},
+    {l:"Web Forms",u:"https://developer.mozilla.org/en-US/docs/Learn/Forms"},
+  ];
+  return <EmbedReader name="MDN Web Docs" color="#4f8ef7" links={links}/>;
 }
-
-// ─── Mock Interview ───────────────────────────────────────────────────────────
-function MockInterview({progress,addXP}){
-  const [role,setRole]=useState("SDE-1 (Fresher)");
-  const [company,setCompany]=useState("General");
-  const [session,setSession]=useState(null);
-  const [msgIdx,setMsgIdx]=useState(0);
-  const [answer,setAnswer]=useState("");
-  const [feedback,setFB]=useState("");
-  const [loading,setLoad]=useState(false);
-  const [done,setDone]=useState(false);
-  const roles=["SDE-1 (Fresher)","SDE-2 (2-4 yrs)","Frontend Dev","Backend Dev","Full Stack","Data Scientist","DevOps"];
-  const companies=["General","Google","Amazon","Microsoft","Flipkart","Startup"];
-
-  const startMock=async()=>{
-    setLoad(true);setSession(null);setDone(false);setMsgIdx(0);setFB("");
-    const r=await ai([{role:"user",content:`Create a realistic mock interview session for a ${role} position at ${company}.\n\nGenerate exactly 5 interview questions (mix of technical, behavioral, and coding approach). Format as JSON:\n{"questions":[{"q":"question text","type":"Technical/Behavioral/Coding","tip":"what to focus on"}]}`}],
-      "Expert technical interviewer. Return only valid JSON. No markdown, no explanation.");
-    try {
-      const parsed=JSON.parse(r.replace(/```json|```/g,"").trim());
-      setSession(parsed); setMsgIdx(0);
-    } catch { alert("Could not generate. Try again."); }
-    setLoad(false);
-  };
-
-  const submitAnswer=async()=>{
-    if(!session||!answer.trim())return;
-    setLoad(true);setFB("");
-    const q=session.questions[msgIdx];
-    const r=await ai([{role:"user",content:`Interview Question: ${q.q}\nType: ${q.type}\n\nCandidate's Answer: ${answer}\n\nGive: score/10, what was good, what was missing, model answer in 3-4 lines.`}],
-      "Experienced interviewer. Give honest, brief feedback. Score strictly.");
-    setFB(r);
-    if(msgIdx>=session.questions.length-1){
-      setDone(true); addXP(100,{interviewAnswered:progress.interviewAnswered+session.questions.length});
-    }
-    setLoad(false);
-  };
-
-  const next=()=>{setMsgIdx(i=>i+1);setAnswer("");setFB("");};
-
-  return (
-    <div className="fade-in">
-      <Title>🎤 Mock Interview</Title>
-      <Card style={{marginBottom:"16px"}}>
-        <div style={{display:"flex",gap:"12px",flexWrap:"wrap",alignItems:"flex-end"}}>
-          {[["Role",role,setRole,roles],["Company",company,setCompany,companies]].map(([lbl,val,set,opts])=>(
-            <div key={lbl}><div style={{fontSize:"12px",color:C.muted,marginBottom:"4px"}}>{lbl}</div>
-            <select value={val} onChange={e=>set(e.target.value)} style={{padding:"8px 12px",background:"#0f1117",border:`1px solid ${C.border}`,borderRadius:"8px",color:C.text,fontFamily:"inherit",fontSize:"13px"}}>{opts.map(o=><option key={o}>{o}</option>)}</select></div>
-          ))}
-          <Btn onClick={startMock} disabled={loading}>{loading?"⏳ Preparing...":"🎤 Start Mock Interview"}</Btn>
+function CoursesGFG(){
+  const links=[
+    {l:"Data Structures",u:"https://www.geeksforgeeks.org/data-structures/"},
+    {l:"Algorithms",u:"https://www.geeksforgeeks.org/fundamentals-of-algorithms/"},
+    {l:"Dynamic Programming",u:"https://www.geeksforgeeks.org/dynamic-programming/"},
+    {l:"Graph Algorithms",u:"https://www.geeksforgeeks.org/graph-data-structure-and-algorithms/"},
+    {l:"System Design",u:"https://www.geeksforgeeks.org/system-design-tutorial/"},
+    {l:"DBMS",u:"https://www.geeksforgeeks.org/dbms/"},
+    {l:"OS Concepts",u:"https://www.geeksforgeeks.org/operating-systems/"},
+    {l:"Interview Prep",u:"https://www.geeksforgeeks.org/interview-preparation/"},
+  ];
+  return <EmbedReader name="GeeksForGeeks" color="#22d3a0" links={links}/>;
+}
+function EmbedReader({name,color,links}){
+  const [sel,setSel]=useState(links[0].l);
+  const cur=links.find(l=>l.l===sel)||links[0];
+  return(
+    <div className="fin">
+      <PageTitle color={color}>{name}</PageTitle>
+      <Card style={{marginBottom:"14px",padding:"12px"}}>
+        <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
+          {links.map(l=><button key={l.l} onClick={()=>setSel(l.l)} style={{padding:"6px 13px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:600,background:sel===l.l?color:"#0d1526",color:sel===l.l?"#000":T.textMuted,transition:"all 0.15s"}}>{l.l}</button>)}
         </div>
       </Card>
-
-      {session&&!done&&(
-        <Card>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"16px",flexWrap:"wrap",gap:"8px"}}>
-            <div style={{fontSize:"13px",fontWeight:700,color:C.muted}}>Question {msgIdx+1} of {session.questions.length}</div>
-            <div style={{display:"flex",gap:"4px"}}>{session.questions.map((_,i)=><div key={i} style={{width:"24px",height:"4px",borderRadius:"2px",background:i<=msgIdx?"#6366f1":"#1e293b"}}/>)}</div>
-          </div>
-          <div style={{padding:"16px",background:"#0f1117",borderRadius:"10px",marginBottom:"16px",border:`1px solid ${C.border}`}}>
-            <span style={{fontSize:"11px",fontWeight:700,color:catCol[session.questions[msgIdx].type]||"#818cf8",background:`${catCol[session.questions[msgIdx].type]||"#818cf8"}22`,padding:"3px 10px",borderRadius:"999px"}}>{session.questions[msgIdx].type}</span>
-            <p style={{fontSize:"16px",fontWeight:600,color:C.text,marginTop:"12px",lineHeight:1.6}}>{session.questions[msgIdx].q}</p>
-            <p style={{fontSize:"12px",color:C.muted,marginTop:"8px"}}>💡 Focus: {session.questions[msgIdx].tip}</p>
-          </div>
-          <TA value={answer} onChange={e=>setAnswer(e.target.value)} placeholder="Apna answer yahan likho..." rows={5}/>
-          <div style={{display:"flex",gap:"10px",marginTop:"12px",flexWrap:"wrap"}}>
-            <Btn onClick={submitAnswer} disabled={loading||!answer.trim()}>{loading?"⏳ Evaluating...":"Submit Answer"}</Btn>
-            {feedback&&msgIdx<session.questions.length-1&&<Btn onClick={next} color="#374151">Next Question →</Btn>}
-          </div>
-          {feedback&&<AIBox title="📊 Interviewer Feedback" content={feedback} color="#6366f1"/>}
-        </Card>
-      )}
-      {done&&(
-        <Card style={{textAlign:"center",padding:"40px"}}>
-          <div style={{fontSize:"48px",marginBottom:"16px"}}>🎉</div>
-          <h3 style={{fontSize:"20px",fontWeight:800,color:"#22c55e",marginBottom:"8px"}}>Mock Interview Complete!</h3>
-          <p style={{color:C.muted,marginBottom:"16px"}}>+100 XP earned! Great job practicing!</p>
-          <Btn onClick={startMock}>🔄 New Session</Btn>
-        </Card>
-      )}
-    </div>
-  );
-}
-
-// ─── ATS Score ────────────────────────────────────────────────────────────────
-function ATSScore({progress,addXP,checkBadges,saveProgress}){
-  const [rTxt,setRT]=useState("");
-  const [jd,setJD]=useState("");
-  const [result,setRes]=useState(null);
-  const [loading,setLoad]=useState(false);
-
-  const analyze=async()=>{
-    if(!rTxt.trim())return; setLoad(true);setRes(null);
-    const r=await ai([{role:"user",content:`Analyze this resume for ATS${jd?` against job:\n${jd}\n\nResume:\n${rTxt}`:`:\n${rTxt}`}\n\nReturn ONLY valid JSON:\n{"score":75,"matched":["React","Python"],"missing":["Docker","Kubernetes"],"formatting":["Issue1"],"improvements":["Tip1"],"sections":{"experience":80,"skills":70,"education":90}}`}],
-      "ATS expert. Return ONLY valid JSON. No markdown. No explanation.");
-    try {
-      const p=JSON.parse(r.replace(/```json|```/g,"").trim());
-      setRes(p);
-      const up=checkBadges({...progress,atsScore:p.score});
-      addXP(20,{atsScore:p.score});
-    } catch { setRes({score:65,matched:[],missing:[],formatting:[],improvements:["Could not parse. Paste cleaner text."]}); }
-    setLoad(false);
-  };
-
-  const sc=result?.score||0;
-  const scCol=sc>=80?"#22c55e":sc>=60?"#f97316":"#ef4444";
-
-  return (
-    <div className="fade-in">
-      <Title>📊 ATS Score Checker</Title>
-      <p style={{color:C.muted,fontSize:"13px",marginBottom:"20px"}}>Check how well your resume passes Applicant Tracking Systems. Optimize keywords for better shortlisting.</p>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px",marginBottom:"16px"}}>
-        <Card><div style={{fontSize:"13px",fontWeight:700,color:C.muted,marginBottom:"8px"}}>📄 Resume Text *</div><TA value={rTxt} onChange={e=>setRT(e.target.value)} placeholder="Resume paste karo..." rows={8}/></Card>
-        <Card><div style={{fontSize:"13px",fontWeight:700,color:C.muted,marginBottom:"8px"}}>🎯 Job Description (optional)</div><TA value={jd} onChange={e=>setJD(e.target.value)} placeholder="Job description paste karo better keyword match ke liye..." rows={8}/></Card>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}}>
+        <span style={{fontSize:"14px",fontWeight:700,color}}>{sel}</span>
+        <a href={cur.u} target="_blank" rel="noreferrer" style={{padding:"7px 14px",borderRadius:"8px",background:color,color:"#000",fontWeight:700,fontSize:"12px"}}>Open Full ↗</a>
       </div>
-      <Btn onClick={analyze} disabled={loading||!rTxt.trim()} style={{marginBottom:"24px"}}>{loading?"⏳ Analyzing...":"📊 Check ATS Score"}</Btn>
-      {result&&(
-        <div className="fade-in">
-          <Card style={{marginBottom:"16px"}}>
-            <div style={{display:"flex",alignItems:"center",gap:"24px",flexWrap:"wrap"}}>
-              <div style={{textAlign:"center"}}><div style={{fontSize:"56px",fontWeight:900,color:scCol,lineHeight:1}}>{sc}</div><div style={{fontSize:"13px",color:C.muted}}>/100 ATS Score</div></div>
-              <div style={{flex:1,minWidth:"160px"}}>
-                <div style={{background:"#1e293b",borderRadius:"999px",height:"12px",overflow:"hidden",marginBottom:"8px"}}><div style={{width:`${sc}%`,height:"100%",background:`linear-gradient(90deg,${scCol},${scCol}88)`,borderRadius:"999px",transition:"width 1s"}}/></div>
-                <div style={{fontSize:"14px",fontWeight:700,color:scCol}}>{sc>=80?"✅ ATS Optimized!":sc>=60?"⚠️ Needs Improvement":"❌ Major Issues Found"}</div>
-              </div>
-            </div>
-          </Card>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(260px,1fr))",gap:"14px"}}>
-            {result.matched?.length>0&&<Card><div style={{fontWeight:700,color:"#22c55e",marginBottom:"10px"}}>✅ Matched ({result.matched.length})</div>{result.matched.map(k=><span key={k} style={{display:"inline-block",background:"#14532d",color:"#86efac",padding:"3px 10px",borderRadius:"999px",fontSize:"12px",margin:"3px"}}>{k}</span>)}</Card>}
-            {result.missing?.length>0&&<Card><div style={{fontWeight:700,color:"#ef4444",marginBottom:"10px"}}>❌ Missing ({result.missing.length})</div>{result.missing.map(k=><span key={k} style={{display:"inline-block",background:"#450a0a",color:"#fca5a5",padding:"3px 10px",borderRadius:"999px",fontSize:"12px",margin:"3px"}}>{k}</span>)}</Card>}
-            {result.improvements?.length>0&&<Card style={{gridColumn:"1/-1"}}><div style={{fontWeight:700,color:"#f97316",marginBottom:"10px"}}>💡 Improvements</div>{result.improvements.map((imp,i)=><div key={i} style={{padding:"7px 0",borderBottom:`1px solid ${C.border}`,color:"#cbd5e1",fontSize:"14px"}}>• {imp}</div>)}</Card>}
-          </div>
-        </div>
-      )}
+      <Card style={{padding:"0",overflow:"hidden",borderRadius:"14px"}}>
+        <iframe src={cur.u} style={{width:"100%",height:"620px",border:"none"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
+      </Card>
     </div>
   );
 }
 
-// ─── Practice ─────────────────────────────────────────────────────────────────
-function Practice({progress,addXP,checkBadges,saveProgress}){
-  const [filter,setFilter]=useState("All");
-  const [lang,setLang]=useState("JavaScript");
-  const [sel,setSel]=useState(null);
-  const [code,setCode]=useState("");
-  const [hint,setHint]=useState("");
-  const [hLoad,setHL]=useState(false);
-  const [review,setRev]=useState("");
-  const [rLoad,setRL]=useState(false);
-
-  const flat=PROBLEMS;
-  const filtered=filter==="All"?flat:flat.filter(q=>q.diff===filter);
-
-  const getHint=async()=>{ if(!sel)return; setHL(true);setHint(""); const r=await ai([{role:"user",content:`Hint (NO full solution) for ${lang}: ${sel.title}\n${sel.desc}`}]); setHint(r); setHL(false); };
-  const getReview=async()=>{ if(!code.trim()||!sel)return; setRL(true);setRev(""); const r=await ai([{role:"user",content:`Review this ${lang} code for "${sel.title}":\n\`\`\`${lang}\n${code}\n\`\`\`\nGive: correctness, time/space complexity, improvements.`}],"Senior SWE. Specific constructive review."); setRev(r); setRL(false); };
-  const markSolved=()=>{
-    if(!sel)return;
-    const ids=[...(progress.solvedIds||[])];
-    if(!ids.includes(sel.id)){ ids.push(sel.id); addXP(50,{totalSolved:progress.totalSolved+1,solvedIds:ids}); alert("✅ +50 XP!"); }
-    else alert("Already solved! Pick another.");
-  };
-
-  return (
-    <div style={{display:"grid",gridTemplateColumns:sel?"1fr 1.4fr":"1fr",gap:"20px",alignItems:"start"}} className="fade-in">
-      <div>
-        <Title>🖥️ DSA Practice</Title>
-        <p style={{color:C.muted,fontSize:"13px",marginBottom:"14px"}}>Pure coding problems — no theory. AI hints + code review. Sabhi languages available!</p>
-        <div style={{display:"flex",gap:"6px",marginBottom:"14px",flexWrap:"wrap",alignItems:"center"}}>
-          {["All","Easy","Medium","Hard"].map(f=><button key={f} onClick={()=>setFilter(f)} style={{padding:"5px 14px",borderRadius:"999px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:700,background:filter===f?(f==="All"?"#6366f1":diffColor(f)):"#1e293b",color:"#fff",opacity:filter===f?1:0.6}}>{f}</button>)}
-          <select value={lang} onChange={e=>setLang(e.target.value)} style={{marginLeft:"auto",padding:"6px 10px",background:"#1e293b",border:`1px solid ${C.border}`,borderRadius:"8px",color:C.text,fontFamily:"inherit",fontSize:"12px"}}>
-            {LANGUAGES.map(l=><option key={l}>{l}</option>)}
-          </select>
+// ═══════════════════════════════════════════════════
+//  CODING — EXTERNAL SITE
+// ═══════════════════════════════════════════════════
+function ExtSite({url,name,color,links,prog,field,addXP}){
+  const val=prog[field]||0;
+  const [inp,setInp]=useState(val);
+  return(
+    <div className="fin">
+      <PageTitle color={color}>{name}</PageTitle>
+      <GCard color={color} style={{marginBottom:"14px"}}>
+        <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"16px"}}>
+          {links.map(([l,u])=><a key={l} href={u} target="_blank" rel="noreferrer" style={{padding:"8px 14px",borderRadius:"8px",background:color,color:"#000",fontWeight:700,fontSize:"12px"}}>{l} ↗</a>)}
         </div>
-        {filtered.map(q=>{
-          const solved=(progress.solvedIds||[]).includes(q.id);
-          return <div key={q.id} onClick={()=>{setSel(q);setCode("");setHint("");setRev("");}} style={{padding:"13px",borderRadius:"10px",marginBottom:"7px",border:`1px solid ${sel?.id===q.id?"#6366f1":C.border}`,background:sel?.id===q.id?"#1e1b4b":C.card,cursor:"pointer",transition:"all 0.15s"}}>
-            <div style={{fontWeight:600,fontSize:"14px",marginBottom:"5px",display:"flex",alignItems:"center",gap:"6px"}}>{solved&&<span style={{color:"#22c55e",fontSize:"11px"}}>✓</span>}{q.title}</div>
-            <div style={{display:"flex",gap:"4px",flexWrap:"wrap"}}><span style={{fontSize:"11px",fontWeight:700,color:diffColor(q.diff),background:`${diffColor(q.diff)}22`,padding:"2px 8px",borderRadius:"999px"}}>{q.diff}</span>{q.tags.map(t=><span key={t} style={{fontSize:"11px",color:C.muted,background:"#1e293b",padding:"2px 8px",borderRadius:"999px"}}>{t}</span>)}</div>
-          </div>;
-        })}
-      </div>
-      {sel&&(
-        <div>
-          <Card style={{marginBottom:"14px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:"8px",marginBottom:"10px"}}>
-              <h3 style={{fontSize:"15px",fontWeight:800}}>{sel.title}</h3>
-              <span style={{fontSize:"12px",fontWeight:700,color:diffColor(sel.diff)}}>{sel.diff}</span>
-            </div>
-            <p style={{color:"#cbd5e1",fontSize:"14px",lineHeight:1.7,marginBottom:"10px"}}>{sel.desc}</p>
-            <pre style={{background:"#0f1117",padding:"12px",borderRadius:"8px",fontFamily:"monospace",fontSize:"12px",color:"#a5b4fc",overflowX:"auto",whiteSpace:"pre-wrap"}}>{sel.example}</pre>
-          </Card>
-          <Card>
-            <div style={{fontSize:"12px",color:C.muted,fontWeight:600,marginBottom:"6px"}}>Your {lang} Solution:</div>
-            <TA value={code} onChange={e=>setCode(e.target.value)} placeholder={`// Write your ${lang} solution...\n// Think about time & space complexity!`} rows={6}/>
-            <div style={{display:"flex",gap:"8px",marginTop:"12px",flexWrap:"wrap"}}>
-              <Btn onClick={getHint} disabled={hLoad}>{hLoad?"⏳...":"💡 Hint"}</Btn>
-              <Btn onClick={getReview} disabled={rLoad||!code.trim()} color="#8b5cf6">{rLoad?"⏳...":"🔍 AI Review"}</Btn>
-              <Btn onClick={markSolved} color="#22c55e">✅ Solved (+50 XP)</Btn>
-            </div>
-            {hint&&<AIBox title="💡 Hint" content={hint} color="#6366f1"/>}
-            {review&&<AIBox title="🔍 Code Review" content={review} color="#8b5cf6"/>}
-          </Card>
+        <div style={{display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap"}}>
+          <span style={{fontSize:"13px",color:T.textSub}}>Problems solved:</span>
+          <input type="number" min="0" value={inp} onChange={e=>setInp(Number(e.target.value))} style={{width:"75px",padding:"7px",background:"#04080f",border:`1px solid ${T.border2}`,borderRadius:"7px",color:T.text,fontFamily:"inherit",fontSize:"13px",outline:"none",textAlign:"center"}}/>
+          <Btn onClick={()=>{addXP(0,{[field]:inp});alert(`✅ Saved: ${inp} problems`);}} color={color}><span style={{color:"#000"}}>Save</span></Btn>
         </div>
-      )}
+        <div style={{marginTop:"12px",background:T.border,borderRadius:"999px",height:"5px"}}>
+          <div style={{width:`${Math.min(val,500)/5}%`,height:"100%",background:`linear-gradient(90deg,${color},${color}99)`,borderRadius:"999px"}}/>
+        </div>
+        <div style={{fontSize:"11px",color:T.textMuted,marginTop:"5px"}}>{val} solved</div>
+      </GCard>
+      <Card style={{padding:"0",overflow:"hidden",borderRadius:"14px"}}>
+        <iframe src={url} style={{width:"100%",height:"580px",border:"none"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
+      </Card>
     </div>
   );
 }
 
-// ─── AI Questions ──────────────────────────────────────────────────────────────
-function AIQuestions({progress,addXP}){
+// ═══════════════════════════════════════════════════
+//  CODING — freeCodeCamp
+// ═══════════════════════════════════════════════════
+function FCC(){
+  const paths=[
+    {l:"Responsive Web Design",u:"https://www.freecodecamp.org/learn/2022/responsive-web-design/"},
+    {l:"JS Algorithms & DS",u:"https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/"},
+    {l:"Front End Libraries",u:"https://www.freecodecamp.org/learn/front-end-development-libraries/"},
+    {l:"APIs & Microservices",u:"https://www.freecodecamp.org/learn/back-end-development-and-apis/"},
+    {l:"Python / Scientific",u:"https://www.freecodecamp.org/learn/scientific-computing-with-python/"},
+  ];
+  return <EmbedReader name="freeCodeCamp" color={T.yellow} links={paths.map(p=>({l:p.l,u:p.u}))}/>;
+}
+
+// ═══════════════════════════════════════════════════
+//  CODING — AI QUESTIONS
+// ═══════════════════════════════════════════════════
+function AIQuestions({prog,addXP}){
   const [diff,setDiff]=useState("Medium");
   const [lang,setLang]=useState("JavaScript");
   const [topic,setTopic]=useState("Any");
   const [q,setQ]=useState(null);
-  const [loading,setLoad]=useState(false);
   const [code,setCode]=useState("");
+  const [loading,setLoad]=useState(false);
+  const [rev,setRev]=useState("");
+  const [rLoad,setRL]=useState(false);
   const topics=["Any","Arrays","Strings","Trees","Graphs","Dynamic Programming","Sorting","Linked Lists","Stacks/Queues","Binary Search","Greedy","Backtracking","Math","Hashing","Two Pointers"];
 
   const generate=async()=>{
-    setLoad(true);setQ(null);setCode("");
-    const raw=await ai([{role:"user",content:`Generate a unique ${diff} ${lang} coding problem on ${topic==="Any"?"any DSA topic":topic}.\n\nFormat:\nTITLE: ...\nTAGS: t1, t2\nDESCRIPTION:\n...\nEXAMPLE:\nInput: ...\nOutput: ...\nCONSTRAINTS:\n...`}],
-      "Competitive programming expert. CODING problems only — no theory. Realistic, educational, original.");
+    setLoad(true);setQ(null);setCode("");setRev("");
+    const raw=await callAI([{role:"user",content:`Generate a unique ${diff} ${lang} coding problem on ${topic==="Any"?"any DSA topic":topic}.\n\nExact format:\nTITLE: ...\nTAGS: tag1, tag2\nDESCRIPTION:\n...\nEXAMPLE:\nInput: ...\nOutput: ...\nCONSTRAINTS:\n...`}],
+      "Competitive programming expert. CODING ONLY — no theory. Original, practical, educational.");
     const lines=raw.split('\n');
     const gl=p=>lines.find(l=>l.startsWith(p))?.replace(p,"").trim()||"";
-    const gb=(s,e)=>{ const si=lines.findIndex(l=>l.startsWith(s)); if(si===-1)return""; const ei=lines.findIndex((l,i)=>i>si&&l.startsWith(e)); return lines.slice(si+1,ei===-1?undefined:ei).join('\n').trim(); };
+    const gb=(s,e)=>{const si=lines.findIndex(l=>l.startsWith(s));if(si===-1)return"";const ei=lines.findIndex((l,i)=>i>si&&l.startsWith(e));return lines.slice(si+1,ei===-1?undefined:ei).join('\n').trim();};
     setQ({title:gl("TITLE:"),tags:gl("TAGS:").split(',').map(t=>t.trim()),diff,desc:gb("DESCRIPTION:","EXAMPLE:"),example:gb("EXAMPLE:","CONSTRAINTS:"),constraints:gb("CONSTRAINTS:","~~~")});
     setLoad(false);
   };
+  const getReview=async()=>{
+    setRL(true);setRev("");
+    const r=await callAI([{role:"user",content:`Review this ${lang} solution for "${q.title}":\n\`\`\`${lang}\n${code}\n\`\`\`\nCover: correctness, time/space complexity, improvements, edge cases.`}],"Senior SWE. Specific, constructive code review.");
+    setRev(r);setRL(false);
+  };
 
-  return (
-    <div className="fade-in">
-      <Title>🤖 AI-Generated Questions</Title>
-      <p style={{color:C.muted,fontSize:"13px",marginBottom:"20px"}}>Unlimited unique coding problems — Basic to Advanced, any language, any topic!</p>
-      <Card style={{marginBottom:"20px"}}>
-        <div style={{display:"flex",gap:"12px",flexWrap:"wrap",alignItems:"flex-end"}}>
-          {[["Difficulty",diff,setDiff,["Easy","Medium","Hard"]],["Language",lang,setLang,LANGUAGES],["Topic",topic,setTopic,topics]].map(([lbl,val,set,opts])=>(
-            <div key={lbl}><div style={{fontSize:"11px",color:C.muted,marginBottom:"4px",fontWeight:600}}>{lbl}</div>
-            <select value={val} onChange={e=>set(e.target.value)} style={{padding:"8px 12px",background:"#0f1117",border:`1px solid ${C.border}`,borderRadius:"8px",color:C.text,fontFamily:"inherit",fontSize:"13px"}}>{opts.map(o=><option key={o}>{o}</option>)}</select></div>
+  return(
+    <div className="fin">
+      <PageTitle color={T.green}>✦ AI-Generated Questions</PageTitle>
+      <GCard color={T.green} style={{marginBottom:"16px"}}>
+        <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"flex-end"}}>
+          {[["Difficulty",diff,setDiff,["Easy","Medium","Hard"]],["Language",lang,setLang,LANGS],["Topic",topic,setTopic,topics]].map(([lbl,val,set,opts])=>(
+            <div key={lbl}><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl.toUpperCase()}</div>
+              <SelField value={val} onChange={set} options={opts}/></div>
           ))}
-          <Btn onClick={generate} disabled={loading}>{loading?"⏳ Generating...":"⚡ Generate Question"}</Btn>
+          <Btn onClick={generate} disabled={loading} color={T.green} style={{alignSelf:"flex-end"}}><span style={{color:"#000"}}>{loading?"⏳ Generating...":"⚡ New Question"}</span></Btn>
         </div>
-      </Card>
-      {loading&&<div style={{textAlign:"center",padding:"60px",color:"#6366f1"}}><div style={{fontSize:"44px",animation:"pulse 1s infinite"}}>⚙️</div><p style={{marginTop:"14px"}}>AI is crafting a unique problem...</p></div>}
-      {q&&!loading&&(
-        <Card className="fade-in">
-          <div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:"8px",marginBottom:"10px"}}>
-            <h3 style={{fontSize:"17px",fontWeight:800}}>{q.title}</h3>
-            <span style={{fontSize:"12px",fontWeight:700,color:diffColor(q.diff)}}>{q.diff}</span>
+      </GCard>
+      {loading && <div style={{textAlign:"center",padding:"50px"}}><div style={{fontSize:"36px",animation:"pulse 1s infinite"}}>⚙️</div><p style={{color:T.textMuted,marginTop:"12px"}}>Generating unique problem...</p></div>}
+      {q && !loading && (
+        <Card className="fin">
+          <div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:"8px",marginBottom:"12px"}}>
+            <div><h3 style={{fontSize:"16px",fontWeight:800,marginBottom:"6px"}}>{q.title}</h3>
+              <div style={{display:"flex",gap:"5px",flexWrap:"wrap"}}>{q.tags?.filter(Boolean).map(t=><Badge2 key={t} color={T.accentV}>{t}</Badge2>)}</div>
+            </div>
+            <Badge2 color={dCol(q.diff)}>{q.diff}</Badge2>
           </div>
-          <div style={{marginBottom:"12px"}}>{q.tags?.filter(Boolean).map(t=><span key={t} style={{fontSize:"11px",background:"#1e293b",color:"#818cf8",padding:"2px 10px",borderRadius:"999px",marginRight:"6px",display:"inline-block",marginBottom:"4px"}}>{t}</span>)}</div>
-          <p style={{color:"#cbd5e1",fontSize:"14px",lineHeight:1.7,marginBottom:"12px"}}>{q.desc}</p>
-          {q.example&&<pre style={{background:"#0f1117",padding:"12px",borderRadius:"8px",fontFamily:"monospace",fontSize:"12px",color:"#86efac",overflowX:"auto",whiteSpace:"pre-wrap",marginBottom:"12px"}}>{q.example}</pre>}
-          {q.constraints&&<p style={{fontSize:"12px",color:C.muted,marginBottom:"16px"}}><b style={{color:C.text}}>Constraints:</b> {q.constraints}</p>}
-          <TA value={code} onChange={e=>setCode(e.target.value)} placeholder={`// Solve in ${lang}...`} rows={5}/>
-          <Btn onClick={()=>{addXP(50,{totalSolved:progress.totalSolved+1});alert("✅ +50 XP!");}} color="#22c55e" style={{marginTop:"12px"}}>✅ Solved (+50 XP)</Btn>
+          <p style={{color:"#b8c8e8",fontSize:"14px",lineHeight:1.7,marginBottom:"12px"}}>{q.desc}</p>
+          {q.example&&<pre style={{background:"#04080f",padding:"13px",borderRadius:"9px",fontFamily:"monospace",fontSize:"12px",color:T.green,overflowX:"auto",whiteSpace:"pre-wrap",marginBottom:"10px",border:`1px solid ${T.border}`}}>{q.example}</pre>}
+          {q.constraints&&<p style={{fontSize:"12px",color:T.textSub,marginBottom:"16px"}}><b style={{color:T.text}}>Constraints:</b> {q.constraints}</p>}
+          <TA value={code} onChange={e=>setCode(e.target.value)} placeholder={`// Write your ${lang} solution here...`} rows={7}/>
+          <div style={{display:"flex",gap:"8px",marginTop:"12px",flexWrap:"wrap"}}>
+            <Btn onClick={getReview} disabled={rLoad||!code.trim()} color={T.accentV}>{rLoad?"⏳ Reviewing...":"🔍 AI Code Review"}</Btn>
+            <Btn onClick={()=>{addXP(50,{totalSolved:prog.totalSolved+1});alert("✅ +50 XP!");}} color={T.green}><span style={{color:"#000"}}>✅ Solved +50 XP</span></Btn>
+          </div>
+          {rev && <AIBox title="Code Review" content={rev} color={T.accentV}/>}
         </Card>
       )}
-      {!q&&!loading&&<div style={{textAlign:"center",padding:"80px 20px",color:C.muted}}><div style={{fontSize:"56px",marginBottom:"16px"}}>🤖</div><p>Generate karo — unlimited unique coding problems!</p></div>}
+      {!q && !loading && <EmptyState icon="🤖" title="Generate unlimited coding problems" sub="Any language, any topic, any difficulty level"/>}
     </div>
   );
 }
 
-// ─── External Site ────────────────────────────────────────────────────────────
-function ExtSite({url,name,color,links,progress,field,addXP,checkBadges,saveProgress}){
-  const val=progress[field]||0;
-  const [inp,setInp]=useState(val);
-  const save=()=>{ addXP(0,{[field]:inp}); alert(`✅ ${name} progress saved: ${inp}`); };
-  return (
-    <div className="fade-in">
-      <Title>🔗 {name}</Title>
-      <Card style={{marginBottom:"16px"}}>
-        <div style={{display:"flex",gap:"10px",flexWrap:"wrap",marginBottom:"16px"}}>
-          {links.map(([lbl,href])=><a key={lbl} href={href} target="_blank" rel="noreferrer" style={{padding:"10px 18px",borderRadius:"8px",background:`linear-gradient(135deg,${color},${color}99)`,color:"#fff",fontWeight:700,fontSize:"13px"}}>{lbl} ↗</a>)}
+// ═══════════════════════════════════════════════════
+//  CODING — TOPIC TEST
+// ═══════════════════════════════════════════════════
+function TopicTest({prog,addXP}){
+  const [topic,setTopic]=useState("Arrays");
+  const [lang,setLang]=useState("JavaScript");
+  const [qs,setQs]=useState([]);
+  const [ans,setAns]=useState({});
+  const [fb,setFB]=useState({});
+  const [loading,setLoad]=useState(false);
+  const [submitted,setSub]=useState(false);
+  const topics=["Arrays","Strings","Linked Lists","Trees","Graphs","Dynamic Programming","Sorting","Binary Search","Stacks & Queues","Recursion","Hash Maps","Two Pointers"];
+
+  const genTest=async()=>{
+    setLoad(true);setQs([]);setAns({});setFB({});setSub(false);
+    const raw=await callAI([{role:"user",content:`Generate 5 ${lang} coding problems on "${topic}". Mix: 2 Easy, 2 Medium, 1 Hard.\nReturn ONLY valid JSON array:\n[{"id":1,"title":"...","diff":"Easy","desc":"...","example":"Input: ...\\nOutput: ..."}]`}],
+      "Competitive programmer. Return ONLY valid JSON array.");
+    try{const arr=JSON.parse(raw.replace(/```json|```/g,"").trim());setQs(arr);}catch{alert("Generation failed. Try again.");}
+    setLoad(false);
+  };
+  const submit=async()=>{
+    setLoad(true);const f={};
+    for(const q of qs){
+      const a=ans[q.id]||"";
+      f[q.id]=a.trim()?await callAI([{role:"user",content:`Problem: ${q.title}\n${q.desc}\nSolution:\n${a}\nBrief: correct? complexity? score/10?`}],"Terse evaluator. One paragraph."):"No answer submitted.";
+    }
+    setFB(f);setSub(true);
+    const n=qs.filter(q=>(ans[q.id]||"").trim()).length;
+    addXP(n*30,{totalSolved:prog.totalSolved+n});
+    setLoad(false);
+  };
+
+  return(
+    <div className="fin">
+      <PageTitle color={T.green}>📝 Topic Test</PageTitle>
+      <GCard color={T.green} style={{marginBottom:"16px"}}>
+        <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"flex-end"}}>
+          <div><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>TOPIC</div><SelField value={topic} onChange={setTopic} options={topics}/></div>
+          <div><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>LANGUAGE</div><SelField value={lang} onChange={setLang} options={LANGS}/></div>
+          <Btn onClick={genTest} disabled={loading} color={T.green} style={{alignSelf:"flex-end"}}><span style={{color:"#000"}}>{loading?"⏳ Generating...":"📝 Generate Test"}</span></Btn>
         </div>
-        <div style={{background:"#0f1117",padding:"14px",borderRadius:"10px",border:`1px solid ${C.border}`}}>
-          <div style={{fontSize:"13px",fontWeight:700,color:C.muted,marginBottom:"10px"}}>📊 My {name} Progress</div>
-          <div style={{display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap"}}>
-            <span style={{color:C.muted,fontSize:"13px"}}>Problems solved:</span>
-            <input type="number" min="0" value={inp} onChange={e=>setInp(Number(e.target.value))} style={{width:"80px",padding:"8px",background:C.card,border:`1px solid ${C.border}`,borderRadius:"8px",color:C.text,fontFamily:"inherit",fontSize:"14px",outline:"none",textAlign:"center"}}/>
-            <Btn onClick={save} color={color}>Save</Btn>
-          </div>
-          <div style={{marginTop:"10px",background:"#1e293b",borderRadius:"999px",height:"7px",overflow:"hidden"}}><div style={{width:`${Math.min(val,500)/5}%`,height:"100%",background:`linear-gradient(90deg,${color},${color}88)`,borderRadius:"999px"}}/></div>
-          <div style={{fontSize:"12px",color:C.muted,marginTop:"5px"}}>{val} problems solved</div>
+      </GCard>
+      {loading&&<div style={{textAlign:"center",padding:"40px"}}><div style={{fontSize:"36px",animation:"pulse 1s infinite"}}>📝</div><p style={{color:T.textMuted,marginTop:"10px"}}>Building your {topic} test...</p></div>}
+      {qs.length>0 && !loading && (
+        <div>
+          {qs.map((q,i)=>(
+            <Card key={q.id||i} style={{marginBottom:"12px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px",flexWrap:"wrap",gap:"6px"}}>
+                <h4 style={{fontSize:"14px",fontWeight:700}}>Q{i+1}. {q.title}</h4>
+                <Badge2 color={dCol(q.diff)}>{q.diff}</Badge2>
+              </div>
+              <p style={{color:"#b8c8e8",fontSize:"13px",lineHeight:1.6,marginBottom:"8px"}}>{q.desc}</p>
+              {q.example&&<pre style={{background:"#04080f",padding:"10px",borderRadius:"7px",fontSize:"11px",color:T.green,fontFamily:"monospace",overflowX:"auto",whiteSpace:"pre-wrap",marginBottom:"10px",border:`1px solid ${T.border}`}}>{q.example}</pre>}
+              <TA value={ans[q.id]||""} onChange={e=>setAns(a=>({...a,[q.id]:e.target.value}))} placeholder={`// ${lang} solution...`} rows={4} readOnly={submitted}/>
+              {submitted&&fb[q.id]&&<AIBox title="Evaluation" content={fb[q.id]} color={T.green}/>}
+            </Card>
+          ))}
+          {!submitted&&<Btn onClick={submit} disabled={loading} color={T.green} style={{width:"100%",padding:"12px"}}><span style={{color:"#000"}}>{loading?"⏳ Evaluating...":"Submit Test for AI Evaluation"}</span></Btn>}
+          {submitted&&<GCard color={T.green} style={{textAlign:"center",marginTop:"14px"}}><div style={{fontSize:"22px",marginBottom:"6px"}}>🎉</div><div style={{fontWeight:700,color:T.green}}>Test Complete! +{qs.filter(q=>(ans[q.id]||"").trim()).length*30} XP</div></GCard>}
         </div>
-      </Card>
-      <Card><div style={{fontSize:"13px",color:C.muted,marginBottom:"10px"}}>Live:</div>
-      <iframe src={url} style={{width:"100%",height:"580px",border:"none",borderRadius:"10px",background:"#fff"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/></Card>
+      )}
     </div>
   );
 }
 
-// ─── Resume Build ─────────────────────────────────────────────────────────────
-function ResumeBuild({progress,addXP,checkBadges,saveProgress}){
+// ═══════════════════════════════════════════════════
+//  RESUME — BUILD
+// ═══════════════════════════════════════════════════
+function ResumeBuild({prog,addXP}){
   const [d,setD]=useState({name:"",email:"",phone:"",linkedin:"",github:"",college:"",degree:"",year:"",skills:"",experience:"",projects:"",achievements:""});
   const [result,setRes]=useState("");
   const [loading,setLoad]=useState(false);
   const upd=(k,v)=>setD(p=>({...p,[k]:v}));
-  const dl=(content,fname)=>{const b=new Blob([content],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=fname;a.click();};
+  const dl=(c,f)=>{const b=new Blob([c],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=f;a.click();};
 
   const generate=async()=>{
     setLoad(true);setRes("");
-    const r=await ai([{role:"user",content:`Generate professional ATS-friendly LaTeX resume:\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nLinkedIn: ${d.linkedin}\nGitHub: ${d.github}\nCollege: ${d.college}\nDegree: ${d.degree} (${d.year})\nSkills: ${d.skills}\nExperience:\n${d.experience}\nProjects:\n${d.projects}\nAchievements:\n${d.achievements}\n\nGenerate complete compilable LaTeX. ATS-optimized.`}],
-      "Expert resume writer. Output ONLY LaTeX code. No markdown, no explanation.");
-    setRes(r); addXP(100,{resumeBuilt:true}); setLoad(false);
+    const r=await callAI([{role:"user",content:`Generate professional ATS-friendly LaTeX resume:\nName: ${d.name}\nEmail: ${d.email} | Phone: ${d.phone}\nLinkedIn: ${d.linkedin} | GitHub: ${d.github}\nCollege: ${d.college} | Degree: ${d.degree} (${d.year})\nSkills: ${d.skills}\nExperience:\n${d.experience}\nProjects:\n${d.projects}\nAchievements:\n${d.achievements}\n\nGenerate complete compilable LaTeX. ATS-optimized.`}],
+      "Expert resume writer. Output ONLY LaTeX code. No markdown.");
+    setRes(r);addXP(100,{resumeBuilt:true});setLoad(false);
   };
 
-  const fields=[["name","Full Name","Rahul Sharma"],["email","Email","rahul@gmail.com"],["phone","Phone","+91 9876543210"],["linkedin","LinkedIn","linkedin.com/in/rahul"],["github","GitHub","github.com/rahul"],["college","College","IIT Delhi"],["degree","Degree","B.Tech CSE"],["year","Grad Year","2025"]];
+  const fields=[["name","Full Name","Rahul Sharma"],["email","Email","rahul@gmail.com"],["phone","Phone","+91 9876543210"],["linkedin","LinkedIn","linkedin.com/in/rahul"],["github","GitHub","github.com/rahul"],["college","College","IIT Delhi"],["degree","Degree","B.Tech CSE"],["year","Year","2025"]];
 
-  return (
-    <div className="fade-in">
-      <Title>✨ Build Resume (AI + LaTeX)</Title>
-      <p style={{color:C.muted,fontSize:"13px",marginBottom:"20px"}}>AI se professional LaTeX resume banao — Overleaf pe paste karo aur PDF download karo!</p>
-      <Card style={{marginBottom:"20px"}}>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))",gap:"12px",marginBottom:"14px"}}>
+  return(
+    <div className="fin">
+      <PageTitle color={T.orange}>✨ Build Resume</PageTitle>
+      <Card style={{marginBottom:"16px"}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:"10px",marginBottom:"14px"}}>
           {fields.map(([k,lbl,ph])=>(
-            <div key={k}><div style={{fontSize:"12px",color:C.muted,marginBottom:"4px"}}>{lbl}</div>
-            <input value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} style={{width:"100%",padding:"9px 12px",background:"#0f1117",border:`1px solid ${C.border}`,borderRadius:"8px",color:C.text,fontFamily:"inherit",fontSize:"13px",outline:"none",boxSizing:"border-box"}}/></div>
+            <div key={k}><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl.toUpperCase()}</div>
+              <InpField value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} style={{width:"100%"}}/></div>
           ))}
         </div>
-        {[["skills","Technical Skills","Python, React, Node.js, SQL, Git, Docker",2],["experience","Work Experience","Company | Role | Jun-Aug 2024\n- Built X that improved Y by 40%",3],["projects","Projects","Project | Tech | github.com/link\n- Description and impact",3],["achievements","Achievements","- LeetCode 400+ Top 5%\n- HackIndia 2024 Winner",2]].map(([k,lbl,ph,rows])=>(
-          <div key={k} style={{marginBottom:"12px"}}><div style={{fontSize:"12px",color:C.muted,marginBottom:"4px"}}>{lbl}</div><TA value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} rows={rows}/></div>
+        {[["skills","SKILLS","Python, React, Node.js, SQL, Git, Docker",2],["experience","EXPERIENCE","Company | Role | Jun–Aug 2024\n- Built X improved Y by 40%",3],["projects","PROJECTS","Project | React, Node.js | github.com/link\n- Description with impact",3],["achievements","ACHIEVEMENTS","- LeetCode 400+ Top 5%\n- HackIndia 2024 Winner",2]].map(([k,lbl,ph,rows])=>(
+          <div key={k} style={{marginBottom:"12px"}}><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl}</div><TA value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} rows={rows}/></div>
         ))}
-        <Btn onClick={generate} disabled={loading}>{loading?"⏳ Generating...":"✨ Generate LaTeX Resume (+100 XP)"}</Btn>
+        <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
+          <Btn onClick={generate} disabled={loading} color={T.orange}>{loading?"⏳ Generating...":"✨ Generate Resume (+100 XP)"}</Btn>
+          <Btn onClick={()=>dl(LATEX_TEMPLATE,"template.tex")} outline color={T.orange}>📋 Download Template</Btn>
+        </div>
       </Card>
       {result&&(
-        <Card>
+        <Card className="fin">
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px",flexWrap:"wrap",gap:"8px"}}>
-            <h3 style={{fontSize:"15px",fontWeight:700,color:"#86efac"}}>✅ Your LaTeX Resume Ready!</h3>
-            <Btn onClick={()=>dl(result,"resume.tex")} color="#22c55e">⬇️ Download .tex</Btn>
+            <Badge2 color={T.green}>✅ LaTeX Ready!</Badge2>
+            <Btn onClick={()=>dl(result,"resume.tex")} color={T.green}><span style={{color:"#000"}}>⬇ Download .tex</span></Btn>
           </div>
           <TA value={result} readOnly rows={10}/>
-          <div style={{marginTop:"10px",padding:"12px",background:"#0f1117",borderRadius:"8px",border:`1px solid ${C.border}`}}>
-            <p style={{color:C.muted,fontSize:"13px"}}>📋 <b style={{color:C.text}}>Steps to get PDF:</b></p>
-            <p style={{color:C.muted,fontSize:"13px",marginTop:"4px"}}>1. Copy code above → 2. Go to <a href="https://overleaf.com" target="_blank" rel="noreferrer" style={{color:"#818cf8"}}>Overleaf.com</a> → 3. New Project → Blank → Paste → Compile → Download PDF</p>
+          <div style={{marginTop:"10px",padding:"12px",background:"#04080f",borderRadius:"9px",border:`1px solid ${T.border}`}}>
+            <p style={{color:T.textMuted,fontSize:"12px"}}>📋 Copy above → <a href="https://overleaf.com" target="_blank" rel="noreferrer" style={{color:T.accent}}>Overleaf.com</a> → New Project → Blank → Paste → Compile → Download PDF</p>
           </div>
         </Card>
       )}
-      <Card style={{marginTop:"16px"}}>
-        <h3 style={{fontSize:"14px",fontWeight:700,color:"#a5b4fc",marginBottom:"8px"}}>📋 Quick Template</h3>
-        <p style={{color:C.muted,fontSize:"13px",marginBottom:"10px"}}>Ready-made template — bas fill karo:</p>
-        <Btn onClick={()=>dl(LATEX_TEMPLATE,"resume_template.tex")} color="#374151">⬇️ Download Template</Btn>
-      </Card>
     </div>
   );
 }
 
-// ─── Resume Analyze ───────────────────────────────────────────────────────────
-function ResumeAnalyze({addXP}){
-  const [txt,setTxt]=useState("");
-  const [analysis,setAna]=useState("");
+// ═══════════════════════════════════════════════════
+//  RESUME — ATS
+// ═══════════════════════════════════════════════════
+function ResumeATS({prog,addXP}){
+  const [rTxt,setRT]=useState("");
+  const [jd,setJD]=useState("");
+  const [result,setRes]=useState(null);
   const [loading,setLoad]=useState(false);
-  const analyze=async()=>{ if(!txt.trim())return; setLoad(true);setAna(""); const r=await ai([{role:"user",content:`Analyze this resume:\n${txt}\n\nCover: strengths, weaknesses, missing sections, impact statements, quantification, ATS, score/10, top 3 improvements.`}],"Expert resume reviewer. Specific, actionable, honest."); setAna(r); addXP(10,{}); setLoad(false); };
-  return (
-    <div className="fade-in">
-      <Title>🔍 Analyze Resume</Title>
-      <p style={{color:C.muted,fontSize:"13px",marginBottom:"20px"}}>Paste your resume — AI detailed feedback dega: kya acha hai, kya missing hai, score bhi milega!</p>
-      <Card style={{marginBottom:"16px"}}><TA value={txt} onChange={e=>setTxt(e.target.value)} placeholder="Apna resume paste karo yahan..." rows={10}/><Btn onClick={analyze} disabled={loading||!txt.trim()} style={{marginTop:"12px"}}>{loading?"⏳ Analyzing...":"🔍 Analyze Resume"}</Btn></Card>
-      {analysis&&<Card><AIBox title="📊 Resume Analysis" content={analysis} color="#f97316"/></Card>}
+  const analyze=async()=>{
+    if(!rTxt.trim())return;setLoad(true);setRes(null);
+    const r=await callAI([{role:"user",content:`Analyze resume for ATS${jd?` vs job description:\n${jd}\n\nResume:\n${rTxt}`:`:\n${rTxt}`}\n\nReturn ONLY valid JSON:\n{"score":75,"matched":["React"],"missing":["Docker"],"improvements":["Fix 1"]}`}],
+      "ATS expert. Return ONLY valid JSON. No markdown.");
+    try{const p=JSON.parse(r.replace(/```json|```/g,"").trim());setRes(p);addXP(20,{atsScore:p.score});}
+    catch{setRes({score:65,matched:[],missing:[],improvements:["Paste cleaner resume text and try again."]});}
+    setLoad(false);
+  };
+  const sc=result?.score||0;
+  const scCol=sc>=80?T.green:sc>=60?T.yellow:T.red;
+
+  return(
+    <div className="fin">
+      <PageTitle color={T.yellow}>📊 ATS Score Checker</PageTitle>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"14px",marginBottom:"14px"}}>
+        <Card><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>RESUME TEXT *</div><TA value={rTxt} onChange={e=>setRT(e.target.value)} placeholder="Paste your resume here..." rows={9}/></Card>
+        <Card><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>JOB DESCRIPTION (optional)</div><TA value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste job description for keyword match..." rows={9}/></Card>
+      </div>
+      <Btn onClick={analyze} disabled={loading||!rTxt.trim()} style={{marginBottom:"20px"}}>{loading?"⏳ Analyzing...":"📊 Check ATS Score"}</Btn>
+      {result&&(
+        <div className="fin">
+          <GCard color={scCol} style={{marginBottom:"14px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:"24px",flexWrap:"wrap"}}>
+              <div style={{textAlign:"center"}}>
+                <div style={{fontSize:"56px",fontWeight:900,color:scCol,lineHeight:1,fontFamily:"'Sora',sans-serif"}}>{sc}</div>
+                <div style={{fontSize:"11px",color:T.textMuted}}>/ 100</div>
+              </div>
+              <div style={{flex:1,minWidth:"150px"}}>
+                <div style={{background:T.border,borderRadius:"999px",height:"8px",overflow:"hidden",marginBottom:"8px"}}><div style={{width:`${sc}%`,height:"100%",background:`linear-gradient(90deg,${scCol},${scCol}99)`,borderRadius:"999px",transition:"width 1s"}}/></div>
+                <div style={{fontSize:"14px",fontWeight:700,color:scCol}}>{sc>=80?"✅ ATS Optimized!":sc>=60?"⚠️ Needs Improvement":"❌ Major Issues Found"}</div>
+              </div>
+            </div>
+          </GCard>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:"12px"}}>
+            {result.matched?.length>0&&<Card><div style={{fontWeight:700,color:T.green,marginBottom:"9px",fontSize:"13px"}}>✅ Matched</div><div style={{display:"flex",flexWrap:"wrap",gap:"5px"}}>{result.matched.map(k=><Badge2 key={k} color={T.green}>{k}</Badge2>)}</div></Card>}
+            {result.missing?.length>0&&<Card><div style={{fontWeight:700,color:T.red,marginBottom:"9px",fontSize:"13px"}}>❌ Missing</div><div style={{display:"flex",flexWrap:"wrap",gap:"5px"}}>{result.missing.map(k=><Badge2 key={k} color={T.red}>{k}</Badge2>)}</div></Card>}
+            {result.improvements?.length>0&&<Card style={{gridColumn:"1/-1"}}><div style={{fontWeight:700,color:T.yellow,marginBottom:"9px",fontSize:"13px"}}>💡 Improvements</div>{result.improvements.map((imp,i)=><div key={i} style={{padding:"7px 0",borderBottom:`1px solid ${T.border}`,color:"#b8c8e8",fontSize:"13px"}}>• {imp}</div>)}</Card>}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Resume Tailor ────────────────────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  RESUME — TEST
+// ═══════════════════════════════════════════════════
+function ResumeTest({prog,addXP}){
+  const [rTxt,setRT]=useState("");
+  const [qs,setQs]=useState([]);
+  const [ans,setAns]=useState({});
+  const [fb,setFB]=useState({});
+  const [loading,setLoad]=useState(false);
+  const [submitted,setSub]=useState(false);
+
+  const generate=async()=>{
+    if(!rTxt.trim())return;setLoad(true);setQs([]);setAns({});setFB({});setSub(false);
+    const r=await callAI([{role:"user",content:`From this resume:\n${rTxt}\n\nGenerate 6 personalized interview questions from this candidate's real experience and projects.\nReturn ONLY valid JSON:\n[{"id":1,"q":"...","type":"Technical/Behavioral","focus":"..."}]`}],
+      "Expert interviewer. Personalized from resume. ONLY valid JSON.");
+    try{const arr=JSON.parse(r.replace(/```json|```/g,"").trim());setQs(arr);}catch{alert("Failed. Try again.");}
+    setLoad(false);
+  };
+  const submit=async()=>{
+    setLoad(true);const f={};
+    for(const q of qs){const a=ans[q.id]||"";f[q.id]=a.trim()?await callAI([{role:"user",content:`Resume:\n${rTxt}\nQ: ${q.q}\nA: ${a}\nShort feedback + score/10.`}],"Brief feedback."):"No answer.";}
+    setFB(f);setSub(true);addXP(qs.filter(q=>(ans[q.id]||"").trim()).length*25,{interviewAnswered:prog.interviewAnswered+qs.length});
+    setLoad(false);
+  };
+
+  return(
+    <div className="fin">
+      <PageTitle color={T.orange}>🎯 Resume-Based Test</PageTitle>
+      <Card style={{marginBottom:"14px"}}>
+        <div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>YOUR RESUME</div>
+        <TA value={rTxt} onChange={e=>setRT(e.target.value)} placeholder="Paste your resume — AI generates questions from YOUR actual experience..." rows={6}/>
+        <Btn onClick={generate} disabled={loading||!rTxt.trim()} color={T.orange} style={{marginTop:"10px"}}>{loading?"⏳ Generating...":"🎯 Generate My Questions"}</Btn>
+      </Card>
+      {qs.map((q,i)=>(
+        <Card key={q.id||i} style={{marginBottom:"12px"}}>
+          <div style={{display:"flex",gap:"8px",alignItems:"flex-start",marginBottom:"8px",flexWrap:"wrap"}}>
+            <Badge2 color={q.type==="Technical"?T.accentV:T.orange}>{q.type}</Badge2>
+            <p style={{fontSize:"14px",fontWeight:600,flex:1}}>Q{i+1}. {q.q}</p>
+          </div>
+          {q.focus&&<p style={{fontSize:"11px",color:T.textMuted,marginBottom:"8px"}}>Focus: {q.focus}</p>}
+          <TA value={ans[q.id]||""} onChange={e=>setAns(a=>({...a,[q.id]:e.target.value}))} placeholder="Your answer..." rows={3} readOnly={submitted}/>
+          {submitted&&fb[q.id]&&<AIBox title="Feedback" content={fb[q.id]} color={T.orange}/>}
+        </Card>
+      ))}
+      {qs.length>0&&!submitted&&<Btn onClick={submit} disabled={loading} color={T.orange} style={{width:"100%",padding:"12px"}}>{loading?"⏳ Evaluating...":"Submit for AI Feedback"}</Btn>}
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+//  RESUME — TAILOR
+// ═══════════════════════════════════════════════════
 function ResumeTailor({addXP}){
   const [resume,setResume]=useState("");
   const [company,setCo]=useState("");
   const [jd,setJD]=useState("");
   const [result,setRes]=useState("");
   const [loading,setLoad]=useState(false);
-  const tailor=async()=>{ if(!resume.trim()||!company.trim())return; setLoad(true);setRes(""); const r=await ai([{role:"user",content:`Tailor this resume for ${company}${jd?` (Job Description:\n${jd})`:""}.\n\nEmphasize relevant skills, rewrite bullet points with ${company}-specific keywords, match their culture and tech stack. Keep professional.\n\nResume:\n${resume}`}],"Expert resume tailor. Make targeted, impactful changes. Keep format. Optimize for this specific company."); setRes(r); addXP(20,{}); setLoad(false); };
+  const companies=["Google","Amazon","Microsoft","Meta","Apple","Flipkart","Swiggy","Zomato","Razorpay","CRED","Infosys","TCS"];
   const dl=(c,f)=>{const b=new Blob([c],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=f;a.click();};
+  const tailor=async()=>{
+    if(!resume.trim()||!company)return;setLoad(true);setRes("");
+    const r=await callAI([{role:"user",content:`Tailor this resume for ${company}${jd?`.\nJob:\n${jd}`:""}.\nMake targeted changes: ${company}-specific keywords, rewrite bullets, match culture and tech stack.\n\nResume:\n${resume}`}],
+      "Resume tailoring expert. Specific, impactful, targeted changes. Professional.");
+    setRes(r);addXP(20,{});setLoad(false);
+  };
 
-  return (
-    <div className="fade-in">
-      <Title>🎯 Tailor Resume for Job</Title>
-      <p style={{color:C.muted,fontSize:"13px",marginBottom:"20px"}}>Har company ke liye alag resume chahiye! AI automatically tailor karega company ke according.</p>
-      <Card style={{marginBottom:"16px"}}>
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"12px",marginBottom:"12px"}}>
-          <div><div style={{fontSize:"12px",color:C.muted,marginBottom:"4px"}}>Company Name *</div><input value={company} onChange={e=>setCo(e.target.value)} placeholder="Google, Amazon, Microsoft..." style={{width:"100%",padding:"9px 12px",background:"#0f1117",border:`1px solid ${C.border}`,borderRadius:"8px",color:C.text,fontFamily:"inherit",fontSize:"13px",outline:"none",boxSizing:"border-box"}}/></div>
-          <div><div style={{fontSize:"12px",color:C.muted,marginBottom:"4px"}}>Job Description (optional)</div><input value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste JD for better tailoring..." style={{width:"100%",padding:"9px 12px",background:"#0f1117",border:`1px solid ${C.border}`,borderRadius:"8px",color:C.text,fontFamily:"inherit",fontSize:"13px",outline:"none",boxSizing:"border-box"}}/></div>
+  return(
+    <div className="fin">
+      <PageTitle color={T.orange}>🔄 Tailor for Company</PageTitle>
+      <Card style={{marginBottom:"14px"}}>
+        <div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"8px"}}>TARGET COMPANY</div>
+        <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"14px"}}>
+          {companies.map(c=><button key={c} onClick={()=>setCo(c)} style={{padding:"6px 13px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:600,background:company===c?T.orange:"#0d1526",color:company===c?"#000":T.textMuted,transition:"all 0.15s"}}>{c}</button>)}
         </div>
-        <div style={{fontSize:"12px",color:C.muted,marginBottom:"4px"}}>Your Resume (LaTeX or plain text) *</div>
-        <TA value={resume} onChange={e=>setResume(e.target.value)} placeholder="Apna resume paste karo..." rows={8}/>
-        <Btn onClick={tailor} disabled={loading||!resume.trim()||!company.trim()} style={{marginTop:"12px"}}>{loading?"⏳ Tailoring...":"🎯 Tailor for "+company}</Btn>
+        <div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>JOB DESCRIPTION (optional)</div>
+        <InpField value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste job description for better tailoring..." style={{width:"100%",marginBottom:"12px"}}/>
+        <div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>YOUR RESUME *</div>
+        <TA value={resume} onChange={e=>setResume(e.target.value)} placeholder="Paste your current resume (LaTeX or plain text)..." rows={8}/>
+        <Btn onClick={tailor} disabled={loading||!resume.trim()||!company} color={T.orange} style={{marginTop:"10px"}}>{loading?"⏳ Tailoring...":"🔄 Tailor for "+company}</Btn>
       </Card>
       {result&&(
-        <Card>
+        <Card className="fin">
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px",flexWrap:"wrap",gap:"8px"}}>
-            <h3 style={{fontSize:"15px",fontWeight:700,color:"#86efac"}}>✅ {company} Tailored Resume</h3>
-            <Btn onClick={()=>dl(result,`resume_${company}.tex`)} color="#22c55e">⬇️ Download</Btn>
+            <Badge2 color={T.green}>✅ {company} Version Ready</Badge2>
+            <Btn onClick={()=>dl(result,`resume_${company}.tex`)} color={T.green}><span style={{color:"#000"}}>⬇ Download</span></Btn>
           </div>
-          <TA value={result} readOnly rows={10}/>
+          <TA value={result} readOnly rows={12}/>
         </Card>
       )}
     </div>
   );
 }
 
-// ─── Courses ──────────────────────────────────────────────────────────────────
-function Courses({progress,addXP,checkBadges,saveProgress,setTab}){
-  const tagColors={"JavaScript":"#f7df1e","DSA":"#6366f1","System Design":"#ec4899","Web Dev":"#22c55e","Full Stack":"#f97316","CS Fundamentals":"#8b5cf6","Career Path":"#14b8a6"};
-  const [tagF,setTagF]=useState("All");
-  const tags=["All",...new Set(COURSES.map(c=>c.tag))];
-  const filtered=tagF==="All"?COURSES:COURSES.filter(c=>c.tag===tagF);
-  const completed=(progress.completedTopics||[]);
-  const pct=(id)=>{ const course=COURSES.find(c=>c.id===id); if(!course)return 0; const done=course.topics.filter(t=>completed.includes(`${id}_${t}`)).length; return Math.round(done/course.topics.length*100); };
+// ═══════════════════════════════════════════════════
+//  INTERVIEW — HR (UNLIMITED AI)
+// ═══════════════════════════════════════════════════
+function InterviewHR({prog,addXP}){
+  const [mode,setMode]=useState("practice"); // practice | generate | strategy
+  const [sel,setSel]=useState(null);
+  const [answer,setAns]=useState("");
+  const [feedback,setFB]=useState("");
+  const [loading,setLoad]=useState(false);
+  // AI-generated unlimited questions
+  const [genTopic,setGenTopic]=useState("General HR");
+  const [genQ,setGenQ]=useState(null);
+  const [genLoad,setGL]=useState(false);
+  const [strategy,setStrat]=useState("");
 
-  return (
-    <div className="fade-in">
-      <Title>🎓 Courses & Learning</Title>
-      <p style={{color:C.muted,fontSize:"13px",marginBottom:"20px"}}>Best resources for placement prep — MDN, GeeksForGeeks, freeCodeCamp and more. Topic-wise progress track karo!</p>
-      <div style={{display:"flex",gap:"6px",marginBottom:"16px",flexWrap:"wrap"}}>
-        {tags.map(t=><button key={t} onClick={()=>setTagF(t)} style={{padding:"5px 14px",borderRadius:"999px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:700,background:tagF===t?(tagColors[t]||C.accent):"#1e293b",color:tagF===t?"#000":"#fff",opacity:tagF===t?1:0.6}}>{t}</button>)}
+  const hrTopics=["General HR","Leadership & Teamwork","Problem Solving","Career Goals","Strengths & Weaknesses","Company Research","Conflict Resolution","Achievement & Impact","Work Style & Culture","Salary Negotiation","Fresher-Specific","Internship Experience"];
+
+  const PRESET_HRQ = [
+    {id:1, q:"Tell me about yourself.",                         hint:"Education → Projects → Skills → Goals"},
+    {id:2, q:"Why should we hire you?",                         hint:"Unique strengths + company fit"},
+    {id:3, q:"Tell about a team conflict and resolution.",       hint:"STAR method"},
+    {id:4, q:"What is your greatest weakness?",                  hint:"Real weakness + improvement plan"},
+    {id:5, q:"Where do you see yourself in 5 years?",           hint:"Company growth alignment"},
+    {id:6, q:"Describe your most challenging project.",          hint:"Challenge + your role + outcome"},
+    {id:7, q:"Why do you want to work here?",                   hint:"Research company: mission, products"},
+    {id:8, q:"How do you handle deadlines and pressure?",        hint:"Real example with result"},
+    {id:9, q:"What motivates you?",                             hint:"Align with the role"},
+    {id:10,q:"Do you have questions for us?",                   hint:"Ask 2-3 smart questions"},
+    {id:11,q:"Tell me about a failure and what you learned.",    hint:"Own it, show growth"},
+    {id:12,q:"How do you prioritize tasks when overloaded?",    hint:"Framework + real example"},
+  ];
+
+  const generateNewQ=async()=>{
+    setGL(true);setGenQ(null);setFB("");setAns("");
+    const r=await callAI([{role:"user",content:`Generate a unique, insightful HR interview question on the topic "${genTopic}" that is commonly asked at top tech companies (Google, Amazon, Microsoft, startups).\n\nReturn ONLY a JSON object:\n{"q":"question text","hint":"what to focus on","why":"why interviewers ask this","category":"${genTopic}"}`}],
+      "Senior HR interviewer. Generate creative, realistic questions. Return ONLY valid JSON.");
+    try{const p=JSON.parse(r.replace(/```json|```/g,"").trim());setGenQ(p);}catch{setGenQ({q:"Tell me about a time you had to learn something completely new in a short timeframe.",hint:"Adaptability, learning speed, resourcefulness",why:"Tests growth mindset and adaptability",category:genTopic});}
+    setGL(false);
+  };
+
+  const getFeedback=async(question)=>{
+    if(!answer.trim())return;setLoad(true);setFB("");
+    const r=await callAI([{role:"user",content:`HR Question: ${question}\n\nCandidate's Answer: ${answer}\n\nProvide:\n1. ✅ Strengths of this answer\n2. ⚠️ What's missing or weak\n3. 💡 Ideal answer structure\n4. 📊 Score: /10\n5. 🔄 One-line improved version`}],
+      "Senior HR interviewer at top tech company. Honest, specific, encouraging feedback.");
+    setFB(r);addXP(25,{interviewAnswered:prog.interviewAnswered+1});setLoad(false);
+  };
+
+  const getStrategy=async(question)=>{
+    setLoad(true);setStrat("");
+    const r=await callAI([{role:"user",content:`Provide the best answering strategy for this HR question:\n"${question}"\n\nInclude:\n1. Framework to use\n2. Key points to cover (bullet format)\n3. Strong sample answer\n4. What NOT to say\n5. Pro tip`}],
+      "Career coach. Practical, specific HR interview strategy.");
+    setStrat(r);setLoad(false);
+  };
+
+  const activeSel = mode==="generate" ? genQ : sel;
+
+  return(
+    <div className="fin">
+      <PageTitle color={T.accentV}>👔 HR Questions</PageTitle>
+      {/* Mode tabs */}
+      <div style={{display:"flex",gap:"6px",marginBottom:"18px",padding:"4px",background:T.sidebar,borderRadius:"10px",width:"fit-content",border:`1px solid ${T.border}`}}>
+        {[["practice","📋 Preset Questions"],["generate","🤖 AI Generate (Unlimited)"]].map(([m,lbl])=>(
+          <button key={m} onClick={()=>{setMode(m);setSel(null);setGenQ(null);setFB("");setStrat("");setAns("");}} style={{padding:"7px 16px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"13px",fontWeight:600,background:mode===m?T.accentV:"transparent",color:mode===m?"#fff":T.textMuted,transition:"all 0.15s"}}>{lbl}</button>
+        ))}
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:"16px"}}>
-        {filtered.map(course=>{
-          const p=pct(course.id);
-          return (
-            <Card key={course.id} style={{border:`1px solid ${C.border}`,borderTop:`3px solid ${course.color}`}}>
-              <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"12px"}}>
-                <div style={{width:"40px",height:"40px",background:`${course.color}22`,borderRadius:"10px",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"20px",flexShrink:0}}>{course.icon}</div>
-                <div style={{flex:1}}>
-                  <div style={{fontWeight:700,fontSize:"15px"}}>{course.name}</div>
-                  <span style={{fontSize:"11px",background:tagColors[course.tag]?`${tagColors[course.tag]}22`:"#1e293b",color:tagColors[course.tag]||C.muted,padding:"2px 8px",borderRadius:"999px",fontWeight:700}}>{course.tag}</span>
+
+      {/* PRESET MODE */}
+      {mode==="practice" && (
+        <div style={{display:"grid",gridTemplateColumns:"340px 1fr",gap:"16px",alignItems:"start"}}>
+          <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
+            {PRESET_HRQ.map(q=>(
+              <div key={q.id} onClick={()=>{setSel(q);setAns("");setFB("");setStrat("");}} className="card-hover" style={{padding:"13px 14px",borderRadius:"10px",border:`1px solid ${sel?.id===q.id?T.accentV:T.border}`,background:sel?.id===q.id?`${T.accentV}15`:T.card,cursor:"pointer"}}>
+                <p style={{fontSize:"13px",fontWeight:600,color:T.text,marginBottom:"4px",lineHeight:1.5}}>{q.q}</p>
+                <p style={{fontSize:"11px",color:T.textMuted}}>💡 {q.hint}</p>
+              </div>
+            ))}
+          </div>
+          <div>
+            {sel ? (
+              <Card>
+                <h3 style={{fontSize:"14px",fontWeight:700,color:"#a5b4fc",marginBottom:"16px",lineHeight:1.5}}>"{sel.q}"</h3>
+                <div style={{display:"flex",gap:"6px",marginBottom:"14px"}}>
+                  <Btn onClick={()=>setMode("answer_mode")} color={T.accentV} style={{flex:1,textAlign:"center"}}>✍️ Write Answer</Btn>
+                  <Btn onClick={()=>getStrategy(sel.q)} outline color={T.accentV} style={{flex:1,textAlign:"center"}}>{loading?"⏳...":"💡 Best Strategy"}</Btn>
+                </div>
+                <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Type your answer... (Use STAR method for behavioral questions)" rows={6}/>
+                <Btn onClick={()=>getFeedback(sel.q)} disabled={loading||!answer.trim()} color={T.accentV} style={{marginTop:"10px",width:"100%"}}>{loading?"⏳ Getting feedback...":"🤖 Get AI Feedback (+25 XP)"}</Btn>
+                {strategy&&<AIBox title="Best Strategy" content={strategy} color={T.accentV}/>}
+                {feedback&&<AIBox title="AI Feedback" content={feedback} color={T.accentV}/>}
+              </Card>
+            ) : (
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"300px",border:`1px dashed ${T.border2}`,borderRadius:"14px"}}>
+                <EmptyState icon="👔" title="Select a question to practice" sub="Get AI feedback on your answers"/>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* AI GENERATE UNLIMITED MODE */}
+      {mode==="generate" && (
+        <div>
+          <GCard color={T.accentV} style={{marginBottom:"16px"}}>
+            <div style={{fontSize:"13px",color:T.textSub,fontWeight:600,marginBottom:"10px"}}>🤖 Generate Unlimited HR Questions</div>
+            <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"14px"}}>
+              {hrTopics.map(t=>(
+                <button key={t} onClick={()=>setGenTopic(t)} style={{padding:"6px 12px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:600,background:genTopic===t?T.accentV:"#0d1526",color:genTopic===t?"#fff":T.textMuted,transition:"all 0.15s"}}>{t}</button>
+              ))}
+            </div>
+            <Btn onClick={generateNewQ} disabled={genLoad} color={T.accentV} style={{width:"100%",padding:"11px"}}>{genLoad?"⏳ Generating...":"⚡ Generate New HR Question"}</Btn>
+          </GCard>
+
+          {genLoad && <div style={{textAlign:"center",padding:"40px"}}><div style={{fontSize:"36px",animation:"pulse 1s infinite"}}>💼</div><p style={{color:T.textMuted,marginTop:"10px"}}>Generating {genTopic} question...</p></div>}
+
+          {genQ && !genLoad && (
+            <Card className="fin">
+              <div style={{display:"flex",gap:"8px",alignItems:"flex-start",marginBottom:"14px",flexWrap:"wrap"}}>
+                <Badge2 color={T.accentV}>{genQ.category||genTopic}</Badge2>
+              </div>
+              <h3 style={{fontSize:"16px",fontWeight:700,color:T.text,marginBottom:"10px",lineHeight:1.6}}>"{genQ.q}"</h3>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"16px"}}>
+                <div style={{padding:"12px",background:"#04080f",borderRadius:"9px",border:`1px solid ${T.border}`}}>
+                  <div style={{fontSize:"11px",color:T.accentV,fontWeight:700,marginBottom:"5px"}}>FOCUS</div>
+                  <p style={{fontSize:"13px",color:T.textSub}}>{genQ.hint}</p>
+                </div>
+                <div style={{padding:"12px",background:"#04080f",borderRadius:"9px",border:`1px solid ${T.border}`}}>
+                  <div style={{fontSize:"11px",color:T.yellow,fontWeight:700,marginBottom:"5px"}}>WHY ASKED</div>
+                  <p style={{fontSize:"13px",color:T.textSub}}>{genQ.why}</p>
                 </div>
               </div>
-              {/* Progress */}
-              <div style={{marginBottom:"12px"}}>
-                <div style={{display:"flex",justifyContent:"space-between",fontSize:"12px",color:C.muted,marginBottom:"4px"}}><span>Progress</span><span>{p}%</span></div>
-                <div style={{background:"#1e293b",borderRadius:"999px",height:"5px"}}><div style={{width:`${p}%`,height:"100%",background:`linear-gradient(90deg,${course.color},${course.color}88)`,borderRadius:"999px"}}/></div>
+              <div style={{display:"flex",gap:"6px",marginBottom:"12px"}}>
+                <Btn onClick={()=>getStrategy(genQ.q)} outline color={T.accentV} disabled={loading}>{loading?"⏳...":"💡 Strategy"}</Btn>
+                <Btn onClick={generateNewQ} outline color={T.textMuted}>🔄 New Question</Btn>
               </div>
-              {/* Topics */}
-              <div style={{marginBottom:"12px"}}>
-                {course.topics.map(t=>{
-                  const key=`${course.id}_${t}`;
-                  const done=completed.includes(key);
-                  return <div key={t} onClick={()=>{ const tops=done?completed.filter(x=>x!==key):[...completed,key]; addXP(done?0:15,{completedTopics:tops}); }} style={{display:"flex",alignItems:"center",gap:"8px",padding:"6px 0",borderBottom:`1px solid ${C.border}`,cursor:"pointer"}}>
-                    <div style={{width:"16px",height:"16px",borderRadius:"4px",border:`1.5px solid ${done?course.color:C.muted}`,background:done?course.color:"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"10px",flexShrink:0}}>{done?"✓":""}</div>
-                    <span style={{fontSize:"13px",color:done?C.text:C.muted,textDecoration:done?"line-through":"none"}}>{t}</span>
-                    {done&&<span style={{marginLeft:"auto",fontSize:"10px",color:"#22c55e"}}>+15xp</span>}
-                  </div>;
-                })}
-              </div>
-              <a href={course.url} target="_blank" rel="noreferrer" style={{display:"block",padding:"8px",borderRadius:"8px",background:`${course.color}22`,color:course.color,fontWeight:700,fontSize:"13px",textAlign:"center",border:`1px solid ${course.color}44`}}>Open {course.name} ↗</a>
+              <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Write your answer here..." rows={6}/>
+              <Btn onClick={()=>getFeedback(genQ.q)} disabled={loading||!answer.trim()} color={T.accentV} style={{marginTop:"10px",width:"100%"}}>{loading?"⏳ Getting feedback...":"🤖 Get AI Feedback (+25 XP)"}</Btn>
+              {strategy&&<AIBox title="Best Strategy" content={strategy} color={T.yellow}/>}
+              {feedback&&<AIBox title="AI Feedback" content={feedback} color={T.accentV}/>}
             </Card>
-          );
-        })}
-      </div>
+          )}
+          {!genQ && !genLoad && <EmptyState icon="🤖" title="Generate unlimited HR questions" sub="Click 'Generate New HR Question' to get started"/>}
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── Course Viewer (MDN / GFG embedded) ───────────────────────────────────────
-function CourseViewer({course,progress,addXP,checkBadges,saveProgress}){
-  if(!course)return null;
-  const completed=(progress.completedTopics||[]);
-  const [selTopic,setSelTopic]=useState(course.topics[0]);
-  const [notes,setNotes]=useState("");
-  const [aiExplain,setAE]=useState("");
+// ═══════════════════════════════════════════════════
+//  INTERVIEW — B.TECH
+// ═══════════════════════════════════════════════════
+function InterviewBtech({prog,addXP}){
+  const [sel,setSel]=useState(null);
+  const [answer,setAns]=useState("");
+  const [feedback,setFB]=useState("");
   const [loading,setLoad]=useState(false);
+  const [subF,setSubF]=useState("All");
+  const subs=["All","OS","DBMS","CN","OOP","DSA"];
 
-  const getExplanation=async()=>{ setLoad(true);setAE(""); const r=await ai([{role:"user",content:`Explain "${selTopic}" in simple terms with a practical example. Include: what it is, why it matters, code example if applicable, common interview questions about this topic.`}],"Expert programming teacher. Clear, concise explanations with examples. Use code blocks for code."); setAE(r); setLoad(false); };
-  const markDone=()=>{ const key=`${course.id}_${selTopic}`; if(!completed.includes(key)){ addXP(15,{completedTopics:[...completed,key]}); } };
+  const getFeedback=async()=>{
+    if(!sel||!answer.trim())return;setLoad(true);setFB("");
+    const r=await callAI([{role:"user",content:`Subject: ${sel.sub}\nQ: ${sel.q}\nAnswer: ${answer}\n\nEvaluate:\n1. ✅ What's correct\n2. ⚠️ What's missing\n3. 📖 Ideal answer\n4. 📊 Score /10`}],
+      "CS professor. Accurate technical evaluation. Specific about what's right/wrong.");
+    setFB(r);addXP(30,{interviewAnswered:prog.interviewAnswered+1});setLoad(false);
+  };
+  const getIdeal=async()=>{
+    setLoad(true);setFB("");
+    const r=await callAI([{role:"user",content:`Give comprehensive interview-ready answer for:\nSubject: ${sel.sub}\nQ: ${sel.q}\n\nInclude: concepts, examples, diagrams in text, follow-up questions.`}],"Expert CS teacher. Thorough, interview-ready answer.");
+    setFB(r);setLoad(false);
+  };
+  const filtered=subF==="All"?BTECH_QUESTIONS:BTECH_QUESTIONS.filter(q=>q.sub===subF);
 
-  return (
-    <div className="fade-in">
-      <div style={{display:"flex",alignItems:"center",gap:"12px",marginBottom:"20px",flexWrap:"wrap"}}>
-        <div style={{fontSize:"28px"}}>{course.icon}</div>
-        <div>
-          <Title style={{marginBottom:"2px"}}>{course.name}</Title>
-          <a href={course.url} target="_blank" rel="noreferrer" style={{color:"#818cf8",fontSize:"13px"}}>Open full site ↗</a>
-        </div>
+  return(
+    <div className="fin">
+      <PageTitle color={T.accentV}>🎓 B.Tech Subjects</PageTitle>
+      <div style={{display:"flex",gap:"6px",marginBottom:"16px",flexWrap:"wrap"}}>
+        {subs.map(s=><button key={s} onClick={()=>setSubF(s)} style={{padding:"6px 14px",borderRadius:"999px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:700,background:subF===s?(subCol[s]||T.accentV):"#0d1526",color:"#fff",opacity:subF===s?1:0.55,transition:"all 0.15s"}}>{s}</button>)}
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"200px 1fr",gap:"16px",alignItems:"start"}}>
-        {/* Topic list */}
-        <Card style={{padding:"12px"}}>
-          <div style={{fontSize:"12px",color:C.muted,fontWeight:700,marginBottom:"10px"}}>TOPICS</div>
-          {course.topics.map(t=>{
-            const done=completed.includes(`${course.id}_${t}`);
-            return <button key={t} onClick={()=>setSelTopic(t)} style={{width:"100%",display:"flex",alignItems:"center",gap:"6px",padding:"8px 10px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"13px",background:selTopic===t?`${course.color}22`:"transparent",color:selTopic===t?course.color:C.muted,marginBottom:"2px",textAlign:"left"}}>
-              <span style={{width:"14px",height:"14px",borderRadius:"3px",border:`1.5px solid ${done?course.color:C.border}`,background:done?course.color:"transparent",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:"9px",flexShrink:0}}>{done?"✓":""}</span>
-              <span style={{flex:1}}>{t}</span>
-            </button>;
-          })}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(290px,1fr))",gap:"10px",marginBottom:"16px"}}>
+        {filtered.map(q=>(
+          <div key={q.id} onClick={()=>{setSel(q);setAns("");setFB("");}} className="card-hover" style={{padding:"14px",borderRadius:"10px",border:`1px solid ${sel?.id===q.id?subCol[q.sub]||T.accentV:T.border}`,background:sel?.id===q.id?`${subCol[q.sub]||T.accentV}12`:T.card,cursor:"pointer"}}>
+            <Badge2 color={subCol[q.sub]||T.accentV}>{q.sub}</Badge2>
+            <p style={{fontSize:"13px",fontWeight:600,color:T.text,marginTop:"8px",marginBottom:"5px",lineHeight:1.5}}>{q.q}</p>
+            <p style={{fontSize:"11px",color:T.textMuted}}>💡 {q.hint}</p>
+          </div>
+        ))}
+      </div>
+      {sel&&(
+        <Card className="fin">
+          <div style={{display:"flex",gap:"8px",alignItems:"center",marginBottom:"14px",flexWrap:"wrap"}}>
+            <Badge2 color={subCol[sel.sub]||T.accentV}>{sel.sub}</Badge2>
+            <p style={{fontSize:"14px",fontWeight:700,color:T.text,flex:1}}>{sel.q}</p>
+          </div>
+          <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Write your answer here..." rows={5}/>
+          <div style={{display:"flex",gap:"8px",marginTop:"10px",flexWrap:"wrap"}}>
+            <Btn onClick={getFeedback} disabled={loading||!answer.trim()} color={T.accentV}>{loading?"⏳...":"🤖 Evaluate (+30 XP)"}</Btn>
+            <Btn onClick={getIdeal} disabled={loading} outline color={T.textMuted}>{loading?"⏳...":"📖 Ideal Answer"}</Btn>
+          </div>
+          {feedback&&<AIBox title="Evaluation" content={feedback} color={T.accentV}/>}
         </Card>
-        {/* Content area */}
-        <div>
-          <Card style={{marginBottom:"14px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"8px",marginBottom:"14px"}}>
-              <h3 style={{fontSize:"16px",fontWeight:700,color:course.color}}>{selTopic}</h3>
-              <div style={{display:"flex",gap:"8px"}}>
-                <Btn onClick={getExplanation} disabled={loading} color={course.color}>{loading?"⏳...":"🤖 AI Explain"}</Btn>
-                <Btn onClick={markDone} color="#22c55e" disabled={completed.includes(`${course.id}_${selTopic}`)}>
-                  {completed.includes(`${course.id}_${selTopic}`)?"✅ Done":"Mark Done (+15 XP)"}
-                </Btn>
-              </div>
-            </div>
-            {aiExplain&&<AIBox title={`🤖 AI Explanation: ${selTopic}`} content={aiExplain} color={course.color}/>}
-            <div style={{marginTop:"14px"}}>
-              <div style={{fontSize:"12px",color:C.muted,fontWeight:600,marginBottom:"6px"}}>📝 My Notes:</div>
-              <TA value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Apne notes yahan likhte jao..." rows={4}/>
-            </div>
-          </Card>
-          <Card style={{padding:"12px"}}>
-            <div style={{fontSize:"13px",color:C.muted,marginBottom:"8px"}}>📖 Read on {course.name}:</div>
-            <iframe src={course.url} style={{width:"100%",height:"500px",border:"none",borderRadius:"8px",background:"#fff"}} title={course.name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
-          </Card>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
 
-// ─── Chatbot ──────────────────────────────────────────────────────────────────
-function Chatbot(){
-  const [msgs,setMsgs]=useState([{role:"assistant",content:"👋 Namaste! Main DevForge AI hoon.\n\nDSA doubts, system design, debugging, resume tips, career advice — kuch bhi pucho! Hinglish mein bhi baat kar sakte ho. 🚀"}]);
+// ═══════════════════════════════════════════════════
+//  PROGRESS
+// ═══════════════════════════════════════════════════
+function Progress({prog,user}){
+  const lv=Math.floor(prog.xp/100)+1;
+  const today=new Date();
+  const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const weekXP=days.map((_,i)=>{
+    const d=new Date(today);d.setDate(today.getDate()-6+i);
+    return (prog.history||[]).filter(h=>new Date(h.date).toDateString()===d.toDateString()).reduce((a,h)=>a+h.xp,0);
+  });
+  const maxW=Math.max(...weekXP,1);
+
+  return(
+    <div className="fin">
+      <PageTitle color={T.accent}>📈 My Progress</PageTitle>
+      {/* Stats grid */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:"10px",marginBottom:"18px"}}>
+        {[["💻",prog.totalSolved,"Problems Solved",T.accentV],["🔥",`${prog.streak}d`,"Streak",T.orange],["⚡",`${prog.xp}xp`,"Total XP",T.accent],["🎯",prog.interviewAnswered,"Interview Qs",T.green],["📊",prog.atsScore??"-","ATS Score",T.yellow],["📚",(prog.completedTopics||[]).length,"Topics Done",T.accent],["🏅",prog.earnedBadges.length,"Badges",T.pink],["🎓",`Lv${lv}`,"Level",T.accentV]].map(([ic,val,lbl,col],i)=>(
+          <GCard key={i} color={col} style={{textAlign:"center",padding:"14px"}}>
+            <div style={{fontSize:"20px",marginBottom:"4px"}}>{ic}</div>
+            <div style={{fontSize:"20px",fontWeight:800,color:col,letterSpacing:"-0.5px"}}>{val}</div>
+            <div style={{fontSize:"10px",color:T.textMuted,marginTop:"2px"}}>{lbl}</div>
+          </GCard>
+        ))}
+      </div>
+
+      {/* Level */}
+      <Card style={{marginBottom:"14px"}}>
+        <div style={{display:"flex",justifyContent:"space-between",marginBottom:"8px"}}>
+          <span style={{fontSize:"13px",fontWeight:700}}>⚡ Level {lv}</span>
+          <span style={{fontSize:"12px",color:T.textMuted}}>{prog.xp%100}/100 XP to Lv{lv+1}</span>
+        </div>
+        <div style={{background:T.border,borderRadius:"999px",height:"8px",overflow:"hidden"}}>
+          <div style={{width:`${prog.xp%100}%`,height:"100%",background:`linear-gradient(90deg,${T.accent},${T.accentV})`,borderRadius:"999px",transition:"width 0.6s"}}/>
+        </div>
+      </Card>
+
+      {/* Weekly bar chart */}
+      <Card style={{marginBottom:"14px"}}>
+        <div style={{fontSize:"13px",fontWeight:700,marginBottom:"16px",color:T.textSub}}>📅 Weekly XP Activity</div>
+        <div style={{display:"flex",gap:"8px",alignItems:"flex-end",height:"90px"}}>
+          {weekXP.map((xp,i)=>{
+            const isToday=i===6;
+            return(
+              <div key={i} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:"5px"}}>
+                {xp>0&&<div style={{fontSize:"9px",color:T.textMuted}}>{xp}</div>}
+                <div style={{width:"100%",borderRadius:"4px 4px 0 0",height:`${Math.max(xp/maxW*70,3)}px`,background:isToday?`linear-gradient(180deg,${T.accent},${T.accentV})`:`${T.border2}`,boxShadow:isToday?`0 0 12px ${T.accent}60`:""}}/>
+                <div style={{fontSize:"9px",color:isToday?T.accent:T.textMuted,fontWeight:isToday?700:400}}>{days[i]}</div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+
+      {/* 30-day streak */}
+      <Card style={{marginBottom:"14px"}}>
+        <div style={{fontSize:"13px",fontWeight:700,marginBottom:"12px",color:T.textSub}}>🔥 Activity — Last 30 Days</div>
+        <div style={{display:"flex",gap:"4px",flexWrap:"wrap"}}>
+          {Array.from({length:30},(_,i)=>{
+            const d=new Date(today);d.setDate(today.getDate()-29+i);
+            const active=(prog.history||[]).some(h=>new Date(h.date).toDateString()===d.toDateString());
+            const isToday=i===29;
+            return <div key={i} style={{width:"20px",height:"20px",borderRadius:"4px",background:active?T.green:T.border,boxShadow:isToday?`0 0 8px ${T.green}60`:""}} title={d.toDateString()}/>;
+          })}
+        </div>
+        <div style={{fontSize:"10px",color:T.textMuted,marginTop:"8px"}}>Green = active day</div>
+      </Card>
+
+      {/* Badges */}
+      <Card>
+        <div style={{fontSize:"13px",fontWeight:700,marginBottom:"14px",color:T.textSub}}>🏅 Badges — {prog.earnedBadges.length}/{BADGES.length} Earned</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))",gap:"8px"}}>
+          {BADGES.map(b=>{
+            const earned=prog.earnedBadges.includes(b.id);
+            return(
+              <div key={b.id} style={{textAlign:"center",padding:"12px 8px",borderRadius:"10px",background:earned?`${T.accentV}12`:T.sidebar,border:`1px solid ${earned?T.accentV:T.border}`,opacity:earned?1:0.35,transition:"all 0.2s"}}>
+                <div style={{fontSize:"22px",marginBottom:"5px"}}>{b.icon}</div>
+                <div style={{fontSize:"11px",fontWeight:700,color:earned?T.text:T.textMuted}}>{b.name}</div>
+                <div style={{fontSize:"9px",color:T.textMuted,marginTop:"2px"}}>{b.desc}</div>
+              </div>
+            );
+          })}
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+//  CHATBOTS
+// ═══════════════════════════════════════════════════
+function ChatCourse(){
+  const sugg=["Explain closures in JavaScript","What is Big-O notation?","How does async/await work?","Difference between SQL and NoSQL","What is React reconciliation?","Explain dynamic programming","What is REST API?"];
+  return <ChatUI title="📚 Course Doubts" subtitle="Ask anything about programming, DSA, web dev, or any concept" color={T.pink} botIcon="📚"
+    system="You are an expert CS tutor. Explain concepts clearly with examples and code blocks. Cover JS, Python, C++, Java, DSA, Web Dev, React, Node.js. Be friendly and educational."
+    sugg={sugg}/>;
+}
+function ChatCode(){
+  const [lang,setLang]=useState("JavaScript");
+  const sugg=["Write binary search","Debug: for(i=0;i<arr.len;i++)","Sort array without built-in sort","Implement a stack","Fibonacci with memoization","Find longest palindrome substring"];
+  return <ChatUI title="💻 Code Assistant" subtitle={`Write, debug, and optimize code`} color={T.pink} botIcon="💻"
+    system={`You are an expert ${lang} developer. Write clean, efficient, commented code. Use code blocks. Explain approach and complexity.`}
+    sugg={sugg} extra={<div style={{display:"flex",alignItems:"center",gap:"8px"}}><span style={{fontSize:"12px",color:T.textMuted}}>Language:</span><SelField value={lang} onChange={setLang} options={LANGS}/></div>}/>;
+}
+
+function ChatUI({title,subtitle,color,botIcon,system,sugg,extra}){
+  const [msgs,setMsgs]=useState([{role:"assistant",content:`👋 Hi! I'm your ${title.split(" ").slice(1).join(" ")}.\n\n${subtitle}\n\nHow can I help you today?`}]);
   const [input,setInput]=useState("");
   const [loading,setLoad]=useState(false);
   const endRef=useRef(null);
-  useEffect(()=>{ endRef.current?.scrollIntoView({behavior:"smooth"}); },[msgs]);
+  useEffect(()=>endRef.current?.scrollIntoView({behavior:"smooth"}),[msgs]);
 
   const send=async()=>{
     if(!input.trim()||loading)return;
-    const userMsg={role:"user",content:input};
-    setMsgs(m=>[...m,userMsg]);setInput("");setLoad(true);
-    try {
-      const r=await ai([...msgs,userMsg].map(m=>({role:m.role,content:m.content})),
-        "You are DevForge AI — friendly expert coding mentor and placement coach. Help with DSA, algorithms, system design, debugging, resume, career advice. Be concise, use examples and code blocks. Respond in Hinglish when user writes in Hindi. Be encouraging and conversational.");
+    const um={role:"user",content:input};
+    setMsgs(m=>[...m,um]);setInput("");setLoad(true);
+    try{
+      const r=await callAI([...msgs,um].map(m=>({role:m.role,content:m.content})),system);
       setMsgs(m=>[...m,{role:"assistant",content:r}]);
-    } catch { setMsgs(m=>[...m,{role:"assistant",content:"Oops! Error. Dobara try karo!"}]); }
+    }catch{setMsgs(m=>[...m,{role:"assistant",content:"Error. Please try again."}]);}
     setLoad(false);
   };
 
-  const sugg=["Binary Search samjhao","DP kaise approach karein?","Resume tips for fresher","FAANG crack roadmap","JavaScript event loop","Merge sort code karo","System design kahan se start karein?"];
-
-  return (
-    <div style={{display:"flex",flexDirection:"column",height:"calc(100vh - 130px)"}} className="fade-in">
-      <Title>💬 DevForge AI Assistant</Title>
-      <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column",gap:"10px",marginBottom:"12px",paddingRight:"4px"}}>
+  return(
+    <div style={{display:"flex",flexDirection:"column",height:"calc(100vh - 136px)"}} className="fin">
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"14px",flexWrap:"wrap",gap:"8px"}}>
+        <div>
+          <h2 style={{fontSize:"18px",fontWeight:800,color,letterSpacing:"-0.3px"}}>{title}</h2>
+          <p style={{fontSize:"12px",color:T.textMuted}}>{subtitle}</p>
+        </div>
+        {extra}
+      </div>
+      {/* Chat messages */}
+      <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column",gap:"10px",marginBottom:"10px",paddingRight:"2px"}}>
         {msgs.map((m,i)=>(
           <div key={i} style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start",alignItems:"flex-end",gap:"8px"}}>
-            {m.role==="assistant"&&<div style={{width:"26px",height:"26px",borderRadius:"50%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px",flexShrink:0}}>⚡</div>}
-            <div style={{padding:"12px 15px",borderRadius:m.role==="user"?"16px 16px 4px 16px":"16px 16px 16px 4px",background:m.role==="user"?"linear-gradient(135deg,#6366f1,#8b5cf6)":"#1e293b",color:"#fff",maxWidth:"78%",fontSize:"14px",lineHeight:1.7,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{m.content}</div>
+            {m.role==="assistant"&&<div style={{width:"26px",height:"26px",borderRadius:"8px",background:`linear-gradient(135deg,${color},${T.accentV})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",flexShrink:0,boxShadow:`0 0 10px ${color}40`}}>{botIcon}</div>}
+            <div style={{padding:"11px 14px",borderRadius:m.role==="user"?"14px 14px 3px 14px":"14px 14px 14px 3px",background:m.role==="user"?`linear-gradient(135deg,${T.accent},${T.accentV})`:"#0d1526",color:"#e8edf8",maxWidth:"80%",fontSize:"13px",lineHeight:1.75,whiteSpace:"pre-wrap",wordBreak:"break-word",border:m.role==="assistant"?`1px solid ${T.border}`:"none",boxShadow:m.role==="user"?`0 4px 16px ${T.accent}30`:""}}>{m.content}</div>
           </div>
         ))}
-        {loading&&<div style={{display:"flex",alignItems:"flex-end",gap:"8px"}}><div style={{width:"26px",height:"26px",borderRadius:"50%",background:"linear-gradient(135deg,#6366f1,#8b5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"12px"}}>⚡</div><div style={{padding:"12px 15px",borderRadius:"16px 16px 16px 4px",background:"#1e293b",color:"#818cf8"}}>⏳ Soch raha hoon...</div></div>}
+        {loading&&(
+          <div style={{display:"flex",alignItems:"flex-end",gap:"8px"}}>
+            <div style={{width:"26px",height:"26px",borderRadius:"8px",background:`linear-gradient(135deg,${color},${T.accentV})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px"}}>{botIcon}</div>
+            <div style={{padding:"11px 14px",borderRadius:"14px 14px 14px 3px",background:"#0d1526",border:`1px solid ${T.border}`,display:"flex",gap:"4px",alignItems:"center"}}>
+              {[0,1,2].map(i=><div key={i} style={{width:"6px",height:"6px",borderRadius:"50%",background:color,animation:`pulse 1s ${i*0.2}s infinite`}}/>)}
+            </div>
+          </div>
+        )}
         <div ref={endRef}/>
       </div>
-      <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"8px"}}>
-        {sugg.map(s=><button key={s} onClick={()=>setInput(s)} style={{padding:"5px 12px",background:"#1e293b",border:`1px solid ${C.border}`,borderRadius:"999px",color:C.muted,fontSize:"12px",cursor:"pointer",fontFamily:"inherit"}}>{s}</button>)}
+      {/* Suggestions */}
+      <div style={{display:"flex",gap:"5px",flexWrap:"wrap",marginBottom:"8px"}}>
+        {sugg.map(s=><button key={s} onClick={()=>setInput(s)} style={{padding:"5px 11px",background:T.card,border:`1px solid ${T.border}`,borderRadius:"999px",color:T.textMuted,fontSize:"11px",cursor:"pointer",fontFamily:"inherit",transition:"all 0.15s"}}>{s}</button>)}
       </div>
+      {/* Input */}
       <div style={{display:"flex",gap:"8px"}}>
-        <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&send()} placeholder="Kuch bhi pucho — DSA, system design, resume, career..." style={{flex:1,padding:"12px 16px",background:C.card,border:`1px solid ${C.border}`,borderRadius:"10px",color:C.text,fontFamily:"inherit",fontSize:"14px",outline:"none"}}/>
-        <Btn onClick={send} disabled={loading} style={{padding:"12px 20px"}}>Send →</Btn>
+        <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&send()} placeholder="Ask your question..."
+          style={{flex:1,padding:"12px 16px",background:T.card,border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"13px",outline:"none",transition:"border-color 0.2s"}}
+          onFocus={e=>e.target.style.borderColor=color} onBlur={e=>e.target.style.borderColor=T.border2}/>
+        <button onClick={send} disabled={loading} style={{padding:"12px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"13px",background:`linear-gradient(135deg,${color},${T.accentV})`,color:"#fff",boxShadow:`0 4px 16px ${color}40`,transition:"all 0.15s"}}>Send →</button>
       </div>
     </div>
   );
