@@ -126,7 +126,18 @@ const T = {
 // ═══════════════════════════════════════════════════
 const SECTIONS = [
   { key:"courses",   label:"Courses",   icon:"📚", color:"#22c4e0",
-    tabs:[{id:"c_ai",label:"AI Notes",icon:"✦"},{id:"c_mdn",label:"MDN Docs",icon:"◈"},{id:"c_gfg",label:"GeeksForGeeks",icon:"◉"}]},
+    tabs:[
+      {id:"c_home",    label:"All Subjects",    icon:"◎"},
+      {id:"c_js",      label:"JavaScript",      icon:"◈"},
+      {id:"c_python",  label:"Python",          icon:"◉"},
+      {id:"c_cpp",     label:"C++",             icon:"◈"},
+      {id:"c_java",    label:"Java",            icon:"◉"},
+      {id:"c_dsa",     label:"DSA",             icon:"◈"},
+      {id:"c_sysdes",  label:"System Design",   icon:"◉"},
+      {id:"c_webdev",  label:"Web Dev",         icon:"◈"},
+      {id:"c_mdn",     label:"MDN Docs",        icon:"◉"},
+      {id:"c_gfg",     label:"GeeksForGeeks",   icon:"◈"},
+    ]},
   { key:"coding",    label:"Coding",    icon:"⌨",  color:"#22d3a0",
     tabs:[{id:"cd_lc",label:"LeetCode",icon:"◈"},{id:"cd_hr",label:"HackerRank",icon:"◉"},{id:"cd_fcc",label:"freeCodeCamp",icon:"◈"},{id:"cd_ai",label:"AI Questions",icon:"✦"},{id:"cd_test",label:"Topic Tests",icon:"◉"}]},
   { key:"resume",    label:"Resume",    icon:"◧",  color:"#f97d50",
@@ -310,9 +321,16 @@ export default function App() {
           {/* Ambient background glow */}
           <div style={{position:"fixed",top:"20%",right:"5%",width:"400px",height:"400px",borderRadius:"50%",background:`radial-gradient(circle,${curSec?.color||T.accent}06 0%,transparent 70%)`,pointerEvents:"none",zIndex:0}}/>
           <div style={{position:"relative",zIndex:1}}>
-            {tabId==="c_ai"    && <CoursesAI   prog={prog} addXP={addXP}/>}
-            {tabId==="c_mdn"   && <CoursesMDN  prog={prog} addXP={addXP}/>}
-            {tabId==="c_gfg"   && <CoursesGFG  prog={prog} addXP={addXP}/>}
+            {tabId==="c_home"   && <CoursesHome  prog={prog} setTID={setTID}/>}
+            {tabId==="c_js"     && <SubjectPage subject="JavaScript" prog={prog} addXP={addXP}/>}
+            {tabId==="c_python" && <SubjectPage subject="Python"     prog={prog} addXP={addXP}/>}
+            {tabId==="c_cpp"    && <SubjectPage subject="C++"        prog={prog} addXP={addXP}/>}
+            {tabId==="c_java"   && <SubjectPage subject="Java"       prog={prog} addXP={addXP}/>}
+            {tabId==="c_dsa"    && <SubjectPage subject="DSA"        prog={prog} addXP={addXP}/>}
+            {tabId==="c_sysdes" && <SubjectPage subject="System Design" prog={prog} addXP={addXP}/>}
+            {tabId==="c_webdev" && <SubjectPage subject="Web Dev"    prog={prog} addXP={addXP}/>}
+            {tabId==="c_mdn"    && <CoursesMDN/>}
+            {tabId==="c_gfg"    && <CoursesGFG/>}
             {tabId==="cd_lc"   && <ExtSite url="https://leetcode.com" name="LeetCode" color="#f89f1b" links={[["All Problems","https://leetcode.com/problemset/"],["Study Plan","https://leetcode.com/study-plan/"],["Explore","https://leetcode.com/explore/"]]} prog={prog} field="lcProgress" addXP={addXP}/>}
             {tabId==="cd_hr"   && <ExtSite url="https://hackerrank.com" name="HackerRank" color="#22d3a0" links={[["Interview Kit","https://hackerrank.com/interview/preparation-kit"],["Certify","https://hackerrank.com/skills-verification"],["Practice","https://hackerrank.com/domains"]]} prog={prog} field="hrProgress" addXP={addXP}/>}
             {tabId==="cd_fcc"  && <FCC prog={prog} addXP={addXP}/>}
@@ -410,70 +428,289 @@ function EmptyState({icon,title,sub}){
 const dCol = d => d==="Easy"?T.green:d==="Medium"?T.cyan:T.red;
 const subCol = {OS:T.accent,DBMS:T.cyan,CN:T.green,OOP:T.pink,DSA:T.accentV};
 
-// ═══════════════════════════════════════════════════
-//  COURSES — AI NOTES
-// ═══════════════════════════════════════════════════
-function CoursesAI({prog,addXP}){
-  const [lang,setLang]=useState("JavaScript");
-  const [topic,setTopic]=useState(TOPICS_BY_LANG["JavaScript"][0]);
-  const [notes,setNotes]=useState("");
-  const [loading,setLoad]=useState(false);
-  const topics=TOPICS_BY_LANG[lang]||[];
-  useEffect(()=>setTopic(topics[0]),[lang]);
 
-  const generate=async()=>{
-    setLoad(true);setNotes("");
-    const r=await callAI([{role:"user",content:`Create comprehensive study notes on "${topic}" in ${lang}.\n\nStructure:\n## What is it?\n## Why it matters\n## How it works\n\`\`\`${lang.toLowerCase()}\n// Code example here\n\`\`\`\n## Common Interview Questions\n## Key Points to Remember`}],
-      "Expert CS teacher. Write clear, structured study notes with practical code examples. Make it interview-ready.");
-    setNotes(r);setLoad(false);
-    const key=`${lang}_${topic}`;
-    const tops=[...(prog.completedTopics||[])];
-    if(!tops.includes(key)){tops.push(key);addXP(15,{completedTopics:tops});}
+// ═══════════════════════════════════════════════════
+//  COURSES — Subject config
+// ═══════════════════════════════════════════════════
+const SUBJECT_META = {
+  "JavaScript":    { color:"#f7df1e", textColor:"#000", icon:"JS",  desc:"Master modern JS — closures, async, DOM, ES6+, Promises" },
+  "Python":        { color:"#3776ab", textColor:"#fff", icon:"PY",  desc:"Python from basics to advanced — OOP, decorators, async" },
+  "C++":           { color:"#00599c", textColor:"#fff", icon:"C++", desc:"C++ mastery — pointers, STL, templates, memory management" },
+  "Java":          { color:"#ed8b00", textColor:"#fff", icon:"☕",  desc:"Java fundamentals to enterprise — JVM, collections, Spring" },
+  "DSA":           { color:"#7c5cf6", textColor:"#fff", icon:"⚡",  desc:"Data Structures & Algorithms — arrays to dynamic programming" },
+  "System Design": { color:"#22c4e0", textColor:"#000", icon:"🏗",  desc:"Build scalable systems — load balancing, caching, CAP theorem" },
+  "Web Dev":       { color:"#e879a0", textColor:"#fff", icon:"🌐",  desc:"Full-stack web development — HTML, CSS, React, Node.js" },
+};
+
+const SUBJECT_TAB_IDS = {
+  "JavaScript":"c_js","Python":"c_python","C++":"c_cpp","Java":"c_java",
+  "DSA":"c_dsa","System Design":"c_sysdes","Web Dev":"c_webdev"
+};
+
+// ═══════════════════════════════════════════════════
+//  COURSES — Home dashboard (all subjects grid)
+// ═══════════════════════════════════════════════════
+function CoursesHome({prog,setTID}){
+  const done = prog.completedTopics||[];
+  return(
+    <div className="fin">
+      <PageTitle color={T.cyan}>📚 All Subjects</PageTitle>
+      <p style={{color:T.textSub,fontSize:"15px",marginBottom:"28px",lineHeight:1.6}}>
+        Each subject has 10 topics with AI-generated notes, code examples, and interview practice.
+      </p>
+      {/* Subject cards grid */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(330px,1fr))",gap:"20px",marginBottom:"32px"}}>
+        {Object.entries(SUBJECT_META).map(([subj,meta])=>{
+          const topics = TOPICS_BY_LANG[subj]||[];
+          const completed = topics.filter(t=>done.includes(`${subj}_${t}`)).length;
+          const pct = topics.length ? Math.round(completed/topics.length*100) : 0;
+          return(
+            <div key={subj} onClick={()=>setTID(SUBJECT_TAB_IDS[subj])} className="card-hover"
+              style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"20px",overflow:"hidden",cursor:"pointer"}}>
+              {/* Color header */}
+              <div style={{background:`linear-gradient(135deg,${meta.color}25,${meta.color}08)`,borderBottom:`1px solid ${meta.color}25`,padding:"26px 26px 22px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:"16px",marginBottom:"16px"}}>
+                  <div style={{width:"56px",height:"56px",borderRadius:"16px",background:meta.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"17px",fontWeight:900,color:meta.textColor,flexShrink:0,boxShadow:`0 6px 24px ${meta.color}55`,letterSpacing:"-1px"}}>
+                    {meta.icon}
+                  </div>
+                  <div style={{flex:1}}>
+                    <h3 style={{fontSize:"22px",fontWeight:900,color:T.text,letterSpacing:"-0.5px",marginBottom:"5px"}}>{subj}</h3>
+                    <p style={{fontSize:"13px",color:T.textSub,lineHeight:1.4}}>{meta.desc}</p>
+                  </div>
+                </div>
+                <div style={{background:"#ffffff10",borderRadius:"999px",height:"7px",marginBottom:"9px"}}>
+                  <div style={{width:`${pct}%`,height:"100%",background:meta.color,borderRadius:"999px",transition:"width 0.6s"}}/>
+                </div>
+                <div style={{display:"flex",justifyContent:"space-between",fontSize:"13px"}}>
+                  <span style={{color:meta.color,fontWeight:700}}>{pct}% complete</span>
+                  <span style={{color:T.textMuted}}>{completed} / {topics.length} topics</span>
+                </div>
+              </div>
+              {/* Topics grid */}
+              <div style={{padding:"18px 26px 22px"}}>
+                <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"13px"}}>TOPICS</div>
+                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"7px",marginBottom:"18px"}}>
+                  {topics.slice(0,8).map(t=>{
+                    const isDone=done.includes(`${subj}_${t}`);
+                    return(
+                      <div key={t} style={{display:"flex",alignItems:"center",gap:"9px"}}>
+                        <div style={{width:"18px",height:"18px",borderRadius:"5px",background:isDone?meta.color:"transparent",border:`1.5px solid ${isDone?meta.color:T.border2}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"10px",color:isDone?meta.textColor:"transparent",flexShrink:0,fontWeight:900}}>✓</div>
+                        <span style={{fontSize:"12px",color:isDone?T.textSub:T.textMuted,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{t}</span>
+                      </div>
+                    );
+                  })}
+                  {topics.length>8&&<div style={{fontSize:"11px",color:T.textMuted,gridColumn:"1/-1"}}>+{topics.length-8} more...</div>}
+                </div>
+                <div style={{padding:"11px 16px",background:`${meta.color}15`,borderRadius:"10px",border:`1px solid ${meta.color}25`,textAlign:"center"}}>
+                  <span style={{fontSize:"14px",fontWeight:700,color:meta.color}}>Start {subj} →</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* External resources */}
+      <div style={{fontSize:"13px",fontWeight:700,color:T.textMuted,letterSpacing:"0.1em",marginBottom:"16px"}}>EXTERNAL RESOURCES</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px"}}>
+        {[["c_mdn","MDN Web Docs","#4f8ef7","Official Mozilla documentation — Web APIs, HTML, CSS, JavaScript","📘"],
+          ["c_gfg","GeeksForGeeks","#22d3a0","DSA, algorithms, CS fundamentals, interview prep","🌿"]].map(([id,name,color,desc,icon])=>(
+          <div key={id} onClick={()=>setTID(id)} className="card-hover"
+            style={{background:T.card,border:`1px solid ${color}30`,borderRadius:"18px",padding:"24px",cursor:"pointer",display:"flex",gap:"18px",alignItems:"center"}}>
+            <div style={{fontSize:"34px",width:"56px",height:"56px",display:"flex",alignItems:"center",justifyContent:"center",background:`${color}18`,borderRadius:"16px",flexShrink:0}}>{icon}</div>
+            <div>
+              <h4 style={{fontSize:"18px",fontWeight:800,color:T.text,marginBottom:"6px"}}>{name}</h4>
+              <p style={{fontSize:"13px",color:T.textMuted,lineHeight:1.5,marginBottom:"8px"}}>{desc}</p>
+              <span style={{fontSize:"13px",color,fontWeight:700}}>Open →</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════
+//  COURSES — Per-Subject Page (same layout for ALL subjects)
+// ═══════════════════════════════════════════════════
+function SubjectPage({subject,prog,addXP}){
+  const meta   = SUBJECT_META[subject]||{color:T.cyan,textColor:"#fff",icon:"📖",desc:""};
+  const topics = TOPICS_BY_LANG[subject]||[];
+  const done   = prog.completedTopics||[];
+  const completed = topics.filter(t=>done.includes(`${subject}_${t}`)).length;
+  const pct    = topics.length ? Math.round(completed/topics.length*100) : 0;
+
+  const [selTopic, setSel]  = useState(topics[0]||"");
+  const [notes,    setNotes]= useState("");
+  const [loading,  setLoad] = useState(false);
+  const [tab,      setTab]  = useState("notes");
+  const [practiceQ,setPQ]   = useState("");
+  const [practiceA,setPA]   = useState("");
+  const [practiceFB,setPFB] = useState("");
+  const [pLoad,    setPL]   = useState(false);
+
+  const generate = async () => {
+    if(!selTopic) return;
+    setLoad(true); setNotes("");
+    const r = await callAI(
+      [{role:"user",content:`Create comprehensive study notes on "${selTopic}" in ${subject}.\n\nUse this exact structure:\n## 📌 What is it?\n(clear definition)\n\n## 🧠 Why it matters\n(use cases, importance)\n\n## ⚙️ How it works\n(detailed explanation with steps)\n\n\`\`\`\n// Practical ${subject} code example with comments\n\`\`\`\n\n## 🎯 Common Interview Questions\n1. ...\n2. ...\n3. ...\n\n## ✅ Key Points to Remember\n- ...\n- ...`}],
+      `Expert ${subject} teacher and interview coach. Write clear, detailed, interview-ready notes. Include working code examples with inline comments. Be thorough but practical.`
+    );
+    setNotes(r); setLoad(false);
+    const key = `${subject}_${selTopic}`;
+    if(!done.includes(key)) addXP(15,{completedTopics:[...done,key]});
   };
 
-  const done=(prog.completedTopics||[]);
-  const progress=topics.filter(t=>done.includes(`${lang}_${t}`)).length;
+  const genPractice = async () => {
+    setPL(true); setPQ(""); setPA(""); setPFB("");
+    const r = await callAI(
+      [{role:"user",content:`Generate one challenging ${subject} interview question specifically about "${selTopic}". Include a brief answer outline after the question.`}],
+      "Experienced technical interviewer. Practical, focused question."
+    );
+    setPQ(r); setPL(false);
+  };
+
+  const getPFB = async () => {
+    if(!practiceA.trim()) return;
+    setPL(true); setPFB("");
+    const r = await callAI(
+      [{role:"user",content:`Subject: ${subject} — Topic: ${selTopic}\nQuestion: ${practiceQ}\nAnswer: ${practiceA}\n\nEvaluate: correctness, gaps, score/10, one improvement tip.`}],
+      "Technical interviewer. Brief honest feedback."
+    );
+    setPFB(r); setPL(false);
+    addXP(20,{interviewAnswered:(prog.interviewAnswered||0)+1});
+  };
 
   return(
     <div className="fin">
-      <PageTitle color={T.cyan}>✦ AI Study Notes</PageTitle>
-      <div style={{display:"grid",gridTemplateColumns:"220px 1fr",gap:"16px",alignItems:"start"}}>
-        {/* Left panel */}
-        <div>
-          <Card style={{marginBottom:"12px",padding:"14px"}}>
-            <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"10px"}}>SUBJECT</div>
-            <SelField value={lang} onChange={setLang} options={Object.keys(TOPICS_BY_LANG)} style={{width:"100%"}}/>
-          </Card>
-          <Card style={{padding:"12px"}}>
-            <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"8px"}}>TOPICS — {progress}/{topics.length}</div>
-            <div style={{background:T.border2,borderRadius:"999px",height:"3px",marginBottom:"10px"}}>
-              <div style={{width:`${topics.length?progress/topics.length*100:0}%`,height:"100%",background:`linear-gradient(90deg,${T.cyan},${T.orange})`,borderRadius:"999px"}}/>
-            </div>
-            {topics.map(t=>{
-              const isDone=done.includes(`${lang}_${t}`);
-              return <button key={t} onClick={()=>setTopic(t)} style={{width:"100%",display:"flex",alignItems:"center",gap:"8px",padding:"8px 9px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",background:topic===t?`${T.cyan}15`:"transparent",color:topic===t?T.cyan:isDone?T.green:T.textMuted,marginBottom:"1px",textAlign:"left"}}>
-                <span style={{width:"13px",height:"13px",borderRadius:"3px",border:`1.5px solid ${isDone?T.green:T.border2}`,background:isDone?T.green:"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"8px",flexShrink:0}}>{isDone?"✓":""}</span>
-                <span style={{flex:1,lineHeight:1.3}}>{t}</span>
-              </button>;
-            })}
-          </Card>
+      {/* ── BIG SUBJECT HEADER ── */}
+      <div style={{background:`linear-gradient(135deg,${meta.color}20,${meta.color}05)`,border:`1px solid ${meta.color}35`,borderRadius:"22px",padding:"32px",marginBottom:"26px"}}>
+        <div style={{display:"flex",alignItems:"center",gap:"22px",marginBottom:"22px",flexWrap:"wrap"}}>
+          <div style={{width:"72px",height:"72px",borderRadius:"20px",background:meta.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"26px",fontWeight:900,color:meta.textColor,flexShrink:0,boxShadow:`0 8px 32px ${meta.color}60`,letterSpacing:"-1px"}}>
+            {meta.icon}
+          </div>
+          <div style={{flex:1}}>
+            <h1 style={{fontSize:"30px",fontWeight:900,color:T.text,letterSpacing:"-0.7px",marginBottom:"7px"}}>{subject}</h1>
+            <p style={{fontSize:"15px",color:T.textSub,lineHeight:1.5}}>{meta.desc}</p>
+          </div>
+          <div style={{textAlign:"right",flexShrink:0}}>
+            <div style={{fontSize:"38px",fontWeight:900,color:meta.color,lineHeight:1}}>{pct}%</div>
+            <div style={{fontSize:"13px",color:T.textMuted,marginTop:"3px"}}>{completed} / {topics.length} topics done</div>
+          </div>
         </div>
-        {/* Right panel */}
+        <div style={{background:"#ffffff08",borderRadius:"999px",height:"10px",overflow:"hidden"}}>
+          <div style={{width:`${pct}%`,height:"100%",background:`linear-gradient(90deg,${meta.color},${meta.color}88)`,borderRadius:"999px",transition:"width 0.6s",boxShadow:`0 0 12px ${meta.color}60`}}/>
+        </div>
+      </div>
+
+      {/* ── TWO-COLUMN LAYOUT ── */}
+      <div style={{display:"grid",gridTemplateColumns:"270px 1fr",gap:"22px",alignItems:"start"}}>
+
+        {/* ── LEFT: topic list (sticky) ── */}
+        <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",overflow:"hidden",position:"sticky",top:"20px"}}>
+          <div style={{padding:"18px 20px 15px",borderBottom:`1px solid ${T.border2}`,background:`${meta.color}12`}}>
+            <div style={{fontSize:"12px",fontWeight:700,color:meta.color,letterSpacing:"0.1em"}}>ALL TOPICS</div>
+            <div style={{fontSize:"13px",color:T.textMuted,marginTop:"3px"}}>{completed} of {topics.length} completed</div>
+          </div>
+          <div style={{padding:"10px"}}>
+            {topics.map((t,i)=>{
+              const isDone   = done.includes(`${subject}_${t}`);
+              const isActive = selTopic === t;
+              return(
+                <button key={t} onClick={()=>{setSel(t);setNotes("");setPQ("");setPFB("");setTab("notes");}} style={{
+                  width:"100%",display:"flex",alignItems:"center",gap:"13px",
+                  padding:"14px 14px",borderRadius:"12px",border:"none",cursor:"pointer",
+                  fontFamily:"inherit",fontSize:"14px",fontWeight:isActive?700:500,
+                  background:isActive?`${meta.color}22`:"transparent",
+                  color:isActive?meta.color:isDone?T.textSub:T.textMuted,
+                  marginBottom:"3px",textAlign:"left",transition:"all 0.15s",
+                  borderLeft:isActive?`3px solid ${meta.color}`:"3px solid transparent"
+                }}>
+                  <div style={{
+                    width:"26px",height:"26px",borderRadius:"7px",flexShrink:0,
+                    background:isDone?meta.color:isActive?`${meta.color}30`:"#ffffff06",
+                    border:`1.5px solid ${isDone?meta.color:T.border2}`,
+                    display:"flex",alignItems:"center",justifyContent:"center",
+                    fontSize:"12px",color:isDone?meta.textColor:T.textMuted,fontWeight:900
+                  }}>{isDone?"✓":i+1}</div>
+                  <span style={{flex:1,lineHeight:1.4}}>{t}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── RIGHT: content area ── */}
         <div>
-          <GCard color={T.cyan} style={{marginBottom:"14px"}}>
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"10px"}}>
+          {/* Active topic bar */}
+          <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",padding:"20px 24px",marginBottom:"18px"}}>
+            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"12px"}}>
               <div>
-                <Badge2 color={T.cyan}>{lang}</Badge2>
-                <h3 style={{fontSize:"16px",fontWeight:700,marginTop:"8px",color:T.text}}>{topic}</h3>
+                <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>{subject.toUpperCase()} · TOPIC</div>
+                <h2 style={{fontSize:"22px",fontWeight:900,color:T.text,letterSpacing:"-0.4px"}}>{selTopic}</h2>
               </div>
-              <Btn onClick={generate} disabled={loading} color={T.cyan}>{loading?"⏳ Generating...":"Generate Notes"}</Btn>
+              <div style={{display:"flex",gap:"8px"}}>
+                <button onClick={()=>setTab("notes")} style={{padding:"10px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"14px",fontWeight:700,background:tab==="notes"?meta.color:T.border2,color:tab==="notes"?meta.textColor:T.textMuted,transition:"all 0.15s"}}>📖 Notes</button>
+                <button onClick={()=>setTab("practice")} style={{padding:"10px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"14px",fontWeight:700,background:tab==="practice"?meta.color:T.border2,color:tab==="practice"?meta.textColor:T.textMuted,transition:"all 0.15s"}}>🎯 Practice</button>
+              </div>
             </div>
-          </GCard>
-          {loading && <div style={{textAlign:"center",padding:"50px"}}><div style={{fontSize:"36px",animation:"pulse 1s infinite",marginBottom:"12px"}}>📖</div><p style={{color:T.textMuted}}>Generating study notes for {topic}...</p></div>}
-          {notes && <Card className="fin" style={{padding:"20px"}}>
-            <div style={{color:"#c8d8f0",fontSize:"13px",lineHeight:1.9,whiteSpace:"pre-wrap",fontFamily:"inherit"}}>{notes}</div>
-          </Card>}
-          {!notes && !loading && <EmptyState icon="📖" title="Select a topic and generate notes" sub="AI will create comprehensive notes with examples and interview tips"/>}
+          </div>
+
+          {/* NOTES TAB */}
+          {tab==="notes" && (
+            <>
+              {!notes && !loading && (
+                <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"56px 32px",textAlign:"center"}}>
+                  <div style={{width:"72px",height:"72px",borderRadius:"20px",background:`${meta.color}18`,border:`1px solid ${meta.color}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"32px",margin:"0 auto 20px"}}>📖</div>
+                  <h3 style={{fontSize:"20px",fontWeight:700,color:T.textSub,marginBottom:"10px"}}>Learn {selTopic}</h3>
+                  <p style={{fontSize:"14px",color:T.textMuted,marginBottom:"28px",maxWidth:"380px",margin:"0 auto 28px",lineHeight:1.6}}>AI will generate detailed notes with code examples, explanations and interview questions</p>
+                  <button onClick={generate} style={{padding:"14px 36px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:800,fontSize:"16px",background:meta.color,color:meta.textColor,boxShadow:`0 6px 24px ${meta.color}50`,letterSpacing:"0.01em"}}>⚡ Generate Notes  +15 XP</button>
+                </div>
+              )}
+              {loading && (
+                <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"70px",textAlign:"center"}}>
+                  <div style={{fontSize:"44px",animation:"pulse 1s infinite",marginBottom:"18px"}}>📖</div>
+                  <p style={{color:T.textMuted,fontSize:"16px"}}>Generating notes for <b style={{color:meta.color}}>{selTopic}</b>...</p>
+                </div>
+              )}
+              {notes && !loading && (
+                <div className="fin">
+                  <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"30px",marginBottom:"16px"}}>
+                    <div style={{color:"#c8d8f0",fontSize:"15px",lineHeight:2.1,whiteSpace:"pre-wrap"}}>{notes}</div>
+                  </div>
+                  <div style={{display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap"}}>
+                    <button onClick={generate} style={{padding:"10px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:meta.color,color:meta.textColor}}>🔄 Regenerate</button>
+                    <button onClick={()=>setNotes("")} style={{padding:"10px 20px",borderRadius:"10px",border:`1px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:"transparent",color:T.textMuted}}>✕ Clear</button>
+                    <span style={{marginLeft:"auto",fontSize:"14px",color:T.green,fontWeight:700}}>✅ +15 XP earned!</span>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* PRACTICE TAB */}
+          {tab==="practice" && (
+            <div>
+              <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"24px",marginBottom:"16px"}}>
+                <p style={{fontSize:"14px",color:T.textSub,marginBottom:"16px"}}>Get an interview question on <b style={{color:meta.color}}>{selTopic}</b> and get AI feedback on your answer.</p>
+                <button onClick={genPractice} disabled={pLoad} style={{padding:"11px 24px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:meta.color,color:meta.textColor,opacity:pLoad?0.5:1}}>{pLoad?"⏳ Generating...":"🎯 Generate Question"}</button>
+              </div>
+              {practiceQ && (
+                <div className="fin">
+                  <div style={{background:T.card,border:`1px solid ${meta.color}35`,borderLeft:`4px solid ${meta.color}`,borderRadius:"18px",padding:"24px",marginBottom:"16px"}}>
+                    <div style={{fontSize:"11px",color:meta.color,fontWeight:700,letterSpacing:"0.1em",marginBottom:"12px"}}>INTERVIEW QUESTION</div>
+                    <p style={{fontSize:"16px",color:T.text,lineHeight:1.8}}>{practiceQ}</p>
+                  </div>
+                  <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"24px"}}>
+                    <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"12px"}}>YOUR ANSWER</div>
+                    <TA value={practiceA} onChange={e=>setPA(e.target.value)} placeholder="Write your answer here..." rows={6}/>
+                    <button onClick={getPFB} disabled={pLoad||!practiceA.trim()} style={{marginTop:"14px",padding:"11px 24px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:meta.color,color:meta.textColor,opacity:(pLoad||!practiceA.trim())?0.4:1}}>{pLoad?"⏳ Evaluating...":"🤖 Get Feedback  +20 XP"}</button>
+                  </div>
+                  {practiceFB && <AIBox title="Feedback" content={practiceFB} color={meta.color}/>}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -481,7 +718,7 @@ function CoursesAI({prog,addXP}){
 }
 
 // ═══════════════════════════════════════════════════
-//  COURSES — MDN & GFG (shared template)
+//  COURSES — MDN & GFG embed readers
 // ═══════════════════════════════════════════════════
 function CoursesMDN(){
   const links=[
@@ -514,21 +751,26 @@ function EmbedReader({name,color,links}){
   return(
     <div className="fin">
       <PageTitle color={color}>{name}</PageTitle>
-      <Card style={{marginBottom:"14px",padding:"12px"}}>
-        <div style={{display:"flex",gap:"6px",flexWrap:"wrap"}}>
-          {links.map(l=><button key={l.l} onClick={()=>setSel(l.l)} style={{padding:"6px 13px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:600,background:sel===l.l?color:"#080c14",color:sel===l.l?"#000":T.textMuted,transition:"all 0.15s"}}>{l.l}</button>)}
+      <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",padding:"16px",marginBottom:"16px"}}>
+        <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
+          {links.map(l=>(
+            <button key={l.l} onClick={()=>setSel(l.l)} style={{padding:"9px 16px",borderRadius:"9px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"13px",fontWeight:600,background:sel===l.l?color:T.border2,color:sel===l.l?"#fff":T.textMuted,transition:"all 0.15s"}}>
+              {l.l}
+            </button>
+          ))}
         </div>
-      </Card>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"10px"}}>
-        <span style={{fontSize:"14px",fontWeight:700,color}}>{sel}</span>
-        <a href={cur.u} target="_blank" rel="noreferrer" style={{padding:"7px 14px",borderRadius:"8px",background:color,color:"#fff",fontWeight:700,fontSize:"12px"}}>Open Full ↗</a>
       </div>
-      <Card style={{padding:"0",overflow:"hidden",borderRadius:"14px"}}>
-        <iframe src={cur.u} style={{width:"100%",height:"620px",border:"none"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
-      </Card>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px",flexWrap:"wrap",gap:"8px"}}>
+        <h3 style={{fontSize:"18px",fontWeight:700,color}}>{sel}</h3>
+        <a href={cur.u} target="_blank" rel="noreferrer" style={{padding:"9px 18px",borderRadius:"9px",background:color,color:"#fff",fontWeight:700,fontSize:"13px"}}>Open Full ↗</a>
+      </div>
+      <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",overflow:"hidden"}}>
+        <iframe src={cur.u} style={{width:"100%",height:"640px",border:"none"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
+      </div>
     </div>
   );
 }
+
 
 // ═══════════════════════════════════════════════════
 //  CODING — EXTERNAL SITE
