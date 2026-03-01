@@ -78,13 +78,25 @@ const LATEX_TEMPLATE = `\\documentclass[letterpaper,11pt]{article}
 //  AI
 // ═══════════════════════════════════════════════════
 async function callAI(messages, system = "") {
-  const body = { model: "claude-sonnet-4-20250514", max_tokens: 1200, messages };
+  const body = { model: "claude-sonnet-4-20250514", max_tokens: 2000, messages };
   if (system) body.system = system;
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body)
-  });
-  const d = await r.json();
-  return d.content?.map(b => b.text || "").join("") || "Error. Please try again.";
+  try {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify(body)
+    });
+    if(!r.ok){ const e=await r.text(); console.error("API error:",e); return "API error. Please try again."; }
+    const d = await r.json();
+    return d.content?.map(b => b.text || "").join("") || "No response. Please try again.";
+  } catch(err) {
+    console.error("callAI error:", err);
+    return "Network error. Please try again.";
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -102,18 +114,18 @@ const DP = () => ({
 //  DESIGN — Placement Prep Navy Theme
 // ═══════════════════════════════════════════════════
 const T = {
-  bg:       "#0f1117",
-  nav:      "#13161f",
-  sidebar:  "#13161f",
-  card:     "#1a1d2e",
-  cardHov:  "#1f2340",
-  border:   "#252840",
-  border2:  "#2d3155",
+  bg:       "#000000",
+  nav:      "#080808",
+  sidebar:  "#080808",
+  card:     "#0e0e0e",
+  cardHov:  "#131313",
+  border:   "#1c1c1c",
+  border2:  "#252525",
   accent:   "#6c63ff",
   accentV:  "#a78bfa",
   text:     "#f0f2ff",
-  textSub:  "#8b93b8",
-  textMuted:"#4a5080",
+  textSub:  "#8888aa",
+  textMuted:"#444466",
   green:    "#34d399",
   yellow:   "#fbbf24",
   orange:   "#fb923c",
@@ -226,7 +238,7 @@ export default function App() {
 
   // ── AUTH ──────────────────────────────────────────
   if (screen === "auth") return (
-    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#0f1117 0%,#1a1040 100%)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Plus Jakarta Sans','Sora','Segoe UI',sans-serif",padding:"20px",position:"relative",overflow:"hidden"}}>
+    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#000000 0%,#0a0818 100%)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Plus Jakarta Sans','Sora','Segoe UI',sans-serif",padding:"20px",position:"relative",overflow:"hidden"}}>
       <div style={{position:"absolute",width:"600px",height:"600px",borderRadius:"50%",background:"radial-gradient(circle,#6c63ff15 0%,transparent 70%)",top:"-150px",left:"-150px",pointerEvents:"none"}}/>
       <div style={{position:"absolute",width:"400px",height:"400px",borderRadius:"50%",background:"radial-gradient(circle,#38bdf815 0%,transparent 70%)",bottom:"-80px",right:"-80px",pointerEvents:"none"}}/>
       <div style={{width:"100%",maxWidth:"400px",position:"relative",zIndex:1}}>
@@ -235,7 +247,7 @@ export default function App() {
           <h1 style={{fontSize:"30px",fontWeight:800,color:T.text,margin:"0 0 6px",letterSpacing:"-0.5px"}}>DevForge</h1>
           <p style={{color:T.textMuted,fontSize:"16px"}}>Your complete placement preparation hub</p>
         </div>
-        <div style={{background:"#1a1d2e",border:"1px solid #2d3155",borderRadius:"20px",padding:"32px",boxShadow:"0 24px 80px #00000080"}}>
+        <div style={{background:"#0f0f0f",border:"1px solid #2d3155",borderRadius:"20px",padding:"32px",boxShadow:"0 24px 80px #00000080"}}>
           <h2 style={{color:T.text,fontSize:"18px",fontWeight:700,marginBottom:"24px",textAlign:"center"}}>
             {authMode==="login" ? "Welcome back 👋" : "Create your account 🚀"}
           </h2>
@@ -243,7 +255,7 @@ export default function App() {
             <div key={lbl} style={{marginBottom:"16px"}}>
               <label style={{display:"block",fontSize:"13px",color:T.textSub,marginBottom:"7px",fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase"}}>{lbl}</label>
               <input type={type} value={val} onChange={e=>set(e.target.value)} placeholder={ph} onKeyDown={e=>e.key==="Enter"&&handleAuth()}
-                style={{width:"100%",padding:"13px 16px",background:"#0f1117",border:"1px solid #2d3155",borderRadius:"11px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
+                style={{width:"100%",padding:"13px 16px",background:"#000000",border:"1px solid #252525",borderRadius:"11px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
                 onFocus={e=>e.target.style.borderColor="#6c63ff"} onBlur={e=>e.target.style.borderColor="#2d3155"}/>
             </div>
           ))}
@@ -266,7 +278,7 @@ export default function App() {
     <div style={{display:"flex",minHeight:"100vh",background:T.bg,fontFamily:"'Plus Jakarta Sans','Sora','Segoe UI',sans-serif",color:T.text}}>
 
       {/* ══ LEFT SIDEBAR ══ */}
-      <aside style={{width:"260px",background:T.sidebar,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",flexShrink:0,position:"sticky",top:0,height:"100vh",overflowY:"auto"}}>
+      <aside style={{width:"260px",background:"#080808",borderRight:"1px solid #1c1c1c",display:"flex",flexDirection:"column",flexShrink:0,position:"sticky",top:0,height:"100vh",overflowY:"auto"}}>
         {/* Logo */}
         <div style={{padding:"22px 20px 18px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:"12px"}}>
           <div style={{width:"38px",height:"38px",borderRadius:"11px",background:"linear-gradient(135deg,#6c63ff,#38bdf8)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"18px",flexShrink:0,boxShadow:"0 0 18px #6c63ff50"}}>⚡</div>
@@ -313,7 +325,7 @@ export default function App() {
 
         {/* Bottom user card */}
         <div style={{padding:"14px",borderTop:`1px solid ${T.border}`}}>
-          <div style={{background:"#0f1117",borderRadius:"12px",padding:"14px",border:`1px solid ${T.border2}`}}>
+          <div style={{background:"#000000",borderRadius:"12px",padding:"14px",border:`1px solid ${T.border}`}}>
             <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"12px"}}>
               <div style={{width:"36px",height:"36px",borderRadius:"50%",background:`linear-gradient(135deg,${curSec?.color||T.accent},#6c63ff)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"15px",fontWeight:800,flexShrink:0}}>{user[0]?.toUpperCase()}</div>
               <div style={{flex:1,minWidth:0}}>
@@ -341,7 +353,7 @@ export default function App() {
       <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
 
         {/* ── TOP NAV BAR ── */}
-        <nav style={{height:"62px",background:T.nav,borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",padding:"0 28px",gap:"6px",position:"sticky",top:0,zIndex:200,flexShrink:0}}>
+        <nav style={{height:"62px",background:"#080808",borderBottom:"1px solid #1c1c1c",display:"flex",alignItems:"center",padding:"0 28px",gap:"6px",position:"sticky",top:0,zIndex:200,flexShrink:0}}>
           {SECTIONS.map(s=>(
             <button key={s.key} onClick={()=>goSec(s.key)} style={{padding:"8px 18px",borderRadius:"999px",border:secKey===s.key?`1.5px solid ${s.color}`:"1.5px solid transparent",cursor:"pointer",fontFamily:"inherit",fontSize:"15px",fontWeight:secKey===s.key?700:500,background:secKey===s.key?`${s.color}15`:"transparent",color:secKey===s.key?s.color:T.textSub,transition:"all 0.15s",whiteSpace:"nowrap"}}>
               {s.label}
@@ -355,7 +367,7 @@ export default function App() {
         </nav>
 
         {/* ── MAIN CONTENT ── */}
-        <main style={{flex:1,overflowY:"auto",padding:"32px 36px",background:T.bg}}>
+        <main style={{flex:1,overflowY:"auto",padding:"28px 32px",background:"#000"}}>
           <div style={{position:"relative",zIndex:1}}>
             {tabId==="c_home"   && <CoursesHome  prog={prog} setTID={setTID}/>}
             {tabId==="c_js"     && <SubjectPage subject="JavaScript" prog={prog} addXP={addXP}/>}
@@ -395,13 +407,13 @@ export default function App() {
 //  GLOBAL STYLES
 // ═══════════════════════════════════════════════════
 function GS(){ return <style>{`
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
   *{box-sizing:border-box;margin:0;padding:0;}
   body{background:#0f1117;}
   ::-webkit-scrollbar{width:6px;}
-  ::-webkit-scrollbar-track{background:#13161f;}
-  ::-webkit-scrollbar-thumb{background:#2d3155;border-radius:4px;}
-  ::-webkit-scrollbar-thumb:hover{background:#3d4175;}
+  ::-webkit-scrollbar-track{background:#080808;}
+  ::-webkit-scrollbar-thumb{background:#252525;border-radius:4px;}
+  ::-webkit-scrollbar-thumb:hover{background:#333333;}
   button:hover:not(:disabled){opacity:0.88;transform:translateY(-1px);}
   button{transition:all 0.15s;}
   button:disabled{opacity:0.35;cursor:not-allowed!important;transform:none!important;}
@@ -441,15 +453,15 @@ function Badge2({children,color=T.accent}){
 }
 function TA({value,onChange,placeholder,rows=4,readOnly=false,style={}}){
   return <textarea value={value} onChange={onChange} placeholder={placeholder} readOnly={readOnly}
-    style={{width:"100%",minHeight:`${rows*44}px`,padding:"14px 16px",background:T.bg,border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"'JetBrains Mono','Fira Code',monospace",fontSize:"14px",outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.75,...style}}/>;
+    style={{width:"100%",minHeight:`${rows*44}px`,padding:"14px 16px",background:"#000",border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"'JetBrains Mono','Fira Code',monospace",fontSize:"14px",outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.75,...style}}/>;
 }
 function InpField({value,onChange,placeholder,style={},type="text"}){
   return <input type={type} value={value} onChange={onChange} placeholder={placeholder}
-    style={{padding:"12px 16px",background:T.bg,border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",...style}}
+    style={{padding:"12px 16px",background:"#000",border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",...style}}
     onFocus={e=>e.target.style.borderColor=T.accent} onBlur={e=>e.target.style.borderColor=T.border2}/>;
 }
 function SelField({value,onChange,options,style={}}){
-  return <select value={value} onChange={e=>onChange(e.target.value)} style={{padding:"11px 16px",background:T.bg,border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",...style}}>
+  return <select value={value} onChange={e=>onChange(e.target.value)} style={{padding:"11px 16px",background:"#000",border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",...style}}>
     {options.map(o=><option key={o} value={o}>{o}</option>)}
   </select>;
 }
@@ -545,10 +557,10 @@ function CoursesHome({prog,setTID}){
           <button onClick={()=>setTID("r_ats")} style={{padding:"14px 24px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:`linear-gradient(135deg,${T.accent},#38bdf8)`,color:"#fff",boxShadow:`0 6px 24px ${T.accent}50`,display:"flex",alignItems:"center",gap:"10px",whiteSpace:"nowrap"}}>
             <span>📊</span> Check ATS Score
           </button>
-          <button onClick={()=>setTID("i_hr")} style={{padding:"14px 24px",borderRadius:"12px",border:`1.5px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:"#1a1d2e",color:T.text,display:"flex",alignItems:"center",gap:"10px",whiteSpace:"nowrap"}}>
+          <button onClick={()=>setTID("i_hr")} style={{padding:"14px 24px",borderRadius:"12px",border:`1.5px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:"#0f0f0f",color:T.text,display:"flex",alignItems:"center",gap:"10px",whiteSpace:"nowrap"}}>
             <span>🎤</span> Interview Prep
           </button>
-          <button onClick={()=>setTID("ch_code")} style={{padding:"14px 24px",borderRadius:"12px",border:`1.5px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:"#1a1d2e",color:T.text,display:"flex",alignItems:"center",gap:"10px",whiteSpace:"nowrap"}}>
+          <button onClick={()=>setTID("ch_code")} style={{padding:"14px 24px",borderRadius:"12px",border:`1.5px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:"#0f0f0f",color:T.text,display:"flex",alignItems:"center",gap:"10px",whiteSpace:"nowrap"}}>
             <span>🤖</span> Ask AI Chatbot
           </button>
         </div>
@@ -614,13 +626,46 @@ function SubjectPage({subject,prog,addXP}){
   const generate = async () => {
     if(!selTopic) return;
     setLoad(true); setNotes("");
-    const r = await callAI(
-      [{role:"user",content:`Create comprehensive study notes on "${selTopic}" in ${subject}.\n\nUse this exact structure:\n## 📌 What is it?\n(clear definition)\n\n## 🧠 Why it matters\n(use cases, importance)\n\n## ⚙️ How it works\n(detailed explanation with steps)\n\n\`\`\`\n// Practical ${subject} code example with comments\n\`\`\`\n\n## 🎯 Common Interview Questions\n1. ...\n2. ...\n3. ...\n\n## ✅ Key Points to Remember\n- ...\n- ...`}],
-      `Expert ${subject} teacher and interview coach. Write clear, detailed, interview-ready notes. Include working code examples with inline comments. Be thorough but practical.`
-    );
-    setNotes(r); setLoad(false);
-    const key = `${subject}_${selTopic}`;
-    if(!done.includes(key)) addXP(15,{completedTopics:[...done,key]});
+    try {
+      const r = await callAI(
+        [{role:"user",content:`Write study notes on "${selTopic}" in ${subject}. Structure:
+
+## What is it?
+Clear definition in 2-3 lines.
+
+## Why it matters
+Real use cases.
+
+## How it works
+Step by step explanation.
+
+## Code Example
+\`\`\`${subject.toLowerCase().includes("python")?"python":subject.toLowerCase().includes("java")&&!subject.includes("Script")?"java":"javascript"}
+// Working example with comments
+\`\`\`
+
+## Interview Questions
+1. Q1?
+2. Q2?
+3. Q3?
+
+## Key Points
+- Point 1
+- Point 2
+- Point 3`}],
+        `You are an expert ${subject} teacher. Write clear, practical study notes. Keep it concise but complete.`
+      );
+      if(r && !r.includes("error") && r.length > 50) {
+        setNotes(r);
+        const key = \`\${subject}_\${selTopic}\`;
+        if(!done.includes(key)) addXP(15,{completedTopics:[...done,key]});
+      } else {
+        setNotes("⚠️ Could not generate notes. Please check your internet connection and try again.");
+      }
+    } catch(e) {
+      setNotes("⚠️ Error generating notes. Please try again.");
+    }
+    setLoad(false);
   };
 
   const genPractice = async () => {
@@ -869,7 +914,7 @@ function ExtSite({url,name,color,links,prog,field,addXP}){
           <div style={{display:"flex",alignItems:"center",gap:"16px",marginBottom:"16px",flexWrap:"wrap"}}>
             <span style={{fontSize:"16px",color:T.textSub,fontWeight:500}}>Problems solved:</span>
             <input type="number" min="0" value={inp} onChange={e=>setInp(Number(e.target.value))}
-              style={{width:"90px",padding:"10px 14px",background:T.bg,border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"16px",outline:"none",textAlign:"center",fontWeight:700}}/>
+              style={{width:"90px",padding:"10px 14px",background:"#000",border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"16px",outline:"none",textAlign:"center",fontWeight:700}}/>
             <button onClick={()=>{addXP(0,{[field]:inp});}} style={{padding:"10px 22px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:color,color:"#fff",boxShadow:`0 4px 16px ${color}40`}}>Save Progress</button>
           </div>
           {/* Progress bar */}
@@ -1075,50 +1120,160 @@ function TopicTest({prog,addXP}){
 //  RESUME — BUILD
 // ═══════════════════════════════════════════════════
 function ResumeBuild({prog,addXP}){
-  const [d,setD]=useState({name:"",email:"",phone:"",linkedin:"",github:"",college:"",degree:"",year:"",skills:"",experience:"",projects:"",achievements:""});
+  const [d,setD]=useState({name:"",email:"",phone:"",linkedin:"",github:"",college:"",degree:"",year:"",cgpa:"",skills:"",experience:"",projects:"",achievements:""});
   const [result,setRes]=useState("");
   const [loading,setLoad]=useState(false);
+  const [template,setTmpl]=useState("classic");
+  const [step,setStep]=useState(1); // 1=template, 2=details, 3=result
   const upd=(k,v)=>setD(p=>({...p,[k]:v}));
-  const dl=(c,f)=>{const b=new Blob([c],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=f;a.click();};
+  const dl=(cnt,fname)=>{const b=new Blob([cnt],{type:"text/plain"});const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=fname;a.click();};
 
-  const generate=async()=>{
-    setLoad(true);setRes("");
-    const r=await callAI([{role:"user",content:`Generate professional ATS-friendly LaTeX resume:\nName: ${d.name}\nEmail: ${d.email} | Phone: ${d.phone}\nLinkedIn: ${d.linkedin} | GitHub: ${d.github}\nCollege: ${d.college} | Degree: ${d.degree} (${d.year})\nSkills: ${d.skills}\nExperience:\n${d.experience}\nProjects:\n${d.projects}\nAchievements:\n${d.achievements}\n\nGenerate complete compilable LaTeX. ATS-optimized.`}],
-      "Expert resume writer. Output ONLY LaTeX code. No markdown.");
-    setRes(r);addXP(100,{resumeBuilt:true});setLoad(false);
+  const TEMPLATES = {
+    classic: { name:"Classic ATS", icon:"📄", desc:"Clean single-column, maximum ATS compatibility. Best for big companies (TCS, Infosys, Wipro, Amazon).", color:T.cyan },
+    modern:  { name:"Modern Two-Column", icon:"🎨", desc:"Left sidebar with skills, right with experience. Great for mid-size & startups (Razorpay, CRED, Swiggy).", color:T.accentV },
+    minimal: { name:"Minimal Clean", icon:"✨", desc:"Ultra-clean minimal layout. Best for Google, Microsoft, top MNCs & research roles.", color:T.green },
   };
 
-  const fields=[["name","Full Name","Rahul Sharma"],["email","Email","rahul@gmail.com"],["phone","Phone","+91 9876543210"],["linkedin","LinkedIn","linkedin.com/in/rahul"],["github","GitHub","github.com/rahul"],["college","College","IIT Delhi"],["degree","Degree","B.Tech CSE"],["year","Year","2025"]];
+  const generate = async () => {
+    setLoad(true); setRes("");
+    const tmplInstructions = {
+      classic: "Single column layout. Name centered at top. Sections: Education, Skills, Experience, Projects, Achievements. Use \section{} for headers. ATS-friendly.",
+      modern:  "Minipage layout: left 35% sidebar (skills, links, education), right 65% main content (experience, projects). Use \begin{minipage} structure.",
+      minimal: "Ultra minimal. Name + contact in header. Thin \hrule separators. No boxes, no colors. Just clean typography. Very ATS-safe.",
+    };
+    try {
+      const r = await callAI([{role:"user",content:`Create a complete, compilable LaTeX resume. Template style: ${tmplInstructions[template]}
+
+CANDIDATE INFO:
+Name: ${d.name||"Your Name"}
+Email: ${d.email||"email@example.com"} | Phone: ${d.phone||"+91 9876543210"}
+LinkedIn: ${d.linkedin||"linkedin.com/in/yourname"} | GitHub: ${d.github||"github.com/yourname"}
+College: ${d.college||"Your University"} | Degree: ${d.degree||"B.Tech CSE"} | Year: ${d.year||"2025"} | CGPA: ${d.cgpa||"8.5"}
+Skills: ${d.skills||"Python, JavaScript, React, SQL, Git"}
+Experience: ${d.experience||"Add your internship/job experience here"}
+Projects: ${d.projects||"Add your projects here"}
+Achievements: ${d.achievements||"Add your achievements here"}
+
+Output ONLY the complete LaTeX code starting with \documentclass. No explanation, no markdown.`}],
+        "Expert LaTeX resume writer. Output ONLY valid compilable LaTeX code. Start with \documentclass. No markdown fences.");
+      if(r && r.includes("\documentclass")) {
+        setRes(r); addXP(100,{resumeBuilt:true}); setStep(3);
+      } else if(r && r.length > 200) {
+        // Try to extract latex if wrapped in markdown
+        const match = r.match(/\\documentclass[\s\S]+/);
+        setRes(match ? match[0] : r); addXP(100,{resumeBuilt:true}); setStep(3);
+      } else {
+        alert("Could not generate. Please try again.");
+      }
+    } catch(e) { alert("Error generating resume. Check connection."); }
+    setLoad(false);
+  };
+
+  const fields=[["name","Full Name","Rahul Sharma"],["email","Email","rahul@gmail.com"],["phone","Phone","+91 9876543210"],["linkedin","LinkedIn","linkedin.com/in/rahul"],["github","GitHub","github.com/rahul"],["college","College","IIT Delhi"],["degree","Degree","B.Tech CSE"],["year","Grad Year","2025"],["cgpa","CGPA","8.5"]];
 
   return(
     <div className="fin">
-      <PageTitle color={T.orange}>✨ Build Resume</PageTitle>
-      <Card style={{marginBottom:"16px"}}>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:"10px",marginBottom:"14px"}}>
-          {fields.map(([k,lbl,ph])=>(
-            <div key={k}><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl.toUpperCase()}</div>
-              <InpField value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} style={{width:"100%"}}/></div>
-          ))}
-        </div>
-        {[["skills","SKILLS","Python, React, Node.js, SQL, Git, Docker",2],["experience","EXPERIENCE","Company | Role | Jun–Aug 2024\n- Built X improved Y by 40%",3],["projects","PROJECTS","Project | React, Node.js | github.com/link\n- Description with impact",3],["achievements","ACHIEVEMENTS","- LeetCode 400+ Top 5%\n- HackIndia 2024 Winner",2]].map(([k,lbl,ph,rows])=>(
-          <div key={k} style={{marginBottom:"12px"}}><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl}</div><TA value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} rows={rows}/></div>
+      <PageTitle color={T.orange}>✨ AI Resume Builder</PageTitle>
+
+      {/* Step indicator */}
+      <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"28px"}}>
+        {[["1","Choose Template"],["2","Fill Details"],["3","Download"]].map(([n,lbl],i)=>(
+          <div key={n} style={{display:"flex",alignItems:"center",gap:"8px"}}>
+            <div style={{width:"28px",height:"28px",borderRadius:"50%",background:step>i?T.orange:step===i+1?`${T.orange}30`:"#1a1a1a",border:`2px solid ${step>=i+1?T.orange:"#333"}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:800,color:step>i?"#000":step===i+1?T.orange:"#444"}}>{step>i?"✓":n}</div>
+            <span style={{fontSize:"14px",color:step===i+1?T.orange:T.textMuted,fontWeight:step===i+1?700:400}}>{lbl}</span>
+            {i<2&&<div style={{width:"40px",height:"2px",background:step>i+1?T.orange:"#1a1a1a",borderRadius:"2px"}}/>}
+          </div>
         ))}
-        <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
-          <Btn onClick={generate} disabled={loading} color={T.orange}>{loading?"⏳ Generating...":"✨ Generate Resume (+100 XP)"}</Btn>
-          <Btn onClick={()=>dl(LATEX_TEMPLATE,"template.tex")} outline color={T.orange}>📋 Download Template</Btn>
+      </div>
+
+      {/* STEP 1: Template Selection */}
+      {step===1 && (
+        <div>
+          <div style={{fontSize:"14px",fontWeight:700,color:T.textMuted,letterSpacing:"0.1em",marginBottom:"16px"}}>SELECT TEMPLATE</div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:"16px",marginBottom:"24px"}}>
+            {Object.entries(TEMPLATES).map(([key,tmpl])=>(
+              <div key={key} onClick={()=>setTmpl(key)} style={{padding:"24px",borderRadius:"16px",border:`2px solid ${template===key?tmpl.color:"#252525"}`,background:template===key?`${tmpl.color}10`:"#0e0e0e",cursor:"pointer",transition:"all 0.2s"}}>
+                <div style={{fontSize:"32px",marginBottom:"12px"}}>{tmpl.icon}</div>
+                <div style={{fontSize:"17px",fontWeight:800,color:template===key?tmpl.color:T.text,marginBottom:"8px"}}>{tmpl.name}</div>
+                <div style={{fontSize:"13px",color:T.textMuted,lineHeight:1.6}}>{tmpl.desc}</div>
+                {template===key && <div style={{marginTop:"12px",fontSize:"13px",fontWeight:700,color:tmpl.color}}>✓ Selected</div>}
+              </div>
+            ))}
+          </div>
+          <button onClick={()=>setStep(2)} style={{padding:"14px 40px",borderRadius:"12px",border:"none",background:T.orange,color:"#000",fontWeight:800,fontSize:"16px",cursor:"pointer",fontFamily:"inherit"}}>
+            Continue → Fill Details
+          </button>
         </div>
-      </Card>
-      {result&&(
-        <Card className="fin">
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px",flexWrap:"wrap",gap:"8px"}}>
-            <Badge2 color={T.green}>✅ LaTeX Ready!</Badge2>
-            <Btn onClick={()=>dl(result,"resume.tex")} color={T.green}>⬇ Download .tex</Btn>
+      )}
+
+      {/* STEP 2: Form */}
+      {step===2 && (
+        <div>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))",gap:"12px",marginBottom:"18px"}}>
+            {fields.map(([k,lbl,ph])=>(
+              <div key={k}>
+                <div style={{fontSize:"12px",color:T.textMuted,fontWeight:700,letterSpacing:"0.08em",marginBottom:"6px",textTransform:"uppercase"}}>{lbl}</div>
+                <InpField value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} style={{width:"100%"}}/>
+              </div>
+            ))}
           </div>
-          <TA value={result} readOnly rows={10}/>
-          <div style={{marginTop:"10px",padding:"12px",background:"#000000",borderRadius:"9px",border:`1px solid ${T.border2}`}}>
-            <p style={{color:T.textMuted,fontSize:"15px"}}>📋 Copy above → <a href="https://overleaf.com" target="_blank" rel="noreferrer" style={{color:T.accent}}>Overleaf.com</a> → New Project → Blank → Paste → Compile → Download PDF</p>
+          {[["skills","SKILLS (comma separated)","Python, React, Node.js, SQL, Git, Docker, AWS",2],
+            ["experience","EXPERIENCE","Company Name | Role | Jun 2024 – Aug 2024
+• Built feature X, improved Y by 40%
+• Worked on Z using React + Node.js",4],
+            ["projects","PROJECTS","Project Name | Tech Stack | github.com/link
+• What it does and its impact
+• Key features and your contributions",4],
+            ["achievements","ACHIEVEMENTS","• LeetCode 400+ problems, Top 5%
+• HackIndia 2024 – 1st Place
+• Google DSC Lead 2023-24",3]
+          ].map(([k,lbl,ph,rows])=>(
+            <div key={k} style={{marginBottom:"14px"}}>
+              <div style={{fontSize:"12px",color:T.textMuted,fontWeight:700,letterSpacing:"0.08em",marginBottom:"6px",textTransform:"uppercase"}}>{lbl}</div>
+              <TA value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} rows={rows}/>
+            </div>
+          ))}
+          <div style={{display:"flex",gap:"10px",flexWrap:"wrap"}}>
+            <button onClick={()=>setStep(1)} style={{padding:"12px 24px",borderRadius:"10px",border:"1px solid #333",background:"transparent",color:T.textSub,fontWeight:600,fontSize:"15px",cursor:"pointer",fontFamily:"inherit"}}>← Back</button>
+            <button onClick={generate} disabled={loading} style={{padding:"13px 36px",borderRadius:"12px",border:"none",background:loading?"#333":T.orange,color:loading?T.textMuted:"#000",fontWeight:800,fontSize:"16px",cursor:loading?"not-allowed":"pointer",fontFamily:"inherit",boxShadow:loading?"none":`0 6px 24px ${T.orange}50`}}>
+              {loading?"⏳ AI Generating Resume...":"✨ Generate Resume (+100 XP)"}
+            </button>
           </div>
-        </Card>
+        </div>
+      )}
+
+      {/* STEP 3: Result */}
+      {step===3 && result && (
+        <div className="fin">
+          <div style={{background:`${T.green}12`,border:`1px solid ${T.green}30`,borderRadius:"16px",padding:"20px 24px",marginBottom:"20px",display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:"12px"}}>
+            <div>
+              <div style={{fontSize:"18px",fontWeight:800,color:T.green,marginBottom:"4px"}}>✅ Resume Generated!</div>
+              <div style={{fontSize:"14px",color:T.textMuted}}>Template: {TEMPLATES[template].name} · Copy to Overleaf to compile PDF</div>
+            </div>
+            <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
+              <button onClick={()=>dl(result,"resume.tex")} style={{padding:"10px 20px",borderRadius:"10px",border:"none",background:T.green,color:"#000",fontWeight:700,fontSize:"14px",cursor:"pointer",fontFamily:"inherit"}}>⬇ Download .tex</button>
+              <a href="https://overleaf.com/project/new/template" target="_blank" rel="noreferrer" style={{padding:"10px 20px",borderRadius:"10px",border:`1px solid ${T.accent}`,color:T.accent,fontWeight:700,fontSize:"14px",textDecoration:"none",display:"flex",alignItems:"center"}}>🌐 Open Overleaf</a>
+              <button onClick={()=>setStep(2)} style={{padding:"10px 20px",borderRadius:"10px",border:"1px solid #333",background:"transparent",color:T.textSub,fontWeight:600,fontSize:"14px",cursor:"pointer",fontFamily:"inherit"}}>🔄 Regenerate</button>
+            </div>
+          </div>
+          <div style={{background:"#0e0e0e",border:`1px solid ${T.border2}`,borderRadius:"14px",overflow:"hidden"}}>
+            <div style={{padding:"12px 16px",borderBottom:`1px solid ${T.border2}`,display:"flex",alignItems:"center",gap:"8px"}}>
+              <div style={{width:"12px",height:"12px",borderRadius:"50%",background:"#ff5f57"}}/>
+              <div style={{width:"12px",height:"12px",borderRadius:"50%",background:"#febc2e"}}/>
+              <div style={{width:"12px",height:"12px",borderRadius:"50%",background:"#28c840"}}/>
+              <span style={{fontSize:"13px",color:T.textMuted,marginLeft:"8px"}}>resume.tex</span>
+            </div>
+            <TA value={result} readOnly rows={14} style={{fontFamily:"'JetBrains Mono',monospace",fontSize:"13px",background:"transparent",border:"none",borderRadius:"0"}}/>
+          </div>
+          <div style={{marginTop:"14px",padding:"16px",background:"#0a0a0a",borderRadius:"12px",border:`1px solid #1a1a1a`}}>
+            <div style={{fontSize:"14px",fontWeight:700,color:T.orange,marginBottom:"8px"}}>📋 How to compile to PDF:</div>
+            <div style={{fontSize:"14px",color:T.textMuted,lineHeight:1.8}}>
+              1. Click <a href="https://overleaf.com" target="_blank" rel="noreferrer" style={{color:T.accent}}>Overleaf.com</a> → New Project → Blank Project<br/>
+              2. Delete default content → Paste your LaTeX code<br/>
+              3. Click <b style={{color:T.text}}>Recompile</b> → Download PDF ✅
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
@@ -1185,7 +1340,7 @@ Return ONLY valid JSON (no markdown):
       system:"Senior ATS/HR expert. Analyze resume thoroughly. Return ONLY valid JSON, no markdown fences, no extra text.",
       messages
     };
-    const resp = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const resp = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify(body)});
     const d = await resp.json();
     const raw = d.content?.map(b=>b.text||"").join("")||"";
     try{
@@ -1472,18 +1627,42 @@ function InterviewHR({prog,addXP}){
   const hrTopics=["General HR","Leadership & Teamwork","Problem Solving","Career Goals","Strengths & Weaknesses","Company Research","Conflict Resolution","Achievement & Impact","Work Style & Culture","Salary Negotiation","Fresher-Specific","Internship Experience"];
 
   const PRESET_HRQ = [
-    {id:1, q:"Tell me about yourself.",                         hint:"Education → Projects → Skills → Goals"},
-    {id:2, q:"Why should we hire you?",                         hint:"Unique strengths + company fit"},
-    {id:3, q:"Tell about a team conflict and resolution.",       hint:"STAR method"},
-    {id:4, q:"What is your greatest weakness?",                  hint:"Real weakness + improvement plan"},
-    {id:5, q:"Where do you see yourself in 5 years?",           hint:"Company growth alignment"},
-    {id:6, q:"Describe your most challenging project.",          hint:"Challenge + your role + outcome"},
-    {id:7, q:"Why do you want to work here?",                   hint:"Research company: mission, products"},
-    {id:8, q:"How do you handle deadlines and pressure?",        hint:"Real example with result"},
-    {id:9, q:"What motivates you?",                             hint:"Align with the role"},
-    {id:10,q:"Do you have questions for us?",                   hint:"Ask 2-3 smart questions"},
-    {id:11,q:"Tell me about a failure and what you learned.",    hint:"Own it, show growth"},
-    {id:12,q:"How do you prioritize tasks when overloaded?",    hint:"Framework + real example"},
+    // Basics
+    {id:1,  cat:"Basics",       q:"Tell me about yourself.",                                        hint:"Education → Skills → Projects → Career goal"},
+    {id:2,  cat:"Basics",       q:"Why should we hire you?",                                        hint:"Your unique value + alignment with role"},
+    {id:3,  cat:"Basics",       q:"Walk me through your resume.",                                   hint:"Highlight key milestones, keep it under 2 min"},
+    {id:4,  cat:"Basics",       q:"What are your greatest strengths?",                              hint:"3 strengths with real examples"},
+    {id:5,  cat:"Basics",       q:"What is your greatest weakness?",                                hint:"Real weakness + concrete improvement steps"},
+    // Career & Goals
+    {id:6,  cat:"Career",       q:"Where do you see yourself in 5 years?",                          hint:"Growth within company, leadership or technical depth"},
+    {id:7,  cat:"Career",       q:"Why do you want to work here?",                                  hint:"Research company mission, products, culture"},
+    {id:8,  cat:"Career",       q:"Why are you leaving your current job / college?",                hint:"Frame positively — growth, new challenges"},
+    {id:9,  cat:"Career",       q:"What type of work environment do you prefer?",                   hint:"Align with company culture"},
+    {id:10, cat:"Career",       q:"What are you looking for in this role?",                         hint:"Learning, impact, alignment with your goals"},
+    // Behavioral (STAR)
+    {id:11, cat:"Behavioral",   q:"Tell me about a time you failed. What did you learn?",           hint:"Own it, growth mindset, what changed after"},
+    {id:12, cat:"Behavioral",   q:"Describe your most challenging project.",                        hint:"Situation → Your role → Actions → Outcome"},
+    {id:13, cat:"Behavioral",   q:"Tell about a team conflict and how you resolved it.",            hint:"STAR — focus on resolution & relationship"},
+    {id:14, cat:"Behavioral",   q:"Give an example of going above and beyond for a task.",          hint:"Show initiative, impact, ownership"},
+    {id:15, cat:"Behavioral",   q:"Describe a time you had to learn something new quickly.",        hint:"Adaptability, resourcefulness, outcome"},
+    {id:16, cat:"Behavioral",   q:"Tell me about a time you disagreed with a team decision.",       hint:"Respectful pushback + accepted final decision"},
+    {id:17, cat:"Behavioral",   q:"Describe a time you managed multiple deadlines.",                hint:"Prioritization, time management, result"},
+    {id:18, cat:"Behavioral",   q:"Tell me about a time you showed leadership without a title.",    hint:"Initiative, influence, team outcome"},
+    // Situational
+    {id:19, cat:"Situational",  q:"How do you handle criticism or negative feedback?",              hint:"Openness, specific example, growth"},
+    {id:20, cat:"Situational",  q:"What would you do if you disagreed with your manager?",         hint:"Communicate respectfully, data-driven, align"},
+    {id:21, cat:"Situational",  q:"How do you handle pressure and tight deadlines?",               hint:"Real framework + calming strategy + example"},
+    {id:22, cat:"Situational",  q:"If you had to choose between quality and speed, what would you pick?", hint:"Context-dependent answer with reasoning"},
+    {id:23, cat:"Situational",  q:"What would you do if a team member wasn't contributing?",       hint:"Communication, empathy, escalation path"},
+    // Fresher-Specific
+    {id:24, cat:"Fresher",      q:"You have no work experience. Why should we hire you?",          hint:"Projects, skills, learning speed, enthusiasm"},
+    {id:25, cat:"Fresher",      q:"How do your college projects prepare you for this role?",       hint:"Map project skills to job requirements"},
+    {id:26, cat:"Fresher",      q:"What salary do you expect as a fresher?",                       hint:"Research market rate, give a range, show flexibility"},
+    {id:27, cat:"Fresher",      q:"Are you okay with relocation / night shifts / travel?",         hint:"Be honest but positive — mention flexibility"},
+    // Closing
+    {id:28, cat:"Closing",      q:"Do you have any questions for us?",                             hint:"Ask about tech stack, team culture, growth path"},
+    {id:29, cat:"Closing",      q:"What motivates you to do your best work?",                      hint:"Intrinsic + extrinsic motivation tied to role"},
+    {id:30, cat:"Closing",      q:"How soon can you join?",                                        hint:"Be specific, mention any notice period"},
   ];
 
   const generateNewQ=async()=>{
@@ -1522,30 +1701,48 @@ function InterviewHR({prog,addXP}){
 
       {/* PRESET MODE */}
       {mode==="practice" && (
-        <div style={{display:"grid",gridTemplateColumns:"340px 1fr",gap:"16px",alignItems:"start"}}>
-          <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
-            {PRESET_HRQ.map(q=>(
-              <div key={q.id} onClick={()=>{setSel(q);setAns("");setFB("");setStrat("");}} className="card-hover" style={{padding:"13px 14px",borderRadius:"10px",border:`1px solid ${sel?.id===q.id?T.accentV:T.border2}`,background:sel?.id===q.id?`${T.accentV}15`:T.card,cursor:"pointer"}}>
-                <p style={{fontSize:"16px",fontWeight:600,color:T.text,marginBottom:"4px",lineHeight:1.5}}>{q.q}</p>
-                <p style={{fontSize:"14px",color:T.textMuted}}>💡 {q.hint}</p>
+        <>
+        {/* Category filter */}
+        {(()=>{
+          const cats=["All",...[...new Set(PRESET_HRQ.map(q=>q.cat))]];
+          const [activeCat,setActiveCat]=useState("All");
+          const filtered=activeCat==="All"?PRESET_HRQ:PRESET_HRQ.filter(q=>q.cat===activeCat);
+          return(
+        <div>
+          <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"16px"}}>
+            {cats.map(cat=>(
+              <button key={cat} onClick={()=>setActiveCat(cat)} style={{padding:"6px 14px",borderRadius:"999px",border:`1px solid ${activeCat===cat?T.accentV:"#333"}`,background:activeCat===cat?`${T.accentV}20`:"transparent",color:activeCat===cat?T.accentV:T.textMuted,fontFamily:"inherit",fontWeight:600,fontSize:"13px",cursor:"pointer",transition:"all 0.15s"}}>
+                {cat} {cat!=="All"&&<span style={{fontSize:"11px",opacity:0.7}}>({PRESET_HRQ.filter(q=>q.cat===cat).length})</span>}
+              </button>
+            ))}
+          </div>
+          <div style={{display:"grid",gridTemplateColumns:"340px 1fr",gap:"16px",alignItems:"start"}}>
+          <div style={{display:"flex",flexDirection:"column",gap:"6px",maxHeight:"70vh",overflowY:"auto",paddingRight:"4px"}}>
+            {filtered.map(q=>(
+              <div key={q.id} onClick={()=>{setSel(q);setAns("");setFB("");setStrat("");}} className="card-hover" style={{padding:"12px 14px",borderRadius:"10px",border:`1px solid ${sel?.id===q.id?T.accentV:"#252525"}`,background:sel?.id===q.id?`${T.accentV}18`:"#0e0e0e",cursor:"pointer",flexShrink:0}}>
+                <div style={{display:"flex",alignItems:"flex-start",gap:"8px"}}>
+                  <span style={{fontSize:"11px",padding:"2px 7px",borderRadius:"999px",background:`${T.accentV}20`,color:T.accentV,fontWeight:700,whiteSpace:"nowrap",marginTop:"2px"}}>{q.cat}</span>
+                  <p style={{fontSize:"14px",fontWeight:600,color:T.text,lineHeight:1.5}}>{q.q}</p>
+                </div>
               </div>
             ))}
           </div>
           <div>
             {sel ? (
               <Card>
-                <h3 style={{fontSize:"17px",fontWeight:700,color:"#a5b4fc",marginBottom:"16px",lineHeight:1.5}}>"{sel.q}"</h3>
+                <div style={{fontSize:"12px",fontWeight:700,color:T.accentV,letterSpacing:"0.08em",marginBottom:"8px",textTransform:"uppercase"}}>{sel.cat}</div>
+                <h3 style={{fontSize:"18px",fontWeight:700,color:T.text,marginBottom:"8px",lineHeight:1.6}}>"{sel.q}"</h3>
+                <div style={{fontSize:"13px",color:T.textMuted,marginBottom:"16px",padding:"10px 14px",background:"#0a0a0a",borderRadius:"8px",borderLeft:`3px solid ${T.accentV}`}}>💡 {sel.hint}</div>
                 <div style={{display:"flex",gap:"6px",marginBottom:"14px"}}>
-                  <Btn onClick={()=>setMode("answer_mode")} color={T.accentV} style={{flex:1,textAlign:"center"}}>✍️ Write Answer</Btn>
-                  <Btn onClick={()=>getStrategy(sel.q)} outline color={T.accentV} style={{flex:1,textAlign:"center"}}>{loading?"⏳...":"💡 Best Strategy"}</Btn>
+                  <Btn onClick={()=>getStrategy(sel.q)} outline color={T.accentV} style={{flex:1,textAlign:"center"}} disabled={loading}>{loading?"⏳...":"💡 Best Strategy"}</Btn>
                 </div>
-                <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Type your answer... (Use STAR method for behavioral questions)" rows={6}/>
+                <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Write your answer here... (Use STAR method for behavioral Qs)" rows={6}/>
                 <Btn onClick={()=>getFeedback(sel.q)} disabled={loading||!answer.trim()} color={T.accentV} style={{marginTop:"10px",width:"100%"}}>{loading?"⏳ Getting feedback...":"🤖 Get AI Feedback (+25 XP)"}</Btn>
                 {strategy&&<AIBox title="Best Strategy" content={strategy} color={T.accentV}/>}
                 {feedback&&<AIBox title="AI Feedback" content={feedback} color={T.accentV}/>}
               </Card>
             ) : (
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"300px",border:`1px dashed ${T.border2}`,borderRadius:"14px"}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"300px",border:`1px dashed #252525`,borderRadius:"14px"}}>
                 <EmptyState icon="👔" title="Select a question to practice" sub="Get AI feedback on your answers"/>
               </div>
             )}
@@ -1674,6 +1871,15 @@ function Progress({prog,user}){
   return(
     <div className="fin">
       <PageTitle color={T.accent}>📈 My Progress</PageTitle>
+      {prog.xp===0&&prog.totalSolved===0&&(
+        <div style={{background:"#0e0e0e",border:"1px solid #1c1c1c",borderRadius:"14px",padding:"20px 24px",marginBottom:"20px",display:"flex",alignItems:"center",gap:"16px"}}>
+          <div style={{fontSize:"32px"}}>🚀</div>
+          <div>
+            <div style={{fontSize:"16px",fontWeight:700,color:T.text,marginBottom:"4px"}}>Start your journey!</div>
+            <div style={{fontSize:"14px",color:T.textMuted,lineHeight:1.6}}>Complete topics, solve problems, and answer interview questions to see your progress here.</div>
+          </div>
+        </div>
+      )}
       {/* Stats grid */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:"10px",marginBottom:"18px"}}>
         {[["💻",prog.totalSolved,"Problems Solved",T.accentV],["🔥",`${prog.streak}d`,"Streak",T.orange],["⚡",`${prog.xp}xp`,"Total XP",T.accent],["🎯",prog.interviewAnswered,"Interview Qs",T.green],["📊",prog.atsScore??"-","ATS Score",T.cyan],["📚",(prog.completedTopics||[]).length,"Topics Done",T.accent],["🏅",prog.earnedBadges.length,"Badges",T.pink],["🎓",`Lv${lv}`,"Level",T.accentV]].map(([ic,val,lbl,col],i)=>(
