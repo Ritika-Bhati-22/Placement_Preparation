@@ -1128,48 +1128,232 @@ function ResumeBuild({prog,addXP}){
 //  RESUME — ATS
 // ═══════════════════════════════════════════════════
 function ResumeATS({prog,addXP}){
-  const [rTxt,setRT]=useState("");
-  const [jd,setJD]=useState("");
-  const [result,setRes]=useState(null);
-  const [loading,setLoad]=useState(false);
-  const analyze=async()=>{
-    if(!rTxt.trim())return;setLoad(true);setRes(null);
-    const r=await callAI([{role:"user",content:`Analyze resume for ATS${jd?` vs job description:\n${jd}\n\nResume:\n${rTxt}`:`:\n${rTxt}`}\n\nReturn ONLY valid JSON:\n{"score":75,"matched":["React"],"missing":["Docker"],"improvements":["Fix 1"]}`}],
-      "ATS expert. Return ONLY valid JSON. No markdown.");
-    try{const p=JSON.parse(r.replace(/```json|```/g,"").trim());setRes(p);addXP(20,{atsScore:p.score});}
-    catch{setRes({score:65,matched:[],missing:[],improvements:["Paste cleaner resume text and try again."]});}
+  const [rTxt,  setRT]  = useState("");
+  const [jd,    setJD]  = useState("");
+  const [result,setRes] = useState(null);
+  const [loading,setLoad]= useState(false);
+  const [pdfLoad,setPL] = useState(false);
+  const [fileName,setFN]= useState("");
+  const [pdfB64, setPB] = useState(null);  // base64 PDF for direct API send
+  const fileRef = useRef(null);
+
+  // ── Read PDF as base64 ──
+  const handlePDF = async(e)=>{
+    const file = e.target.files?.[0];
+    if(!file) return;
+    if(!file.name.toLowerCase().endsWith(".pdf")){ alert("Please upload a PDF file."); return; }
+    setFN(file.name); setPL(true); setRT(""); setRes(null); setPB(null);
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const b64 = ev.target.result.split(",")[1]; // strip data:...base64, prefix
+      setPB(b64);
+      setRT(`[PDF loaded: ${file.name}]`); // placeholder so analyze button enables
+      setPL(false);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // ── Analyze: if PDF, send as document block; else send as text ──
+  const analyze = async()=>{
+    if(!rTxt.trim() && !pdfB64) return;
+    setLoad(true); setRes(null);
+
+    let messages;
+    if(pdfB64){
+      // Send PDF directly to Claude — it will extract text itself
+      const userContent = [
+        { type:"document", source:{ type:"base64", media_type:"application/pdf", data:pdfB64 } },
+        { type:"text", text:`Analyze this resume PDF for ATS compatibility${jd?` against this job description:\n\n${jd}`:""}.
+
+Return ONLY valid JSON (no markdown, no explanation):
+{"score":75,"matched":["React","Python"],"missing":["Docker","AWS"],"improvements":["Add measurable achievements with numbers","Include more JD keywords in skills section","Use standard section headings for ATS parsers"]}` }
+      ];
+      messages = [{ role:"user", content: userContent }];
+    } else {
+      messages = [{role:"user", content:`Analyze this resume for ATS compatibility${jd?` against the job description below`:""}.
+
+Resume:
+${rTxt}${jd?`\n\nJob Description:\n${jd}`:""}
+
+Return ONLY valid JSON (no markdown):
+{"score":75,"matched":["React","Python"],"missing":["Docker","AWS"],"improvements":["Add measurable achievements","Include keywords from JD","Fix formatting for ATS parsers"]}`}];
+    }
+
+    const body = {
+      model:"claude-sonnet-4-20250514",
+      max_tokens:1200,
+      system:"Senior ATS/HR expert. Analyze resume thoroughly. Return ONLY valid JSON, no markdown fences, no extra text.",
+      messages
+    };
+    const resp = await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+    const d = await resp.json();
+    const raw = d.content?.map(b=>b.text||"").join("")||"";
+    try{
+      const p=JSON.parse(raw.replace(/```json|```/g,"").trim());
+      setRes(p); addXP(20,{atsScore:p.score});
+    } catch{
+      setRes({score:60,matched:[],missing:[],improvements:["Could not parse response. Try again."]});
+    }
     setLoad(false);
   };
+
   const sc=result?.score||0;
   const scCol=sc>=80?T.green:sc>=60?T.cyan:T.red;
+  const scLabel=sc>=80?"ATS Optimized ✅":sc>=60?"Needs Improvement ⚠️":"Major Issues ❌";
+  const canAnalyze = !loading && (pdfB64 || rTxt.trim().length>20);
 
   return(
     <div className="fin">
       <PageTitle color={T.cyan}>📊 ATS Score Checker</PageTitle>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"14px",marginBottom:"14px"}}>
-        <Card><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>RESUME TEXT *</div><TA value={rTxt} onChange={e=>setRT(e.target.value)} placeholder="Paste your resume here..." rows={9}/></Card>
-        <Card><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>JOB DESCRIPTION (optional)</div><TA value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste job description for keyword match..." rows={9}/></Card>
+
+      {/* ── PDF Upload Zone ── */}
+      <div
+        onClick={()=>!pdfB64&&fileRef.current?.click()}
+        style={{
+          background: pdfB64
+            ? `linear-gradient(135deg,${T.green}15,${T.green}05)`
+            : `linear-gradient(135deg,${T.cyan}12,${T.accent}06)`,
+          border: `2px dashed ${pdfB64?T.green:T.cyan}50`,
+          borderRadius:"18px", padding:"40px 32px", marginBottom:"24px",
+          textAlign:"center", cursor: pdfB64?"default":"pointer",
+          transition:"all 0.2s"
+        }}
+        onMouseEnter={e=>{ if(!pdfB64) e.currentTarget.style.borderColor=(T.cyan); }}
+        onMouseLeave={e=>{ e.currentTarget.style.borderColor=(pdfB64?T.green:T.cyan)+"50"; }}
+      >
+        <input ref={fileRef} type="file" accept=".pdf,application/pdf" onChange={handlePDF} style={{display:"none"}}/>
+
+        {pdfLoad ? (
+          <>
+            <div style={{fontSize:"44px",marginBottom:"14px",animation:"pulse 1s infinite"}}>⏳</div>
+            <div style={{fontSize:"18px",fontWeight:700,color:T.cyan}}>Reading PDF...</div>
+            <div style={{fontSize:"14px",color:T.textMuted,marginTop:"6px"}}>{fileName}</div>
+          </>
+        ) : pdfB64 ? (
+          <>
+            <div style={{fontSize:"44px",marginBottom:"14px"}}>✅</div>
+            <div style={{fontSize:"20px",fontWeight:800,color:T.green,marginBottom:"6px"}}>PDF Ready!</div>
+            <div style={{fontSize:"14px",color:T.textMuted,marginBottom:"20px"}}>📄 {fileName}</div>
+            <div style={{display:"flex",gap:"10px",justifyContent:"center",flexWrap:"wrap"}}>
+              <button onClick={e=>{e.stopPropagation();fileRef.current?.click();}}
+                style={{padding:"10px 20px",borderRadius:"10px",border:`1px solid ${T.border2}`,background:T.card,color:T.textSub,fontFamily:"inherit",fontWeight:600,fontSize:"14px",cursor:"pointer"}}>
+                📂 Change PDF
+              </button>
+              <button onClick={e=>{e.stopPropagation();setRT("");setFN("");setPB(null);setRes(null);}}
+                style={{padding:"10px 20px",borderRadius:"10px",border:`1px solid ${T.red}50`,background:"transparent",color:T.red,fontFamily:"inherit",fontWeight:600,fontSize:"14px",cursor:"pointer"}}>
+                ✕ Remove
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div style={{fontSize:"52px",marginBottom:"16px"}}>📄</div>
+            <div style={{fontSize:"22px",fontWeight:800,color:T.text,marginBottom:"10px"}}>Upload Resume PDF</div>
+            <div style={{fontSize:"15px",color:T.textMuted,marginBottom:"24px",lineHeight:1.7,maxWidth:"420px",margin:"0 auto 24px"}}>
+              Click here or drag & drop your resume PDF.<br/>Claude will read it directly — no text extraction needed.
+            </div>
+            <div style={{display:"inline-block",padding:"14px 40px",borderRadius:"12px",background:`linear-gradient(135deg,${T.cyan},${T.accent})`,color:"#fff",fontWeight:700,fontSize:"17px",boxShadow:`0 6px 24px ${T.cyan}40`}}>
+              📂 Choose PDF File
+            </div>
+            <div style={{fontSize:"13px",color:T.textMuted,marginTop:"14px"}}>or paste resume text in the box below</div>
+          </>
+        )}
       </div>
-      <Btn onClick={analyze} disabled={loading||!rTxt.trim()} style={{marginBottom:"20px"}}>{loading?"⏳ Analyzing...":"📊 Check ATS Score"}</Btn>
-      {result&&(
+
+      {/* ── Text inputs ── */}
+      {!pdfB64 && (
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px",marginBottom:"20px"}}>
+          <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"20px"}}>
+            <div style={{fontSize:"12px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"10px",display:"flex",justifyContent:"space-between"}}>
+              <span>RESUME TEXT *</span>
+              {rTxt&&<span style={{color:T.cyan}}>{rTxt.length} chars</span>}
+            </div>
+            <TA value={rTxt} onChange={e=>setRT(e.target.value)} placeholder="Paste resume text here (or upload PDF above)..." rows={9}/>
+          </div>
+          <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"20px"}}>
+            <div style={{fontSize:"12px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"10px"}}>
+              JOB DESCRIPTION <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:"11px"}}>(optional)</span>
+            </div>
+            <TA value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste job description for keyword matching..." rows={9}/>
+          </div>
+        </div>
+      )}
+
+      {/* JD input when PDF is loaded */}
+      {pdfB64 && (
+        <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"20px",marginBottom:"20px"}}>
+          <div style={{fontSize:"12px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"10px"}}>
+            JOB DESCRIPTION <span style={{fontWeight:400,textTransform:"none",letterSpacing:0,fontSize:"11px"}}>(optional — paste to match keywords)</span>
+          </div>
+          <TA value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste job description for targeted keyword analysis..." rows={5}/>
+        </div>
+      )}
+
+      {/* ── Analyze button ── */}
+      <button onClick={analyze} disabled={!canAnalyze}
+        style={{padding:"15px 44px",borderRadius:"12px",border:"none",cursor:canAnalyze?"pointer":"not-allowed",fontFamily:"inherit",fontWeight:700,fontSize:"17px",
+          background:canAnalyze?`linear-gradient(135deg,${T.cyan},${T.accent})`:"#2d3155",
+          color:"#fff",boxShadow:canAnalyze?`0 6px 24px ${T.cyan}40`:"none",
+          marginBottom:"28px",transition:"all 0.2s",width:"100%",letterSpacing:"0.01em"}}>
+        {loading?"⏳ AI is analyzing your resume...":"📊 Check ATS Score"}
+      </button>
+
+      {/* ── Results ── */}
+      {result && (
         <div className="fin">
-          <GCard color={scCol} style={{marginBottom:"14px"}}>
-            <div style={{display:"flex",alignItems:"center",gap:"24px",flexWrap:"wrap"}}>
-              <div style={{textAlign:"center"}}>
-                <div style={{fontSize:"56px",fontWeight:900,color:scCol,lineHeight:1,fontFamily:"'Sora',sans-serif"}}>{sc}</div>
-                <div style={{fontSize:"14px",color:T.textMuted}}>/ 100</div>
+          {/* Score circle */}
+          <div style={{background:`linear-gradient(135deg,${scCol}15,${scCol}05)`,border:`1px solid ${scCol}30`,borderRadius:"18px",padding:"32px 36px",marginBottom:"20px",display:"flex",alignItems:"center",gap:"32px",flexWrap:"wrap"}}>
+            <div style={{width:"120px",height:"120px",borderRadius:"50%",border:`5px solid ${scCol}`,background:`${scCol}12`,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:`0 0 36px ${scCol}30`}}>
+              <div style={{fontSize:"44px",fontWeight:900,color:scCol,lineHeight:1}}>{sc}</div>
+              <div style={{fontSize:"12px",color:T.textMuted,marginTop:"2px"}}>/100</div>
+            </div>
+            <div style={{flex:1,minWidth:"200px"}}>
+              <div style={{fontSize:"24px",fontWeight:800,color:scCol,marginBottom:"14px"}}>{scLabel}</div>
+              <div style={{background:`${scCol}18`,borderRadius:"999px",height:"10px",overflow:"hidden",marginBottom:"12px"}}>
+                <div style={{width:`${sc}%`,height:"100%",background:`linear-gradient(90deg,${scCol},${scCol}88)`,borderRadius:"999px",transition:"width 1.4s ease",boxShadow:`0 0 14px ${scCol}50`}}/>
               </div>
-              <div style={{flex:1,minWidth:"150px"}}>
-                <div style={{background:T.border2,borderRadius:"999px",height:"8px",overflow:"hidden",marginBottom:"8px"}}><div style={{width:`${sc}%`,height:"100%",background:`linear-gradient(90deg,${scCol},${scCol}99)`,borderRadius:"999px",transition:"width 1s"}}/></div>
-                <div style={{fontSize:"17px",fontWeight:700,color:scCol}}>{sc>=80?"✅ ATS Optimized!":sc>=60?"⚠️ Needs Improvement":"❌ Major Issues Found"}</div>
+              <div style={{fontSize:"15px",color:T.textSub,lineHeight:1.6}}>
+                {sc>=80?"Great! Your resume is well-optimized for ATS systems and should pass most filters.":sc>=60?"Your resume has potential but needs some improvements to reliably pass ATS filters.":"Your resume needs significant work — it may be auto-rejected by ATS before reaching a recruiter."}
               </div>
             </div>
-          </GCard>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:"12px"}}>
-            {result.matched?.length>0&&<Card><div style={{fontWeight:700,color:T.green,marginBottom:"9px",fontSize:"16px"}}>✅ Matched</div><div style={{display:"flex",flexWrap:"wrap",gap:"5px"}}>{result.matched.map(k=><Badge2 key={k} color={T.green}>{k}</Badge2>)}</div></Card>}
-            {result.missing?.length>0&&<Card><div style={{fontWeight:700,color:T.red,marginBottom:"9px",fontSize:"16px"}}>❌ Missing</div><div style={{display:"flex",flexWrap:"wrap",gap:"5px"}}>{result.missing.map(k=><Badge2 key={k} color={T.red}>{k}</Badge2>)}</div></Card>}
-            {result.improvements?.length>0&&<Card style={{gridColumn:"1/-1"}}><div style={{fontWeight:700,color:T.cyan,marginBottom:"9px",fontSize:"16px"}}>💡 Improvements</div>{result.improvements.map((imp,i)=><div key={i} style={{padding:"7px 0",borderBottom:`1px solid ${T.border2}`,color:"#b8c8e8",fontSize:"16px"}}>• {imp}</div>)}</Card>}
           </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"14px",marginBottom:"14px"}}>
+            {result.matched?.length>0 && (
+              <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"22px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"14px"}}>
+                  <span style={{fontSize:"15px",fontWeight:700,color:T.green}}>✅ Matched Keywords</span>
+                  <span style={{fontSize:"12px",color:T.textMuted,background:`${T.green}15`,padding:"2px 8px",borderRadius:"999px"}}>{result.matched.length}</span>
+                </div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:"7px"}}>
+                  {result.matched.map(k=><Badge2 key={k} color={T.green}>{k}</Badge2>)}
+                </div>
+              </div>
+            )}
+            {result.missing?.length>0 && (
+              <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"22px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:"8px",marginBottom:"14px"}}>
+                  <span style={{fontSize:"15px",fontWeight:700,color:T.red}}>❌ Missing Keywords</span>
+                  <span style={{fontSize:"12px",color:T.textMuted,background:`${T.red}15`,padding:"2px 8px",borderRadius:"999px"}}>{result.missing.length}</span>
+                </div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:"7px"}}>
+                  {result.missing.map(k=><Badge2 key={k} color={T.red}>{k}</Badge2>)}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {result.improvements?.length>0 && (
+            <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"24px"}}>
+              <div style={{fontSize:"15px",fontWeight:700,color:T.cyan,marginBottom:"18px"}}>💡 How to Improve Your Score</div>
+              {result.improvements.map((imp,i)=>(
+                <div key={i} style={{display:"flex",gap:"14px",padding:"13px 0",borderBottom:i<result.improvements.length-1?`1px solid ${T.border}`:"none",alignItems:"flex-start"}}>
+                  <div style={{width:"28px",height:"28px",borderRadius:"50%",background:`${T.cyan}18`,border:`1px solid ${T.cyan}35`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",color:T.cyan,fontWeight:700,flexShrink:0}}>{i+1}</div>
+                  <span style={{color:"#b0c8e8",fontSize:"15px",lineHeight:1.7,flex:1}}>{imp}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
