@@ -217,27 +217,27 @@ export default function App() {
       <div style={{position:"absolute",width:"400px",height:"400px",borderRadius:"50%",background:"radial-gradient(circle,#7c5cf620 0%,transparent 70%)",bottom:"-80px",right:"-80px",pointerEvents:"none"}}/>
       <div style={{width:"100%",maxWidth:"380px",position:"relative",zIndex:1}}>
         <div style={{textAlign:"center",marginBottom:"32px"}}>
-          <div style={{width:"56px",height:"56px",borderRadius:"16px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"24px",margin:"0 auto 14px",boxShadow:"0 8px 32px #4f8ef740"}}>⚡</div>
-          <h1 style={{fontSize:"24px",fontWeight:800,color:T.text,margin:"0 0 6px",letterSpacing:"-0.5px"}}>DevForge</h1>
-          <p style={{color:T.textMuted,fontSize:"13px"}}>Complete Placement Preparation Platform</p>
+          <div style={{width:"56px",height:"56px",borderRadius:"16px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"28px",margin:"0 auto 14px",boxShadow:"0 8px 32px #4f8ef740"}}>⚡</div>
+          <h1 style={{fontSize:"28px",fontWeight:800,color:T.text,margin:"0 0 6px",letterSpacing:"-0.5px"}}>DevForge</h1>
+          <p style={{color:T.textMuted,fontSize:"16px"}}>Complete Placement Preparation Platform</p>
         </div>
         <div style={{background:"linear-gradient(135deg,#080c14,#0d1320)",border:`1px solid ${T.border2}`,borderRadius:"20px",padding:"28px",backdropFilter:"blur(20px)",boxShadow:"0 24px 80px #00000080"}}>
-          <h2 style={{color:T.text,fontSize:"16px",fontWeight:700,marginBottom:"22px",textAlign:"center"}}>
+          <h2 style={{color:T.text,fontSize:"19px",fontWeight:700,marginBottom:"22px",textAlign:"center"}}>
             {authMode==="login" ? "Welcome back 👋" : "Create your account 🚀"}
           </h2>
           {[["Username",aName,setAName,"text","your_username"],["Password",aPwd,setAPwd,"password","••••••••"]].map(([lbl,val,set,type,ph])=>(
             <div key={lbl} style={{marginBottom:"14px"}}>
-              <label style={{display:"block",fontSize:"11px",color:T.textSub,marginBottom:"6px",fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase"}}>{lbl}</label>
+              <label style={{display:"block",fontSize:"14px",color:T.textSub,marginBottom:"6px",fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase"}}>{lbl}</label>
               <input type={type} value={val} onChange={e=>set(e.target.value)} placeholder={ph} onKeyDown={e=>e.key==="Enter"&&handleAuth()}
-                style={{width:"100%",padding:"11px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"14px",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
+                style={{width:"100%",padding:"11px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"17px",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
                 onFocus={e=>e.target.style.borderColor="#4f8ef7"} onBlur={e=>e.target.style.borderColor=T.border2}/>
             </div>
           ))}
-          {aErr && <div style={{background:"#2d0a0a",border:"1px solid #f45b5b44",borderRadius:"8px",padding:"10px 12px",color:"#f45b5b",fontSize:"13px",marginBottom:"14px"}}>{aErr}</div>}
-          <button onClick={handleAuth} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",border:"none",borderRadius:"10px",color:"#fff",fontWeight:700,fontSize:"14px",cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #4f8ef740",letterSpacing:"0.02em"}}>
+          {aErr && <div style={{background:"#2d0a0a",border:"1px solid #f45b5b44",borderRadius:"8px",padding:"10px 12px",color:"#f45b5b",fontSize:"16px",marginBottom:"14px"}}>{aErr}</div>}
+          <button onClick={handleAuth} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",border:"none",borderRadius:"10px",color:"#fff",fontWeight:700,fontSize:"17px",cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #4f8ef740",letterSpacing:"0.02em"}}>
             {authMode==="login" ? "Sign In →" : "Create Account →"}
           </button>
-          <p style={{textAlign:"center",marginTop:"16px",color:T.textMuted,fontSize:"13px"}}>
+          <p style={{textAlign:"center",marginTop:"16px",color:T.textMuted,fontSize:"16px"}}>
             {authMode==="login" ? "No account? " : "Have an account? "}
             <span onClick={()=>{setAMode(m=>m==="login"?"register":"login");setAErr("");}} style={{color:T.accent,cursor:"pointer",fontWeight:600}}>{authMode==="login"?"Register":"Login"}</span>
           </p>
@@ -253,71 +253,71 @@ export default function App() {
   return (
     <div style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:T.bg,fontFamily:"'Sora','Segoe UI',sans-serif",color:T.text}}>
       {/* ── TOPNAV ── */}
-      <nav style={{height:"66px",background:"#000000f0",backdropFilter:"blur(24px)",borderBottom:`1px solid ${T.border2}`,display:"flex",alignItems:"center",padding:"0 20px",gap:"8px",position:"sticky",top:0,zIndex:300,flexShrink:0}}>
-        <button onClick={()=>setSB(s=>!s)} style={{background:"none",border:"none",color:T.textMuted,cursor:"pointer",fontSize:"18px",padding:"8px",flexShrink:0,lineHeight:1}}>
+      <nav style={{height:"80px",background:"#000000f0",backdropFilter:"blur(24px)",borderBottom:`1px solid ${T.border2}`,display:"flex",alignItems:"center",padding:"0 20px",gap:"8px",position:"sticky",top:0,zIndex:300,flexShrink:0}}>
+        <button onClick={()=>setSB(s=>!s)} style={{background:"none",border:"none",color:T.textMuted,cursor:"pointer",fontSize:"22px",padding:"8px",flexShrink:0,lineHeight:1}}>
           {sbOpen ? "◁" : "▷"}
         </button>
         <div style={{display:"flex",alignItems:"center",gap:"9px",flexShrink:0,marginRight:"16px"}}>
-          <div style={{width:"34px",height:"34px",borderRadius:"10px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",boxShadow:"0 0 20px #4f8ef750"}}>⚡</div>
-          <span style={{fontWeight:800,fontSize:"17px",background:"linear-gradient(90deg,#4f8ef7,#7c5cf6)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.5px"}}>DevForge</span>
+          <div style={{width:"34px",height:"34px",borderRadius:"10px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"19px",boxShadow:"0 0 20px #4f8ef750"}}>⚡</div>
+          <span style={{fontWeight:800,fontSize:"24px",background:"linear-gradient(90deg,#4f8ef7,#7c5cf6)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.5px"}}>DevForge</span>
         </div>
         {/* Section pills */}
         <div style={{display:"flex",gap:"4px"}}>
           {SECTIONS.map(s=>(
-            <button key={s.key} onClick={()=>goSec(s.key)} style={{padding:"8px 16px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"13px",fontWeight:700,background:secKey===s.key?`${s.color}20`:"transparent",color:secKey===s.key?s.color:T.textMuted,transition:"all 0.15s",borderBottom:secKey===s.key?`2.5px solid ${s.color}`:"2.5px solid transparent",letterSpacing:"0.01em"}}>
+            <button key={s.key} onClick={()=>goSec(s.key)} style={{padding:"10px 20px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"19px",fontWeight:700,background:secKey===s.key?`${s.color}20`:"transparent",color:secKey===s.key?s.color:T.textMuted,transition:"all 0.15s",borderBottom:secKey===s.key?`2.5px solid ${s.color}`:"2.5px solid transparent",letterSpacing:"0.01em"}}>
               {s.icon} {s.label}
             </button>
           ))}
         </div>
         <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:"10px",flexShrink:0}}>
           <div style={{display:"flex",alignItems:"center",gap:"6px",background:T.card,border:`1px solid ${T.border2}`,borderRadius:"999px",padding:"6px 14px"}}>
-            <span style={{fontSize:"12px",color:T.orange,fontWeight:700}}>🔥{prog.streak}</span>
+            <span style={{fontSize:"17px",color:T.orange,fontWeight:700}}>🔥{prog.streak}</span>
             <div style={{width:"1px",height:"14px",background:T.border2}}/>
-            <span style={{fontSize:"12px",color:T.accent,fontWeight:700}}>⚡Lv{lv}</span>
+            <span style={{fontSize:"17px",color:T.accent,fontWeight:700}}>⚡Lv{lv}</span>
             <div style={{width:"1px",height:"14px",background:T.border2}}/>
-            <span style={{fontSize:"12px",color:T.textMuted,fontWeight:600}}>{prog.xp}xp</span>
+            <span style={{fontSize:"17px",color:T.textMuted,fontWeight:600}}>{prog.xp}xp</span>
           </div>
-          <div style={{width:"34px",height:"34px",borderRadius:"50%",background:`linear-gradient(135deg,${curSec?.color||T.accent},#7c5cf6)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",fontWeight:800,cursor:"pointer",boxShadow:`0 0 14px ${curSec?.color||T.accent}50`}}>{user[0]?.toUpperCase()}</div>
-          <button onClick={logout} style={{padding:"7px 13px",borderRadius:"8px",border:`1px solid ${T.border2}`,background:"none",color:T.textMuted,cursor:"pointer",fontSize:"12px",fontFamily:"inherit"}}>Exit</button>
+          <div style={{width:"34px",height:"34px",borderRadius:"50%",background:`linear-gradient(135deg,${curSec?.color||T.accent},#7c5cf6)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",fontWeight:800,cursor:"pointer",boxShadow:`0 0 14px ${curSec?.color||T.accent}50`}}>{user[0]?.toUpperCase()}</div>
+          <button onClick={logout} style={{padding:"7px 13px",borderRadius:"8px",border:`1px solid ${T.border2}`,background:"none",color:T.textMuted,cursor:"pointer",fontSize:"17px",fontFamily:"inherit"}}>Exit</button>
         </div>
       </nav>
 
       <div style={{display:"flex",flex:1,overflow:"hidden"}}>
         {/* ── SIDEBAR ── */}
         {sbOpen && (
-          <aside style={{width:"230px",background:T.sidebar,borderRight:`1px solid ${T.border2}`,display:"flex",flexDirection:"column",flexShrink:0}}>
+          <aside style={{width:"250px",background:T.sidebar,borderRight:`1px solid ${T.border2}`,display:"flex",flexDirection:"column",flexShrink:0}}>
             {/* Section name */}
             <div style={{padding:"18px 16px 14px",borderBottom:`1px solid ${T.border2}`}}>
-              <div style={{fontSize:"11px",fontWeight:700,color:curSec?.color,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:"4px"}}>{curSec?.icon} {curSec?.label}</div>
-              <div style={{fontSize:"12px",color:T.textMuted}}>{curSec?.tabs.length} sections</div>
+              <div style={{fontSize:"16px",fontWeight:700,color:curSec?.color,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"4px"}}>{curSec?.icon} {curSec?.label}</div>
+              <div style={{fontSize:"17px",color:T.textMuted}}>{curSec?.tabs.length} sections</div>
             </div>
             {/* Tabs */}
             <div style={{padding:"10px 10px",flex:1,overflowY:"auto"}}>
               {curSec?.tabs.map(t=>(
-                <button key={t.id} onClick={()=>setTID(t.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:"11px",padding:"12px 12px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"14px",fontWeight:tabId===t.id?700:500,background:tabId===t.id?`${curSec.color}18`:"transparent",color:tabId===t.id?curSec.color:T.textMuted,marginBottom:"3px",textAlign:"left",transition:"all 0.15s",borderLeft:tabId===t.id?`3px solid ${curSec.color}`:"3px solid transparent"}}>
-                  <span style={{fontSize:"11px",opacity:0.6}}>{t.icon}</span>
+                <button key={t.id} onClick={()=>setTID(t.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:"11px",padding:"16px 16px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"19px",fontWeight:tabId===t.id?700:500,background:tabId===t.id?`${curSec.color}18`:"transparent",color:tabId===t.id?curSec.color:T.textMuted,marginBottom:"3px",textAlign:"left",transition:"all 0.15s",borderLeft:tabId===t.id?`3px solid ${curSec.color}`:"3px solid transparent"}}>
+                  <span style={{fontSize:"14px",opacity:0.6}}>{t.icon}</span>
                   <span style={{flex:1,letterSpacing:"-0.1px"}}>{t.label}</span>
                 </button>
               ))}
             </div>
             {/* XP bar */}
             <div style={{padding:"14px",borderTop:`1px solid ${T.border2}`}}>
-              <div style={{display:"flex",justifyContent:"space-between",fontSize:"11px",color:T.textMuted,marginBottom:"6px"}}>
+              <div style={{display:"flex",justifyContent:"space-between",fontSize:"14px",color:T.textMuted,marginBottom:"6px"}}>
                 <span style={{fontWeight:700,color:T.textSub}}>Level {lv}</span><span>{prog.xp%100}/100 xp</span>
               </div>
               <div style={{background:"#0f1826",borderRadius:"999px",height:"5px"}}>
                 <div style={{width:`${prog.xp%100}%`,height:"100%",background:`linear-gradient(90deg,${T.accent},${T.accentV})`,borderRadius:"999px",transition:"width 0.5s"}}/>
               </div>
               <div style={{display:"flex",justifyContent:"space-between",marginTop:"10px"}}>
-                <span style={{fontSize:"11px",color:T.orange,fontWeight:700}}>🔥 {prog.streak}d streak</span>
-                <span style={{fontSize:"11px",color:T.textMuted}}>💻 {prog.totalSolved}</span>
+                <span style={{fontSize:"16px",color:T.orange,fontWeight:700}}>🔥 {prog.streak}d streak</span>
+                <span style={{fontSize:"16px",color:T.textMuted}}>💻 {prog.totalSolved}</span>
               </div>
             </div>
           </aside>
         )}
 
         {/* ── MAIN ── */}
-        <main style={{flex:1,overflowY:"auto",padding:"28px 30px",position:"relative"}}>
+        <main style={{flex:1,overflowY:"auto",padding:"32px 36px",position:"relative"}}>
           {/* Ambient background glow */}
           <div style={{position:"fixed",top:"20%",right:"5%",width:"400px",height:"400px",borderRadius:"50%",background:`radial-gradient(circle,${curSec?.color||T.accent}06 0%,transparent 70%)`,pointerEvents:"none",zIndex:0}}/>
           <div style={{position:"relative",zIndex:1}}>
@@ -385,44 +385,44 @@ function GCard({children,color=T.accent,style={}}){
   return <div style={{background:`linear-gradient(135deg,${T.card},${T.cardHov})`,border:`1px solid ${color}35`,borderRadius:"16px",padding:"22px",boxShadow:`0 4px 30px ${color}10`,...style}}>{children}</div>;
 }
 function Btn({children,onClick,disabled,color=T.accent,outline=false,style={}}){
-  return <button onClick={onClick} disabled={disabled} style={{padding:"10px 20px",borderRadius:"10px",border:outline?`1px solid ${color}`:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:outline?"transparent":`linear-gradient(135deg,${color},${color}cc)`,color:outline?color:"#fff",letterSpacing:"0.01em",...style}}>{children}</button>;
+  return <button onClick={onClick} disabled={disabled} style={{padding:"10px 20px",borderRadius:"10px",border:outline?`1px solid ${color}`:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"19px",background:outline?"transparent":`linear-gradient(135deg,${color},${color}cc)`,color:outline?color:"#fff",letterSpacing:"0.01em",...style}}>{children}</button>;
 }
 function PageTitle({children,color=T.accent}){
   return (
     <div style={{marginBottom:"26px"}}>
-      <h2 style={{fontSize:"24px",fontWeight:800,color:T.text,letterSpacing:"-0.6px"}}>{children}</h2>
+      <h2 style={{fontSize:"32px",fontWeight:800,color:T.text,letterSpacing:"-0.7px"}}>{children}</h2>
       <div style={{width:"40px",height:"3px",background:`linear-gradient(90deg,${color},transparent)`,marginTop:"8px",borderRadius:"2px"}}/>
     </div>
   );
 }
 function Badge2({children,color=T.accent}){
-  return <span style={{fontSize:"12px",fontWeight:700,color,background:`${color}18`,padding:"4px 12px",borderRadius:"999px",display:"inline-block",border:`1px solid ${color}30`}}>{children}</span>;
+  return <span style={{fontSize:"15px",fontWeight:700,color,background:`${color}18`,padding:"4px 12px",borderRadius:"999px",display:"inline-block",border:`1px solid ${color}30`}}>{children}</span>;
 }
 function TA({value,onChange,placeholder,rows=4,readOnly=false,style={}}){
   return <textarea value={value} onChange={onChange} placeholder={placeholder} readOnly={readOnly}
-    style={{width:"100%",minHeight:`${rows*44}px`,padding:"14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"'JetBrains Mono','Fira Code',monospace",fontSize:"13px",outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7,...style}}/>;
+    style={{width:"100%",minHeight:`${rows*44}px`,padding:"14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"'JetBrains Mono','Fira Code',monospace",fontSize:"16px",outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7,...style}}/>;
 }
 function InpField({value,onChange,placeholder,style={},type="text"}){
   return <input type={type} value={value} onChange={onChange} placeholder={placeholder}
-    style={{padding:"11px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"14px",outline:"none",...style}}
+    style={{padding:"11px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"17px",outline:"none",...style}}
     onFocus={e=>e.target.style.borderColor=T.accent} onBlur={e=>e.target.style.borderColor=T.border2}/>;
 }
 function SelField({value,onChange,options,style={}}){
-  return <select value={value} onChange={e=>onChange(e.target.value)} style={{padding:"10px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"14px",outline:"none",...style}}>
+  return <select value={value} onChange={e=>onChange(e.target.value)} style={{padding:"10px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"17px",outline:"none",...style}}>
     {options.map(o=><option key={o} value={o}>{o}</option>)}
   </select>;
 }
 function AIBox({title,content,color=T.accent}){
   return <div style={{marginTop:"16px",padding:"18px",background:"#000000",borderRadius:"12px",border:`1px solid ${color}30`,borderLeft:`3px solid ${color}`}}>
-    <div style={{color,fontWeight:700,marginBottom:"9px",fontSize:"12px",letterSpacing:"0.1em",textTransform:"uppercase"}}>{title}</div>
-    <p style={{color:"#b0c4e0",fontSize:"14px",lineHeight:1.9,whiteSpace:"pre-wrap"}}>{content}</p>
+    <div style={{color,fontWeight:700,marginBottom:"9px",fontSize:"15px",letterSpacing:"0.1em",textTransform:"uppercase"}}>{title}</div>
+    <p style={{color:"#b0c4e0",fontSize:"18px",lineHeight:2.0,whiteSpace:"pre-wrap"}}>{content}</p>
   </div>;
 }
 function EmptyState({icon,title,sub}){
   return <div style={{textAlign:"center",padding:"70px 20px",color:T.textMuted}}>
     <div style={{fontSize:"52px",marginBottom:"16px",opacity:0.4}}>{icon}</div>
-    <div style={{fontSize:"16px",fontWeight:600,color:T.textSub,marginBottom:"7px"}}>{title}</div>
-    <div style={{fontSize:"13px"}}>{sub}</div>
+    <div style={{fontSize:"22px",fontWeight:600,color:T.textSub,marginBottom:"8px"}}>{title}</div>
+    <div style={{fontSize:"18px"}}>{sub}</div>
   </div>;
 }
 const dCol = d => d==="Easy"?T.green:d==="Medium"?T.cyan:T.red;
@@ -455,7 +455,7 @@ function CoursesHome({prog,setTID}){
   return(
     <div className="fin">
       <PageTitle color={T.cyan}>📚 All Subjects</PageTitle>
-      <p style={{color:T.textSub,fontSize:"15px",marginBottom:"28px",lineHeight:1.6}}>
+      <p style={{color:T.textSub,fontSize:"18px",marginBottom:"28px",lineHeight:1.6}}>
         Each subject has 10 topics with AI-generated notes, code examples, and interview practice.
       </p>
       {/* Subject cards grid */}
@@ -470,39 +470,39 @@ function CoursesHome({prog,setTID}){
               {/* Color header */}
               <div style={{background:`linear-gradient(135deg,${meta.color}25,${meta.color}08)`,borderBottom:`1px solid ${meta.color}25`,padding:"26px 26px 22px"}}>
                 <div style={{display:"flex",alignItems:"center",gap:"16px",marginBottom:"16px"}}>
-                  <div style={{width:"56px",height:"56px",borderRadius:"16px",background:meta.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"17px",fontWeight:900,color:meta.textColor,flexShrink:0,boxShadow:`0 6px 24px ${meta.color}55`,letterSpacing:"-1px"}}>
+                  <div style={{width:"56px",height:"56px",borderRadius:"16px",background:meta.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"21px",fontWeight:900,color:meta.textColor,flexShrink:0,boxShadow:`0 6px 24px ${meta.color}55`,letterSpacing:"-1px"}}>
                     {meta.icon}
                   </div>
                   <div style={{flex:1}}>
-                    <h3 style={{fontSize:"22px",fontWeight:900,color:T.text,letterSpacing:"-0.5px",marginBottom:"5px"}}>{subj}</h3>
-                    <p style={{fontSize:"13px",color:T.textSub,lineHeight:1.4}}>{meta.desc}</p>
+                    <h3 style={{fontSize:"30px",fontWeight:900,color:T.text,letterSpacing:"-0.6px",marginBottom:"6px"}}>{subj}</h3>
+                    <p style={{fontSize:"19px",color:T.textSub,lineHeight:1.6}}>{meta.desc}</p>
                   </div>
                 </div>
                 <div style={{background:"#ffffff10",borderRadius:"999px",height:"7px",marginBottom:"9px"}}>
                   <div style={{width:`${pct}%`,height:"100%",background:meta.color,borderRadius:"999px",transition:"width 0.6s"}}/>
                 </div>
-                <div style={{display:"flex",justifyContent:"space-between",fontSize:"13px"}}>
+                <div style={{display:"flex",justifyContent:"space-between",fontSize:"18px"}}>
                   <span style={{color:meta.color,fontWeight:700}}>{pct}% complete</span>
                   <span style={{color:T.textMuted}}>{completed} / {topics.length} topics</span>
                 </div>
               </div>
               {/* Topics grid */}
               <div style={{padding:"18px 26px 22px"}}>
-                <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"13px"}}>TOPICS</div>
+                <div style={{fontSize:"16px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"13px"}}>TOPICS</div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"7px",marginBottom:"18px"}}>
                   {topics.slice(0,8).map(t=>{
                     const isDone=done.includes(`${subj}_${t}`);
                     return(
                       <div key={t} style={{display:"flex",alignItems:"center",gap:"9px"}}>
-                        <div style={{width:"18px",height:"18px",borderRadius:"5px",background:isDone?meta.color:"transparent",border:`1.5px solid ${isDone?meta.color:T.border2}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"10px",color:isDone?meta.textColor:"transparent",flexShrink:0,fontWeight:900}}>✓</div>
-                        <span style={{fontSize:"12px",color:isDone?T.textSub:T.textMuted,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{t}</span>
+                        <div style={{width:"18px",height:"18px",borderRadius:"5px",background:isDone?meta.color:"transparent",border:`1.5px solid ${isDone?meta.color:T.border2}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",color:isDone?meta.textColor:"transparent",flexShrink:0,fontWeight:900}}>✓</div>
+                        <span style={{fontSize:"17px",color:isDone?T.textSub:T.textMuted,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{t}</span>
                       </div>
                     );
                   })}
-                  {topics.length>8&&<div style={{fontSize:"11px",color:T.textMuted,gridColumn:"1/-1"}}>+{topics.length-8} more...</div>}
+                  {topics.length>8&&<div style={{fontSize:"16px",color:T.textMuted,gridColumn:"1/-1"}}>+{topics.length-8} more...</div>}
                 </div>
                 <div style={{padding:"11px 16px",background:`${meta.color}15`,borderRadius:"10px",border:`1px solid ${meta.color}25`,textAlign:"center"}}>
-                  <span style={{fontSize:"14px",fontWeight:700,color:meta.color}}>Start {subj} →</span>
+                  <span style={{fontSize:"19px",fontWeight:700,color:meta.color}}>Start {subj} →</span>
                 </div>
               </div>
             </div>
@@ -511,17 +511,17 @@ function CoursesHome({prog,setTID}){
       </div>
 
       {/* External resources */}
-      <div style={{fontSize:"13px",fontWeight:700,color:T.textMuted,letterSpacing:"0.1em",marginBottom:"16px"}}>EXTERNAL RESOURCES</div>
+      <div style={{fontSize:"18px",fontWeight:700,color:T.textMuted,letterSpacing:"0.1em",marginBottom:"16px"}}>EXTERNAL RESOURCES</div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px"}}>
         {[["c_mdn","MDN Web Docs","#4f8ef7","Official Mozilla documentation — Web APIs, HTML, CSS, JavaScript","📘"],
           ["c_gfg","GeeksForGeeks","#22d3a0","DSA, algorithms, CS fundamentals, interview prep","🌿"]].map(([id,name,color,desc,icon])=>(
           <div key={id} onClick={()=>setTID(id)} className="card-hover"
             style={{background:T.card,border:`1px solid ${color}30`,borderRadius:"18px",padding:"24px",cursor:"pointer",display:"flex",gap:"18px",alignItems:"center"}}>
-            <div style={{fontSize:"34px",width:"56px",height:"56px",display:"flex",alignItems:"center",justifyContent:"center",background:`${color}18`,borderRadius:"16px",flexShrink:0}}>{icon}</div>
+            <div style={{fontSize:"38px",width:"56px",height:"56px",display:"flex",alignItems:"center",justifyContent:"center",background:`${color}18`,borderRadius:"16px",flexShrink:0}}>{icon}</div>
             <div>
-              <h4 style={{fontSize:"18px",fontWeight:800,color:T.text,marginBottom:"6px"}}>{name}</h4>
-              <p style={{fontSize:"13px",color:T.textMuted,lineHeight:1.5,marginBottom:"8px"}}>{desc}</p>
-              <span style={{fontSize:"13px",color,fontWeight:700}}>Open →</span>
+              <h4 style={{fontSize:"24px",fontWeight:800,color:T.text,marginBottom:"8px"}}>{name}</h4>
+              <p style={{fontSize:"18px",color:T.textMuted,lineHeight:1.5,marginBottom:"8px"}}>{desc}</p>
+              <span style={{fontSize:"18px",color,fontWeight:700}}>Open →</span>
             </div>
           </div>
         ))}
@@ -586,16 +586,16 @@ function SubjectPage({subject,prog,addXP}){
       {/* ── BIG SUBJECT HEADER ── */}
       <div style={{background:`linear-gradient(135deg,${meta.color}20,${meta.color}05)`,border:`1px solid ${meta.color}35`,borderRadius:"22px",padding:"32px",marginBottom:"26px"}}>
         <div style={{display:"flex",alignItems:"center",gap:"22px",marginBottom:"22px",flexWrap:"wrap"}}>
-          <div style={{width:"72px",height:"72px",borderRadius:"20px",background:meta.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"26px",fontWeight:900,color:meta.textColor,flexShrink:0,boxShadow:`0 8px 32px ${meta.color}60`,letterSpacing:"-1px"}}>
+          <div style={{width:"72px",height:"72px",borderRadius:"20px",background:meta.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"30px",fontWeight:900,color:meta.textColor,flexShrink:0,boxShadow:`0 8px 32px ${meta.color}60`,letterSpacing:"-1px"}}>
             {meta.icon}
           </div>
           <div style={{flex:1}}>
-            <h1 style={{fontSize:"30px",fontWeight:900,color:T.text,letterSpacing:"-0.7px",marginBottom:"7px"}}>{subject}</h1>
-            <p style={{fontSize:"15px",color:T.textSub,lineHeight:1.5}}>{meta.desc}</p>
+            <h1 style={{fontSize:"38px",fontWeight:900,color:T.text,letterSpacing:"-0.8px",marginBottom:"8px"}}>{subject}</h1>
+            <p style={{fontSize:"18px",color:T.textSub,lineHeight:1.5}}>{meta.desc}</p>
           </div>
           <div style={{textAlign:"right",flexShrink:0}}>
-            <div style={{fontSize:"38px",fontWeight:900,color:meta.color,lineHeight:1}}>{pct}%</div>
-            <div style={{fontSize:"13px",color:T.textMuted,marginTop:"3px"}}>{completed} / {topics.length} topics done</div>
+            <div style={{fontSize:"44px",fontWeight:900,color:meta.color,lineHeight:1}}>{pct}%</div>
+            <div style={{fontSize:"18px",color:T.textMuted,marginTop:"4px"}}>{completed} / {topics.length} topics done</div>
           </div>
         </div>
         <div style={{background:"#ffffff08",borderRadius:"999px",height:"10px",overflow:"hidden"}}>
@@ -604,13 +604,13 @@ function SubjectPage({subject,prog,addXP}){
       </div>
 
       {/* ── TWO-COLUMN LAYOUT ── */}
-      <div style={{display:"grid",gridTemplateColumns:"270px 1fr",gap:"22px",alignItems:"start"}}>
+      <div style={{display:"grid",gridTemplateColumns:"300px 1fr",gap:"24px",alignItems:"start"}}>
 
         {/* ── LEFT: topic list (sticky) ── */}
         <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",overflow:"hidden",position:"sticky",top:"20px"}}>
-          <div style={{padding:"18px 20px 15px",borderBottom:`1px solid ${T.border2}`,background:`${meta.color}12`}}>
-            <div style={{fontSize:"12px",fontWeight:700,color:meta.color,letterSpacing:"0.1em"}}>ALL TOPICS</div>
-            <div style={{fontSize:"13px",color:T.textMuted,marginTop:"3px"}}>{completed} of {topics.length} completed</div>
+          <div style={{padding:"22px 24px 18px",borderBottom:`1px solid ${T.border2}`,background:`${meta.color}12`}}>
+            <div style={{fontSize:"22px",fontWeight:800,color:meta.color,letterSpacing:"0.05em"}}>ALL TOPICS</div>
+            <div style={{fontSize:"20px",color:T.textMuted,marginTop:"6px"}}>{completed} of {topics.length} completed</div>
           </div>
           <div style={{padding:"10px"}}>
             {topics.map((t,i)=>{
@@ -619,21 +619,21 @@ function SubjectPage({subject,prog,addXP}){
               return(
                 <button key={t} onClick={()=>{setSel(t);setNotes("");setPQ("");setPFB("");setTab("notes");}} style={{
                   width:"100%",display:"flex",alignItems:"center",gap:"13px",
-                  padding:"14px 14px",borderRadius:"12px",border:"none",cursor:"pointer",
-                  fontFamily:"inherit",fontSize:"14px",fontWeight:isActive?700:500,
+                  padding:"16px 16px",borderRadius:"12px",border:"none",cursor:"pointer",
+                  fontFamily:"inherit",fontSize:"22px",fontWeight:isActive?800:500,
                   background:isActive?`${meta.color}22`:"transparent",
                   color:isActive?meta.color:isDone?T.textSub:T.textMuted,
                   marginBottom:"3px",textAlign:"left",transition:"all 0.15s",
                   borderLeft:isActive?`3px solid ${meta.color}`:"3px solid transparent"
                 }}>
                   <div style={{
-                    width:"26px",height:"26px",borderRadius:"7px",flexShrink:0,
+                    width:"32px",height:"32px",borderRadius:"8px",flexShrink:0,
                     background:isDone?meta.color:isActive?`${meta.color}30`:"#ffffff06",
                     border:`1.5px solid ${isDone?meta.color:T.border2}`,
                     display:"flex",alignItems:"center",justifyContent:"center",
-                    fontSize:"12px",color:isDone?meta.textColor:T.textMuted,fontWeight:900
+                    fontSize:"17px",color:isDone?meta.textColor:T.textMuted,fontWeight:900
                   }}>{isDone?"✓":i+1}</div>
-                  <span style={{flex:1,lineHeight:1.4}}>{t}</span>
+                  <span style={{flex:1,lineHeight:1.5}}>{t}</span>
                 </button>
               );
             })}
@@ -643,15 +643,15 @@ function SubjectPage({subject,prog,addXP}){
         {/* ── RIGHT: content area ── */}
         <div>
           {/* Active topic bar */}
-          <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",padding:"20px 24px",marginBottom:"18px"}}>
+          <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"26px 28px",marginBottom:"20px"}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:"12px"}}>
               <div>
-                <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>{subject.toUpperCase()} · TOPIC</div>
-                <h2 style={{fontSize:"22px",fontWeight:900,color:T.text,letterSpacing:"-0.4px"}}>{selTopic}</h2>
+                <div style={{fontSize:"20px",color:T.textMuted,fontWeight:700,letterSpacing:"0.08em",marginBottom:"10px"}}>{subject.toUpperCase()} · TOPIC</div>
+                <h2 style={{fontSize:"36px",fontWeight:900,color:T.text,letterSpacing:"-0.8px"}}>{selTopic}</h2>
               </div>
               <div style={{display:"flex",gap:"8px"}}>
-                <button onClick={()=>setTab("notes")} style={{padding:"10px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"14px",fontWeight:700,background:tab==="notes"?meta.color:T.border2,color:tab==="notes"?meta.textColor:T.textMuted,transition:"all 0.15s"}}>📖 Notes</button>
-                <button onClick={()=>setTab("practice")} style={{padding:"10px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"14px",fontWeight:700,background:tab==="practice"?meta.color:T.border2,color:tab==="practice"?meta.textColor:T.textMuted,transition:"all 0.15s"}}>🎯 Practice</button>
+                <button onClick={()=>setTab("notes")} style={{padding:"13px 26px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"21px",fontWeight:700,background:tab==="notes"?meta.color:T.border2,color:tab==="notes"?meta.textColor:T.textMuted,transition:"all 0.15s"}}>📖 Notes</button>
+                <button onClick={()=>setTab("practice")} style={{padding:"13px 26px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"21px",fontWeight:700,background:tab==="practice"?meta.color:T.border2,color:tab==="practice"?meta.textColor:T.textMuted,transition:"all 0.15s"}}>🎯 Practice</button>
               </div>
             </div>
           </div>
@@ -662,26 +662,26 @@ function SubjectPage({subject,prog,addXP}){
               {!notes && !loading && (
                 <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"56px 32px",textAlign:"center"}}>
                   <div style={{width:"72px",height:"72px",borderRadius:"20px",background:`${meta.color}18`,border:`1px solid ${meta.color}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"32px",margin:"0 auto 20px"}}>📖</div>
-                  <h3 style={{fontSize:"20px",fontWeight:700,color:T.textSub,marginBottom:"10px"}}>Learn {selTopic}</h3>
-                  <p style={{fontSize:"14px",color:T.textMuted,marginBottom:"28px",maxWidth:"380px",margin:"0 auto 28px",lineHeight:1.6}}>AI will generate detailed notes with code examples, explanations and interview questions</p>
-                  <button onClick={generate} style={{padding:"14px 36px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:800,fontSize:"16px",background:meta.color,color:meta.textColor,boxShadow:`0 6px 24px ${meta.color}50`,letterSpacing:"0.01em"}}>⚡ Generate Notes  +15 XP</button>
+                  <h3 style={{fontSize:"30px",fontWeight:800,color:T.textSub,marginBottom:"14px"}}>Learn {selTopic}</h3>
+                  <p style={{fontSize:"19px",color:T.textMuted,marginBottom:"28px",maxWidth:"380px",margin:"0 auto 28px",lineHeight:1.6}}>AI will generate detailed notes with code examples, explanations and interview questions</p>
+                  <button onClick={generate} style={{padding:"18px 48px",borderRadius:"14px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:800,fontSize:"26px",background:meta.color,color:meta.textColor,boxShadow:`0 6px 24px ${meta.color}50`,letterSpacing:"0.01em"}}>⚡ Generate Notes  +15 XP</button>
                 </div>
               )}
               {loading && (
                 <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"70px",textAlign:"center"}}>
                   <div style={{fontSize:"44px",animation:"pulse 1s infinite",marginBottom:"18px"}}>📖</div>
-                  <p style={{color:T.textMuted,fontSize:"16px"}}>Generating notes for <b style={{color:meta.color}}>{selTopic}</b>...</p>
+                  <p style={{color:T.textMuted,fontSize:"19px"}}>Generating notes for <b style={{color:meta.color}}>{selTopic}</b>...</p>
                 </div>
               )}
               {notes && !loading && (
                 <div className="fin">
                   <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"30px",marginBottom:"16px"}}>
-                    <div style={{color:"#c8d8f0",fontSize:"15px",lineHeight:2.1,whiteSpace:"pre-wrap"}}>{notes}</div>
+                    <div style={{color:"#c8d8f0",fontSize:"19px",lineHeight:2.2,whiteSpace:"pre-wrap"}}>{notes}</div>
                   </div>
                   <div style={{display:"flex",gap:"10px",alignItems:"center",flexWrap:"wrap"}}>
-                    <button onClick={generate} style={{padding:"10px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:meta.color,color:meta.textColor}}>🔄 Regenerate</button>
-                    <button onClick={()=>setNotes("")} style={{padding:"10px 20px",borderRadius:"10px",border:`1px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:"transparent",color:T.textMuted}}>✕ Clear</button>
-                    <span style={{marginLeft:"auto",fontSize:"14px",color:T.green,fontWeight:700}}>✅ +15 XP earned!</span>
+                    <button onClick={generate} style={{padding:"10px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"19px",background:meta.color,color:meta.textColor}}>🔄 Regenerate</button>
+                    <button onClick={()=>setNotes("")} style={{padding:"10px 20px",borderRadius:"10px",border:`1px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"19px",background:"transparent",color:T.textMuted}}>✕ Clear</button>
+                    <span style={{marginLeft:"auto",fontSize:"19px",color:T.green,fontWeight:700}}>✅ +15 XP earned!</span>
                   </div>
                 </div>
               )}
@@ -692,19 +692,19 @@ function SubjectPage({subject,prog,addXP}){
           {tab==="practice" && (
             <div>
               <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"24px",marginBottom:"16px"}}>
-                <p style={{fontSize:"14px",color:T.textSub,marginBottom:"16px"}}>Get an interview question on <b style={{color:meta.color}}>{selTopic}</b> and get AI feedback on your answer.</p>
-                <button onClick={genPractice} disabled={pLoad} style={{padding:"11px 24px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:meta.color,color:meta.textColor,opacity:pLoad?0.5:1}}>{pLoad?"⏳ Generating...":"🎯 Generate Question"}</button>
+                <p style={{fontSize:"19px",color:T.textSub,marginBottom:"16px"}}>Get an interview question on <b style={{color:meta.color}}>{selTopic}</b> and get AI feedback on your answer.</p>
+                <button onClick={genPractice} disabled={pLoad} style={{padding:"11px 24px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"19px",background:meta.color,color:meta.textColor,opacity:pLoad?0.5:1}}>{pLoad?"⏳ Generating...":"🎯 Generate Question"}</button>
               </div>
               {practiceQ && (
                 <div className="fin">
                   <div style={{background:T.card,border:`1px solid ${meta.color}35`,borderLeft:`4px solid ${meta.color}`,borderRadius:"18px",padding:"24px",marginBottom:"16px"}}>
-                    <div style={{fontSize:"11px",color:meta.color,fontWeight:700,letterSpacing:"0.1em",marginBottom:"12px"}}>INTERVIEW QUESTION</div>
-                    <p style={{fontSize:"16px",color:T.text,lineHeight:1.8}}>{practiceQ}</p>
+                    <div style={{fontSize:"16px",color:meta.color,fontWeight:700,letterSpacing:"0.1em",marginBottom:"12px"}}>INTERVIEW QUESTION</div>
+                    <p style={{fontSize:"19px",color:T.text,lineHeight:1.8}}>{practiceQ}</p>
                   </div>
                   <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"24px"}}>
-                    <div style={{fontSize:"11px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"12px"}}>YOUR ANSWER</div>
+                    <div style={{fontSize:"16px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"12px"}}>YOUR ANSWER</div>
                     <TA value={practiceA} onChange={e=>setPA(e.target.value)} placeholder="Write your answer here..." rows={6}/>
-                    <button onClick={getPFB} disabled={pLoad||!practiceA.trim()} style={{marginTop:"14px",padding:"11px 24px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"14px",background:meta.color,color:meta.textColor,opacity:(pLoad||!practiceA.trim())?0.4:1}}>{pLoad?"⏳ Evaluating...":"🤖 Get Feedback  +20 XP"}</button>
+                    <button onClick={getPFB} disabled={pLoad||!practiceA.trim()} style={{marginTop:"14px",padding:"11px 24px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"17px",background:meta.color,color:meta.textColor,opacity:(pLoad||!practiceA.trim())?0.4:1}}>{pLoad?"⏳ Evaluating...":"🤖 Get Feedback  +20 XP"}</button>
                   </div>
                   {practiceFB && <AIBox title="Feedback" content={practiceFB} color={meta.color}/>}
                 </div>
@@ -754,15 +754,15 @@ function EmbedReader({name,color,links}){
       <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",padding:"16px",marginBottom:"16px"}}>
         <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
           {links.map(l=>(
-            <button key={l.l} onClick={()=>setSel(l.l)} style={{padding:"9px 16px",borderRadius:"9px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"13px",fontWeight:600,background:sel===l.l?color:T.border2,color:sel===l.l?"#fff":T.textMuted,transition:"all 0.15s"}}>
+            <button key={l.l} onClick={()=>setSel(l.l)} style={{padding:"9px 16px",borderRadius:"9px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"18px",fontWeight:600,background:sel===l.l?color:T.border2,color:sel===l.l?"#fff":T.textMuted,transition:"all 0.15s"}}>
               {l.l}
             </button>
           ))}
         </div>
       </div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px",flexWrap:"wrap",gap:"8px"}}>
-        <h3 style={{fontSize:"18px",fontWeight:700,color}}>{sel}</h3>
-        <a href={cur.u} target="_blank" rel="noreferrer" style={{padding:"9px 18px",borderRadius:"9px",background:color,color:"#fff",fontWeight:700,fontSize:"13px"}}>Open Full ↗</a>
+        <h3 style={{fontSize:"24px",fontWeight:700,color}}>{sel}</h3>
+        <a href={cur.u} target="_blank" rel="noreferrer" style={{padding:"9px 18px",borderRadius:"9px",background:color,color:"#fff",fontWeight:700,fontSize:"18px"}}>Open Full ↗</a>
       </div>
       <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",overflow:"hidden"}}>
         <iframe src={cur.u} style={{width:"100%",height:"640px",border:"none"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
@@ -783,17 +783,17 @@ function ExtSite({url,name,color,links,prog,field,addXP}){
       <PageTitle color={color}>{name}</PageTitle>
       <GCard color={color} style={{marginBottom:"14px"}}>
         <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"16px"}}>
-          {links.map(([l,u])=><a key={l} href={u} target="_blank" rel="noreferrer" style={{padding:"8px 14px",borderRadius:"8px",background:color,color:"#fff",fontWeight:700,fontSize:"12px"}}>{l} ↗</a>)}
+          {links.map(([l,u])=><a key={l} href={u} target="_blank" rel="noreferrer" style={{padding:"8px 14px",borderRadius:"8px",background:color,color:"#fff",fontWeight:700,fontSize:"15px"}}>{l} ↗</a>)}
         </div>
         <div style={{display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap"}}>
-          <span style={{fontSize:"13px",color:T.textSub}}>Problems solved:</span>
-          <input type="number" min="0" value={inp} onChange={e=>setInp(Number(e.target.value))} style={{width:"75px",padding:"7px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"7px",color:T.text,fontFamily:"inherit",fontSize:"13px",outline:"none",textAlign:"center"}}/>
+          <span style={{fontSize:"16px",color:T.textSub}}>Problems solved:</span>
+          <input type="number" min="0" value={inp} onChange={e=>setInp(Number(e.target.value))} style={{width:"75px",padding:"7px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"7px",color:T.text,fontFamily:"inherit",fontSize:"16px",outline:"none",textAlign:"center"}}/>
           <Btn onClick={()=>{addXP(0,{[field]:inp});alert(`✅ Saved: ${inp} problems`);}} color={color}>Save</Btn>
         </div>
         <div style={{marginTop:"12px",background:T.border2,borderRadius:"999px",height:"5px"}}>
           <div style={{width:`${Math.min(val,500)/5}%`,height:"100%",background:`linear-gradient(90deg,${color},${color}99)`,borderRadius:"999px"}}/>
         </div>
-        <div style={{fontSize:"11px",color:T.textMuted,marginTop:"5px"}}>{val} solved</div>
+        <div style={{fontSize:"14px",color:T.textMuted,marginTop:"5px"}}>{val} solved</div>
       </GCard>
       <Card style={{padding:"0",overflow:"hidden",borderRadius:"14px"}}>
         <iframe src={url} style={{width:"100%",height:"580px",border:"none"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
@@ -852,7 +852,7 @@ function AIQuestions({prog,addXP}){
       <GCard color={T.green} style={{marginBottom:"16px"}}>
         <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"flex-end"}}>
           {[["Difficulty",diff,setDiff,["Easy","Medium","Hard"]],["Language",lang,setLang,LANGS],["Topic",topic,setTopic,topics]].map(([lbl,val,set,opts])=>(
-            <div key={lbl}><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl.toUpperCase()}</div>
+            <div key={lbl}><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl.toUpperCase()}</div>
               <SelField value={val} onChange={set} options={opts}/></div>
           ))}
           <Btn onClick={generate} disabled={loading} color={T.green} style={{alignSelf:"flex-end"}}>{loading?"⏳ Generating...":"⚡ New Question"}</Btn>
@@ -862,14 +862,14 @@ function AIQuestions({prog,addXP}){
       {q && !loading && (
         <Card className="fin">
           <div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:"8px",marginBottom:"12px"}}>
-            <div><h3 style={{fontSize:"16px",fontWeight:800,marginBottom:"6px"}}>{q.title}</h3>
+            <div><h3 style={{fontSize:"19px",fontWeight:800,marginBottom:"6px"}}>{q.title}</h3>
               <div style={{display:"flex",gap:"5px",flexWrap:"wrap"}}>{q.tags?.filter(Boolean).map(t=><Badge2 key={t} color={T.accentV}>{t}</Badge2>)}</div>
             </div>
             <Badge2 color={dCol(q.diff)}>{q.diff}</Badge2>
           </div>
-          <p style={{color:"#b8c8e8",fontSize:"14px",lineHeight:1.7,marginBottom:"12px"}}>{q.desc}</p>
-          {q.example&&<pre style={{background:"#000000",padding:"13px",borderRadius:"9px",fontFamily:"monospace",fontSize:"12px",color:T.green,overflowX:"auto",whiteSpace:"pre-wrap",marginBottom:"10px",border:`1px solid ${T.border2}`}}>{q.example}</pre>}
-          {q.constraints&&<p style={{fontSize:"12px",color:T.textSub,marginBottom:"16px"}}><b style={{color:T.text}}>Constraints:</b> {q.constraints}</p>}
+          <p style={{color:"#b8c8e8",fontSize:"17px",lineHeight:1.7,marginBottom:"12px"}}>{q.desc}</p>
+          {q.example&&<pre style={{background:"#000000",padding:"13px",borderRadius:"9px",fontFamily:"monospace",fontSize:"15px",color:T.green,overflowX:"auto",whiteSpace:"pre-wrap",marginBottom:"10px",border:`1px solid ${T.border2}`}}>{q.example}</pre>}
+          {q.constraints&&<p style={{fontSize:"15px",color:T.textSub,marginBottom:"16px"}}><b style={{color:T.text}}>Constraints:</b> {q.constraints}</p>}
           <TA value={code} onChange={e=>setCode(e.target.value)} placeholder={`// Write your ${lang} solution here...`} rows={7}/>
           <div style={{display:"flex",gap:"8px",marginTop:"12px",flexWrap:"wrap"}}>
             <Btn onClick={getReview} disabled={rLoad||!code.trim()} color={T.accentV}>{rLoad?"⏳ Reviewing...":"🔍 AI Code Review"}</Btn>
@@ -920,8 +920,8 @@ function TopicTest({prog,addXP}){
       <PageTitle color={T.green}>📝 Topic Test</PageTitle>
       <GCard color={T.green} style={{marginBottom:"16px"}}>
         <div style={{display:"flex",gap:"10px",flexWrap:"wrap",alignItems:"flex-end"}}>
-          <div><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>TOPIC</div><SelField value={topic} onChange={setTopic} options={topics}/></div>
-          <div><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>LANGUAGE</div><SelField value={lang} onChange={setLang} options={LANGS}/></div>
+          <div><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>TOPIC</div><SelField value={topic} onChange={setTopic} options={topics}/></div>
+          <div><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>LANGUAGE</div><SelField value={lang} onChange={setLang} options={LANGS}/></div>
           <Btn onClick={genTest} disabled={loading} color={T.green} style={{alignSelf:"flex-end"}}>{loading?"⏳ Generating...":"📝 Generate Test"}</Btn>
         </div>
       </GCard>
@@ -931,17 +931,17 @@ function TopicTest({prog,addXP}){
           {qs.map((q,i)=>(
             <Card key={q.id||i} style={{marginBottom:"12px"}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px",flexWrap:"wrap",gap:"6px"}}>
-                <h4 style={{fontSize:"14px",fontWeight:700}}>Q{i+1}. {q.title}</h4>
+                <h4 style={{fontSize:"17px",fontWeight:700}}>Q{i+1}. {q.title}</h4>
                 <Badge2 color={dCol(q.diff)}>{q.diff}</Badge2>
               </div>
-              <p style={{color:"#b8c8e8",fontSize:"13px",lineHeight:1.6,marginBottom:"8px"}}>{q.desc}</p>
-              {q.example&&<pre style={{background:"#000000",padding:"10px",borderRadius:"7px",fontSize:"11px",color:T.green,fontFamily:"monospace",overflowX:"auto",whiteSpace:"pre-wrap",marginBottom:"10px",border:`1px solid ${T.border2}`}}>{q.example}</pre>}
+              <p style={{color:"#b8c8e8",fontSize:"16px",lineHeight:1.6,marginBottom:"8px"}}>{q.desc}</p>
+              {q.example&&<pre style={{background:"#000000",padding:"10px",borderRadius:"7px",fontSize:"14px",color:T.green,fontFamily:"monospace",overflowX:"auto",whiteSpace:"pre-wrap",marginBottom:"10px",border:`1px solid ${T.border2}`}}>{q.example}</pre>}
               <TA value={ans[q.id]||""} onChange={e=>setAns(a=>({...a,[q.id]:e.target.value}))} placeholder={`// ${lang} solution...`} rows={4} readOnly={submitted}/>
               {submitted&&fb[q.id]&&<AIBox title="Evaluation" content={fb[q.id]} color={T.green}/>}
             </Card>
           ))}
           {!submitted&&<Btn onClick={submit} disabled={loading} color={T.green} style={{width:"100%",padding:"12px"}}>{loading?"⏳ Evaluating...":"Submit Test for AI Evaluation"}</Btn>}
-          {submitted&&<GCard color={T.green} style={{textAlign:"center",marginTop:"14px"}}><div style={{fontSize:"22px",marginBottom:"6px"}}>🎉</div><div style={{fontWeight:700,color:T.green}}>Test Complete! +{qs.filter(q=>(ans[q.id]||"").trim()).length*30} XP</div></GCard>}
+          {submitted&&<GCard color={T.green} style={{textAlign:"center",marginTop:"14px"}}><div style={{fontSize:"26px",marginBottom:"6px"}}>🎉</div><div style={{fontWeight:700,color:T.green}}>Test Complete! +{qs.filter(q=>(ans[q.id]||"").trim()).length*30} XP</div></GCard>}
         </div>
       )}
     </div>
@@ -973,12 +973,12 @@ function ResumeBuild({prog,addXP}){
       <Card style={{marginBottom:"16px"}}>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:"10px",marginBottom:"14px"}}>
           {fields.map(([k,lbl,ph])=>(
-            <div key={k}><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl.toUpperCase()}</div>
+            <div key={k}><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl.toUpperCase()}</div>
               <InpField value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} style={{width:"100%"}}/></div>
           ))}
         </div>
         {[["skills","SKILLS","Python, React, Node.js, SQL, Git, Docker",2],["experience","EXPERIENCE","Company | Role | Jun–Aug 2024\n- Built X improved Y by 40%",3],["projects","PROJECTS","Project | React, Node.js | github.com/link\n- Description with impact",3],["achievements","ACHIEVEMENTS","- LeetCode 400+ Top 5%\n- HackIndia 2024 Winner",2]].map(([k,lbl,ph,rows])=>(
-          <div key={k} style={{marginBottom:"12px"}}><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl}</div><TA value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} rows={rows}/></div>
+          <div key={k} style={{marginBottom:"12px"}}><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>{lbl}</div><TA value={d[k]} onChange={e=>upd(k,e.target.value)} placeholder={ph} rows={rows}/></div>
         ))}
         <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
           <Btn onClick={generate} disabled={loading} color={T.orange}>{loading?"⏳ Generating...":"✨ Generate Resume (+100 XP)"}</Btn>
@@ -993,7 +993,7 @@ function ResumeBuild({prog,addXP}){
           </div>
           <TA value={result} readOnly rows={10}/>
           <div style={{marginTop:"10px",padding:"12px",background:"#000000",borderRadius:"9px",border:`1px solid ${T.border2}`}}>
-            <p style={{color:T.textMuted,fontSize:"12px"}}>📋 Copy above → <a href="https://overleaf.com" target="_blank" rel="noreferrer" style={{color:T.accent}}>Overleaf.com</a> → New Project → Blank → Paste → Compile → Download PDF</p>
+            <p style={{color:T.textMuted,fontSize:"15px"}}>📋 Copy above → <a href="https://overleaf.com" target="_blank" rel="noreferrer" style={{color:T.accent}}>Overleaf.com</a> → New Project → Blank → Paste → Compile → Download PDF</p>
           </div>
         </Card>
       )}
@@ -1024,8 +1024,8 @@ function ResumeATS({prog,addXP}){
     <div className="fin">
       <PageTitle color={T.cyan}>📊 ATS Score Checker</PageTitle>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"14px",marginBottom:"14px"}}>
-        <Card><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>RESUME TEXT *</div><TA value={rTxt} onChange={e=>setRT(e.target.value)} placeholder="Paste your resume here..." rows={9}/></Card>
-        <Card><div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>JOB DESCRIPTION (optional)</div><TA value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste job description for keyword match..." rows={9}/></Card>
+        <Card><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>RESUME TEXT *</div><TA value={rTxt} onChange={e=>setRT(e.target.value)} placeholder="Paste your resume here..." rows={9}/></Card>
+        <Card><div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>JOB DESCRIPTION (optional)</div><TA value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste job description for keyword match..." rows={9}/></Card>
       </div>
       <Btn onClick={analyze} disabled={loading||!rTxt.trim()} style={{marginBottom:"20px"}}>{loading?"⏳ Analyzing...":"📊 Check ATS Score"}</Btn>
       {result&&(
@@ -1034,18 +1034,18 @@ function ResumeATS({prog,addXP}){
             <div style={{display:"flex",alignItems:"center",gap:"24px",flexWrap:"wrap"}}>
               <div style={{textAlign:"center"}}>
                 <div style={{fontSize:"56px",fontWeight:900,color:scCol,lineHeight:1,fontFamily:"'Sora',sans-serif"}}>{sc}</div>
-                <div style={{fontSize:"11px",color:T.textMuted}}>/ 100</div>
+                <div style={{fontSize:"14px",color:T.textMuted}}>/ 100</div>
               </div>
               <div style={{flex:1,minWidth:"150px"}}>
                 <div style={{background:T.border2,borderRadius:"999px",height:"8px",overflow:"hidden",marginBottom:"8px"}}><div style={{width:`${sc}%`,height:"100%",background:`linear-gradient(90deg,${scCol},${scCol}99)`,borderRadius:"999px",transition:"width 1s"}}/></div>
-                <div style={{fontSize:"14px",fontWeight:700,color:scCol}}>{sc>=80?"✅ ATS Optimized!":sc>=60?"⚠️ Needs Improvement":"❌ Major Issues Found"}</div>
+                <div style={{fontSize:"17px",fontWeight:700,color:scCol}}>{sc>=80?"✅ ATS Optimized!":sc>=60?"⚠️ Needs Improvement":"❌ Major Issues Found"}</div>
               </div>
             </div>
           </GCard>
           <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:"12px"}}>
-            {result.matched?.length>0&&<Card><div style={{fontWeight:700,color:T.green,marginBottom:"9px",fontSize:"13px"}}>✅ Matched</div><div style={{display:"flex",flexWrap:"wrap",gap:"5px"}}>{result.matched.map(k=><Badge2 key={k} color={T.green}>{k}</Badge2>)}</div></Card>}
-            {result.missing?.length>0&&<Card><div style={{fontWeight:700,color:T.red,marginBottom:"9px",fontSize:"13px"}}>❌ Missing</div><div style={{display:"flex",flexWrap:"wrap",gap:"5px"}}>{result.missing.map(k=><Badge2 key={k} color={T.red}>{k}</Badge2>)}</div></Card>}
-            {result.improvements?.length>0&&<Card style={{gridColumn:"1/-1"}}><div style={{fontWeight:700,color:T.cyan,marginBottom:"9px",fontSize:"13px"}}>💡 Improvements</div>{result.improvements.map((imp,i)=><div key={i} style={{padding:"7px 0",borderBottom:`1px solid ${T.border2}`,color:"#b8c8e8",fontSize:"13px"}}>• {imp}</div>)}</Card>}
+            {result.matched?.length>0&&<Card><div style={{fontWeight:700,color:T.green,marginBottom:"9px",fontSize:"16px"}}>✅ Matched</div><div style={{display:"flex",flexWrap:"wrap",gap:"5px"}}>{result.matched.map(k=><Badge2 key={k} color={T.green}>{k}</Badge2>)}</div></Card>}
+            {result.missing?.length>0&&<Card><div style={{fontWeight:700,color:T.red,marginBottom:"9px",fontSize:"16px"}}>❌ Missing</div><div style={{display:"flex",flexWrap:"wrap",gap:"5px"}}>{result.missing.map(k=><Badge2 key={k} color={T.red}>{k}</Badge2>)}</div></Card>}
+            {result.improvements?.length>0&&<Card style={{gridColumn:"1/-1"}}><div style={{fontWeight:700,color:T.cyan,marginBottom:"9px",fontSize:"16px"}}>💡 Improvements</div>{result.improvements.map((imp,i)=><div key={i} style={{padding:"7px 0",borderBottom:`1px solid ${T.border2}`,color:"#b8c8e8",fontSize:"16px"}}>• {imp}</div>)}</Card>}
           </div>
         </div>
       )}
@@ -1082,7 +1082,7 @@ function ResumeTest({prog,addXP}){
     <div className="fin">
       <PageTitle color={T.orange}>🎯 Resume-Based Test</PageTitle>
       <Card style={{marginBottom:"14px"}}>
-        <div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>YOUR RESUME</div>
+        <div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"7px"}}>YOUR RESUME</div>
         <TA value={rTxt} onChange={e=>setRT(e.target.value)} placeholder="Paste your resume — AI generates questions from YOUR actual experience..." rows={6}/>
         <Btn onClick={generate} disabled={loading||!rTxt.trim()} color={T.orange} style={{marginTop:"10px"}}>{loading?"⏳ Generating...":"🎯 Generate My Questions"}</Btn>
       </Card>
@@ -1090,9 +1090,9 @@ function ResumeTest({prog,addXP}){
         <Card key={q.id||i} style={{marginBottom:"12px"}}>
           <div style={{display:"flex",gap:"8px",alignItems:"flex-start",marginBottom:"8px",flexWrap:"wrap"}}>
             <Badge2 color={q.type==="Technical"?T.accentV:T.orange}>{q.type}</Badge2>
-            <p style={{fontSize:"14px",fontWeight:600,flex:1}}>Q{i+1}. {q.q}</p>
+            <p style={{fontSize:"17px",fontWeight:600,flex:1}}>Q{i+1}. {q.q}</p>
           </div>
-          {q.focus&&<p style={{fontSize:"11px",color:T.textMuted,marginBottom:"8px"}}>Focus: {q.focus}</p>}
+          {q.focus&&<p style={{fontSize:"14px",color:T.textMuted,marginBottom:"8px"}}>Focus: {q.focus}</p>}
           <TA value={ans[q.id]||""} onChange={e=>setAns(a=>({...a,[q.id]:e.target.value}))} placeholder="Your answer..." rows={3} readOnly={submitted}/>
           {submitted&&fb[q.id]&&<AIBox title="Feedback" content={fb[q.id]} color={T.orange}/>}
         </Card>
@@ -1124,13 +1124,13 @@ function ResumeTailor({addXP}){
     <div className="fin">
       <PageTitle color={T.orange}>🔄 Tailor for Company</PageTitle>
       <Card style={{marginBottom:"14px"}}>
-        <div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"8px"}}>TARGET COMPANY</div>
+        <div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"8px"}}>TARGET COMPANY</div>
         <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"14px"}}>
-          {companies.map(c=><button key={c} onClick={()=>setCo(c)} style={{padding:"6px 13px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:600,background:company===c?T.orange:"#080c14",color:company===c?"#000":T.textMuted,transition:"all 0.15s"}}>{c}</button>)}
+          {companies.map(c=><button key={c} onClick={()=>setCo(c)} style={{padding:"6px 13px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"15px",fontWeight:600,background:company===c?T.orange:"#080c14",color:company===c?"#000":T.textMuted,transition:"all 0.15s"}}>{c}</button>)}
         </div>
-        <div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>JOB DESCRIPTION (optional)</div>
+        <div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>JOB DESCRIPTION (optional)</div>
         <InpField value={jd} onChange={e=>setJD(e.target.value)} placeholder="Paste job description for better tailoring..." style={{width:"100%",marginBottom:"12px"}}/>
-        <div style={{fontSize:"10px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>YOUR RESUME *</div>
+        <div style={{fontSize:"13px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"5px"}}>YOUR RESUME *</div>
         <TA value={resume} onChange={e=>setResume(e.target.value)} placeholder="Paste your current resume (LaTeX or plain text)..." rows={8}/>
         <Btn onClick={tailor} disabled={loading||!resume.trim()||!company} color={T.orange} style={{marginTop:"10px"}}>{loading?"⏳ Tailoring...":"🔄 Tailor for "+company}</Btn>
       </Card>
@@ -1209,7 +1209,7 @@ function InterviewHR({prog,addXP}){
       {/* Mode tabs */}
       <div style={{display:"flex",gap:"6px",marginBottom:"18px",padding:"4px",background:T.sidebar,borderRadius:"10px",width:"fit-content",border:`1px solid ${T.border2}`}}>
         {[["practice","📋 Preset Questions"],["generate","🤖 AI Generate (Unlimited)"]].map(([m,lbl])=>(
-          <button key={m} onClick={()=>{setMode(m);setSel(null);setGenQ(null);setFB("");setStrat("");setAns("");}} style={{padding:"7px 16px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"13px",fontWeight:600,background:mode===m?T.accentV:"transparent",color:mode===m?"#fff":T.textMuted,transition:"all 0.15s"}}>{lbl}</button>
+          <button key={m} onClick={()=>{setMode(m);setSel(null);setGenQ(null);setFB("");setStrat("");setAns("");}} style={{padding:"7px 16px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"16px",fontWeight:600,background:mode===m?T.accentV:"transparent",color:mode===m?"#fff":T.textMuted,transition:"all 0.15s"}}>{lbl}</button>
         ))}
       </div>
 
@@ -1219,15 +1219,15 @@ function InterviewHR({prog,addXP}){
           <div style={{display:"flex",flexDirection:"column",gap:"8px"}}>
             {PRESET_HRQ.map(q=>(
               <div key={q.id} onClick={()=>{setSel(q);setAns("");setFB("");setStrat("");}} className="card-hover" style={{padding:"13px 14px",borderRadius:"10px",border:`1px solid ${sel?.id===q.id?T.accentV:T.border2}`,background:sel?.id===q.id?`${T.accentV}15`:T.card,cursor:"pointer"}}>
-                <p style={{fontSize:"13px",fontWeight:600,color:T.text,marginBottom:"4px",lineHeight:1.5}}>{q.q}</p>
-                <p style={{fontSize:"11px",color:T.textMuted}}>💡 {q.hint}</p>
+                <p style={{fontSize:"16px",fontWeight:600,color:T.text,marginBottom:"4px",lineHeight:1.5}}>{q.q}</p>
+                <p style={{fontSize:"14px",color:T.textMuted}}>💡 {q.hint}</p>
               </div>
             ))}
           </div>
           <div>
             {sel ? (
               <Card>
-                <h3 style={{fontSize:"14px",fontWeight:700,color:"#a5b4fc",marginBottom:"16px",lineHeight:1.5}}>"{sel.q}"</h3>
+                <h3 style={{fontSize:"17px",fontWeight:700,color:"#a5b4fc",marginBottom:"16px",lineHeight:1.5}}>"{sel.q}"</h3>
                 <div style={{display:"flex",gap:"6px",marginBottom:"14px"}}>
                   <Btn onClick={()=>setMode("answer_mode")} color={T.accentV} style={{flex:1,textAlign:"center"}}>✍️ Write Answer</Btn>
                   <Btn onClick={()=>getStrategy(sel.q)} outline color={T.accentV} style={{flex:1,textAlign:"center"}}>{loading?"⏳...":"💡 Best Strategy"}</Btn>
@@ -1250,10 +1250,10 @@ function InterviewHR({prog,addXP}){
       {mode==="generate" && (
         <div>
           <GCard color={T.accentV} style={{marginBottom:"16px"}}>
-            <div style={{fontSize:"13px",color:T.textSub,fontWeight:600,marginBottom:"10px"}}>🤖 Generate Unlimited HR Questions</div>
+            <div style={{fontSize:"16px",color:T.textSub,fontWeight:600,marginBottom:"10px"}}>🤖 Generate Unlimited HR Questions</div>
             <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"14px"}}>
               {hrTopics.map(t=>(
-                <button key={t} onClick={()=>setGenTopic(t)} style={{padding:"6px 12px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:600,background:genTopic===t?T.accentV:"#080c14",color:genTopic===t?"#fff":T.textMuted,transition:"all 0.15s"}}>{t}</button>
+                <button key={t} onClick={()=>setGenTopic(t)} style={{padding:"6px 12px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"15px",fontWeight:600,background:genTopic===t?T.accentV:"#080c14",color:genTopic===t?"#fff":T.textMuted,transition:"all 0.15s"}}>{t}</button>
               ))}
             </div>
             <Btn onClick={generateNewQ} disabled={genLoad} color={T.accentV} style={{width:"100%",padding:"11px"}}>{genLoad?"⏳ Generating...":"⚡ Generate New HR Question"}</Btn>
@@ -1266,15 +1266,15 @@ function InterviewHR({prog,addXP}){
               <div style={{display:"flex",gap:"8px",alignItems:"flex-start",marginBottom:"14px",flexWrap:"wrap"}}>
                 <Badge2 color={T.accentV}>{genQ.category||genTopic}</Badge2>
               </div>
-              <h3 style={{fontSize:"16px",fontWeight:700,color:T.text,marginBottom:"10px",lineHeight:1.6}}>"{genQ.q}"</h3>
+              <h3 style={{fontSize:"19px",fontWeight:700,color:T.text,marginBottom:"10px",lineHeight:1.6}}>"{genQ.q}"</h3>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"16px"}}>
                 <div style={{padding:"12px",background:"#000000",borderRadius:"9px",border:`1px solid ${T.border2}`}}>
-                  <div style={{fontSize:"11px",color:T.accentV,fontWeight:700,marginBottom:"5px"}}>FOCUS</div>
-                  <p style={{fontSize:"13px",color:T.textSub}}>{genQ.hint}</p>
+                  <div style={{fontSize:"14px",color:T.accentV,fontWeight:700,marginBottom:"5px"}}>FOCUS</div>
+                  <p style={{fontSize:"16px",color:T.textSub}}>{genQ.hint}</p>
                 </div>
                 <div style={{padding:"12px",background:"#000000",borderRadius:"9px",border:`1px solid ${T.border2}`}}>
-                  <div style={{fontSize:"11px",color:T.cyan,fontWeight:700,marginBottom:"5px"}}>WHY ASKED</div>
-                  <p style={{fontSize:"13px",color:T.textSub}}>{genQ.why}</p>
+                  <div style={{fontSize:"14px",color:T.cyan,fontWeight:700,marginBottom:"5px"}}>WHY ASKED</div>
+                  <p style={{fontSize:"16px",color:T.textSub}}>{genQ.why}</p>
                 </div>
               </div>
               <div style={{display:"flex",gap:"6px",marginBottom:"12px"}}>
@@ -1322,14 +1322,14 @@ function InterviewBtech({prog,addXP}){
     <div className="fin">
       <PageTitle color={T.accentV}>🎓 B.Tech Subjects</PageTitle>
       <div style={{display:"flex",gap:"6px",marginBottom:"16px",flexWrap:"wrap"}}>
-        {subs.map(s=><button key={s} onClick={()=>setSubF(s)} style={{padding:"6px 14px",borderRadius:"999px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"12px",fontWeight:700,background:subF===s?(subCol[s]||T.accentV):"#080c14",color:"#fff",opacity:subF===s?1:0.55,transition:"all 0.15s"}}>{s}</button>)}
+        {subs.map(s=><button key={s} onClick={()=>setSubF(s)} style={{padding:"6px 14px",borderRadius:"999px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"15px",fontWeight:700,background:subF===s?(subCol[s]||T.accentV):"#080c14",color:"#fff",opacity:subF===s?1:0.55,transition:"all 0.15s"}}>{s}</button>)}
       </div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(290px,1fr))",gap:"10px",marginBottom:"16px"}}>
         {filtered.map(q=>(
           <div key={q.id} onClick={()=>{setSel(q);setAns("");setFB("");}} className="card-hover" style={{padding:"14px",borderRadius:"10px",border:`1px solid ${sel?.id===q.id?subCol[q.sub]||T.accentV:T.border2}`,background:sel?.id===q.id?`${subCol[q.sub]||T.accentV}12`:T.card,cursor:"pointer"}}>
             <Badge2 color={subCol[q.sub]||T.accentV}>{q.sub}</Badge2>
-            <p style={{fontSize:"13px",fontWeight:600,color:T.text,marginTop:"8px",marginBottom:"5px",lineHeight:1.5}}>{q.q}</p>
-            <p style={{fontSize:"11px",color:T.textMuted}}>💡 {q.hint}</p>
+            <p style={{fontSize:"16px",fontWeight:600,color:T.text,marginTop:"8px",marginBottom:"5px",lineHeight:1.5}}>{q.q}</p>
+            <p style={{fontSize:"14px",color:T.textMuted}}>💡 {q.hint}</p>
           </div>
         ))}
       </div>
@@ -1337,7 +1337,7 @@ function InterviewBtech({prog,addXP}){
         <Card className="fin">
           <div style={{display:"flex",gap:"8px",alignItems:"center",marginBottom:"14px",flexWrap:"wrap"}}>
             <Badge2 color={subCol[sel.sub]||T.accentV}>{sel.sub}</Badge2>
-            <p style={{fontSize:"14px",fontWeight:700,color:T.text,flex:1}}>{sel.q}</p>
+            <p style={{fontSize:"17px",fontWeight:700,color:T.text,flex:1}}>{sel.q}</p>
           </div>
           <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Write your answer here..." rows={5}/>
           <div style={{display:"flex",gap:"8px",marginTop:"10px",flexWrap:"wrap"}}>
@@ -1371,9 +1371,9 @@ function Progress({prog,user}){
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(130px,1fr))",gap:"10px",marginBottom:"18px"}}>
         {[["💻",prog.totalSolved,"Problems Solved",T.accentV],["🔥",`${prog.streak}d`,"Streak",T.orange],["⚡",`${prog.xp}xp`,"Total XP",T.accent],["🎯",prog.interviewAnswered,"Interview Qs",T.green],["📊",prog.atsScore??"-","ATS Score",T.cyan],["📚",(prog.completedTopics||[]).length,"Topics Done",T.accent],["🏅",prog.earnedBadges.length,"Badges",T.pink],["🎓",`Lv${lv}`,"Level",T.accentV]].map(([ic,val,lbl,col],i)=>(
           <GCard key={i} color={col} style={{textAlign:"center",padding:"14px"}}>
-            <div style={{fontSize:"20px",marginBottom:"4px"}}>{ic}</div>
-            <div style={{fontSize:"20px",fontWeight:800,color:col,letterSpacing:"-0.5px"}}>{val}</div>
-            <div style={{fontSize:"10px",color:T.textMuted,marginTop:"2px"}}>{lbl}</div>
+            <div style={{fontSize:"24px",marginBottom:"4px"}}>{ic}</div>
+            <div style={{fontSize:"24px",fontWeight:800,color:col,letterSpacing:"-0.5px"}}>{val}</div>
+            <div style={{fontSize:"13px",color:T.textMuted,marginTop:"2px"}}>{lbl}</div>
           </GCard>
         ))}
       </div>
@@ -1381,8 +1381,8 @@ function Progress({prog,user}){
       {/* Level */}
       <Card style={{marginBottom:"14px"}}>
         <div style={{display:"flex",justifyContent:"space-between",marginBottom:"8px"}}>
-          <span style={{fontSize:"13px",fontWeight:700}}>⚡ Level {lv}</span>
-          <span style={{fontSize:"12px",color:T.textMuted}}>{prog.xp%100}/100 XP to Lv{lv+1}</span>
+          <span style={{fontSize:"16px",fontWeight:700}}>⚡ Level {lv}</span>
+          <span style={{fontSize:"15px",color:T.textMuted}}>{prog.xp%100}/100 XP to Lv{lv+1}</span>
         </div>
         <div style={{background:T.border2,borderRadius:"999px",height:"8px",overflow:"hidden"}}>
           <div style={{width:`${prog.xp%100}%`,height:"100%",background:`linear-gradient(90deg,${T.accent},${T.accentV})`,borderRadius:"999px",transition:"width 0.6s"}}/>
@@ -1391,7 +1391,7 @@ function Progress({prog,user}){
 
       {/* Weekly bar chart */}
       <Card style={{marginBottom:"14px"}}>
-        <div style={{fontSize:"13px",fontWeight:700,marginBottom:"16px",color:T.textSub}}>📅 Weekly XP Activity</div>
+        <div style={{fontSize:"16px",fontWeight:700,marginBottom:"16px",color:T.textSub}}>📅 Weekly XP Activity</div>
         <div style={{display:"flex",gap:"8px",alignItems:"flex-end",height:"90px"}}>
           {weekXP.map((xp,i)=>{
             const isToday=i===6;
@@ -1408,7 +1408,7 @@ function Progress({prog,user}){
 
       {/* 30-day streak */}
       <Card style={{marginBottom:"14px"}}>
-        <div style={{fontSize:"13px",fontWeight:700,marginBottom:"12px",color:T.textSub}}>🔥 Activity — Last 30 Days</div>
+        <div style={{fontSize:"16px",fontWeight:700,marginBottom:"12px",color:T.textSub}}>🔥 Activity — Last 30 Days</div>
         <div style={{display:"flex",gap:"4px",flexWrap:"wrap"}}>
           {Array.from({length:30},(_,i)=>{
             const d=new Date(today);d.setDate(today.getDate()-29+i);
@@ -1417,19 +1417,19 @@ function Progress({prog,user}){
             return <div key={i} style={{width:"20px",height:"20px",borderRadius:"4px",background:active?T.green:T.border2,boxShadow:isToday?`0 0 8px ${T.green}60`:""}} title={d.toDateString()}/>;
           })}
         </div>
-        <div style={{fontSize:"10px",color:T.textMuted,marginTop:"8px"}}>Green = active day</div>
+        <div style={{fontSize:"13px",color:T.textMuted,marginTop:"8px"}}>Green = active day</div>
       </Card>
 
       {/* Badges */}
       <Card>
-        <div style={{fontSize:"13px",fontWeight:700,marginBottom:"14px",color:T.textSub}}>🏅 Badges — {prog.earnedBadges.length}/{BADGES.length} Earned</div>
+        <div style={{fontSize:"16px",fontWeight:700,marginBottom:"14px",color:T.textSub}}>🏅 Badges — {prog.earnedBadges.length}/{BADGES.length} Earned</div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(110px,1fr))",gap:"8px"}}>
           {BADGES.map(b=>{
             const earned=prog.earnedBadges.includes(b.id);
             return(
               <div key={b.id} style={{textAlign:"center",padding:"12px 8px",borderRadius:"10px",background:earned?`${T.accentV}12`:T.sidebar,border:`1px solid ${earned?T.accentV:T.border2}`,opacity:earned?1:0.35,transition:"all 0.2s"}}>
-                <div style={{fontSize:"22px",marginBottom:"5px"}}>{b.icon}</div>
-                <div style={{fontSize:"11px",fontWeight:700,color:earned?T.text:T.textMuted}}>{b.name}</div>
+                <div style={{fontSize:"26px",marginBottom:"5px"}}>{b.icon}</div>
+                <div style={{fontSize:"14px",fontWeight:700,color:earned?T.text:T.textMuted}}>{b.name}</div>
                 <div style={{fontSize:"9px",color:T.textMuted,marginTop:"2px"}}>{b.desc}</div>
               </div>
             );
@@ -1454,7 +1454,7 @@ function ChatCode(){
   const sugg=["Write binary search","Debug: for(i=0;i<arr.len;i++)","Sort array without built-in sort","Implement a stack","Fibonacci with memoization","Find longest palindrome substring"];
   return <ChatUI title="💻 Code Assistant" subtitle={`Write, debug, and optimize code`} color={T.pink} botIcon="💻"
     system={`You are an expert ${lang} developer. Write clean, efficient, commented code. Use code blocks. Explain approach and complexity.`}
-    sugg={sugg} extra={<div style={{display:"flex",alignItems:"center",gap:"8px"}}><span style={{fontSize:"12px",color:T.textMuted}}>Language:</span><SelField value={lang} onChange={setLang} options={LANGS}/></div>}/>;
+    sugg={sugg} extra={<div style={{display:"flex",alignItems:"center",gap:"8px"}}><span style={{fontSize:"15px",color:T.textMuted}}>Language:</span><SelField value={lang} onChange={setLang} options={LANGS}/></div>}/>;
 }
 
 function ChatUI({title,subtitle,color,botIcon,system,sugg,extra}){
@@ -1479,8 +1479,8 @@ function ChatUI({title,subtitle,color,botIcon,system,sugg,extra}){
     <div style={{display:"flex",flexDirection:"column",height:"calc(100vh - 136px)"}} className="fin">
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"14px",flexWrap:"wrap",gap:"8px"}}>
         <div>
-          <h2 style={{fontSize:"18px",fontWeight:800,color,letterSpacing:"-0.3px"}}>{title}</h2>
-          <p style={{fontSize:"12px",color:T.textMuted}}>{subtitle}</p>
+          <h2 style={{fontSize:"22px",fontWeight:800,color,letterSpacing:"-0.3px"}}>{title}</h2>
+          <p style={{fontSize:"15px",color:T.textMuted}}>{subtitle}</p>
         </div>
         {extra}
       </div>
@@ -1488,13 +1488,13 @@ function ChatUI({title,subtitle,color,botIcon,system,sugg,extra}){
       <div style={{flex:1,overflowY:"auto",display:"flex",flexDirection:"column",gap:"10px",marginBottom:"10px",paddingRight:"2px"}}>
         {msgs.map((m,i)=>(
           <div key={i} style={{display:"flex",justifyContent:m.role==="user"?"flex-end":"flex-start",alignItems:"flex-end",gap:"8px"}}>
-            {m.role==="assistant"&&<div style={{width:"26px",height:"26px",borderRadius:"8px",background:`linear-gradient(135deg,${color},${T.accentV})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",flexShrink:0,boxShadow:`0 0 10px ${color}40`}}>{botIcon}</div>}
-            <div style={{padding:"11px 14px",borderRadius:m.role==="user"?"14px 14px 3px 14px":"14px 14px 14px 3px",background:m.role==="user"?`linear-gradient(135deg,${T.accent},${T.accentV})`:"#070a12",color:"#e8edf8",maxWidth:"80%",fontSize:"13px",lineHeight:1.75,whiteSpace:"pre-wrap",wordBreak:"break-word",border:m.role==="assistant"?`1px solid ${T.border2}`:"none",boxShadow:m.role==="user"?`0 4px 16px ${T.accent}30`:""}}>{m.content}</div>
+            {m.role==="assistant"&&<div style={{width:"26px",height:"26px",borderRadius:"8px",background:`linear-gradient(135deg,${color},${T.accentV})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",flexShrink:0,boxShadow:`0 0 10px ${color}40`}}>{botIcon}</div>}
+            <div style={{padding:"11px 14px",borderRadius:m.role==="user"?"14px 14px 3px 14px":"14px 14px 14px 3px",background:m.role==="user"?`linear-gradient(135deg,${T.accent},${T.accentV})`:"#070a12",color:"#e8edf8",maxWidth:"80%",fontSize:"16px",lineHeight:1.75,whiteSpace:"pre-wrap",wordBreak:"break-word",border:m.role==="assistant"?`1px solid ${T.border2}`:"none",boxShadow:m.role==="user"?`0 4px 16px ${T.accent}30`:""}}>{m.content}</div>
           </div>
         ))}
         {loading&&(
           <div style={{display:"flex",alignItems:"flex-end",gap:"8px"}}>
-            <div style={{width:"26px",height:"26px",borderRadius:"8px",background:`linear-gradient(135deg,${color},${T.accentV})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px"}}>{botIcon}</div>
+            <div style={{width:"26px",height:"26px",borderRadius:"8px",background:`linear-gradient(135deg,${color},${T.accentV})`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px"}}>{botIcon}</div>
             <div style={{padding:"11px 14px",borderRadius:"14px 14px 14px 3px",background:"#070a12",border:`1px solid ${T.border2}`,display:"flex",gap:"4px",alignItems:"center"}}>
               {[0,1,2].map(i=><div key={i} style={{width:"6px",height:"6px",borderRadius:"50%",background:color,animation:`pulse 1s ${i*0.2}s infinite`}}/>)}
             </div>
@@ -1504,14 +1504,14 @@ function ChatUI({title,subtitle,color,botIcon,system,sugg,extra}){
       </div>
       {/* Suggestions */}
       <div style={{display:"flex",gap:"5px",flexWrap:"wrap",marginBottom:"8px"}}>
-        {sugg.map(s=><button key={s} onClick={()=>setInput(s)} style={{padding:"5px 11px",background:T.card,border:`1px solid ${T.border2}`,borderRadius:"999px",color:T.textMuted,fontSize:"11px",cursor:"pointer",fontFamily:"inherit",transition:"all 0.15s"}}>{s}</button>)}
+        {sugg.map(s=><button key={s} onClick={()=>setInput(s)} style={{padding:"5px 11px",background:T.card,border:`1px solid ${T.border2}`,borderRadius:"999px",color:T.textMuted,fontSize:"14px",cursor:"pointer",fontFamily:"inherit",transition:"all 0.15s"}}>{s}</button>)}
       </div>
       {/* Input */}
       <div style={{display:"flex",gap:"8px"}}>
         <input value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!e.shiftKey&&send()} placeholder="Ask your question..."
-          style={{flex:1,padding:"12px 16px",background:T.card,border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"13px",outline:"none",transition:"border-color 0.2s"}}
+          style={{flex:1,padding:"12px 16px",background:T.card,border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"16px",outline:"none",transition:"border-color 0.2s"}}
           onFocus={e=>e.target.style.borderColor=color} onBlur={e=>e.target.style.borderColor=T.border2}/>
-        <button onClick={send} disabled={loading} style={{padding:"12px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"13px",background:`linear-gradient(135deg,${color},${T.accentV})`,color:"#fff",boxShadow:`0 4px 16px ${color}40`,transition:"all 0.15s"}}>Send →</button>
+        <button onClick={send} disabled={loading} style={{padding:"12px 20px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"16px",background:`linear-gradient(135deg,${color},${T.accentV})`,color:"#fff",boxShadow:`0 4px 16px ${color}40`,transition:"all 0.15s"}}>Send →</button>
       </div>
     </div>
   );
