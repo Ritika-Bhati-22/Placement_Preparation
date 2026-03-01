@@ -99,55 +99,71 @@ const DP = () => ({
 });
 
 // ═══════════════════════════════════════════════════
-//  DESIGN — Pure Black Ultra Dark Theme
+//  DESIGN — Placement Prep Navy Theme
 // ═══════════════════════════════════════════════════
 const T = {
-  bg:       "#000000",
-  sidebar:  "#030508",
-  card:     "#080c14",
-  cardHov:  "#0d1320",
-  border:   "#0f1826",
-  border2:  "#162236",
-  accent:   "#4f8ef7",
-  accentV:  "#7c5cf6",
-  text:     "#e8edf8",
-  textSub:  "#7a8faa",
-  textMuted:"#3a4a66",
-  green:    "#22d3a0",
-  yellow:   "#4f8ef7",   // replaced yellow → blue
-  orange:   "#f97d50",
-  red:      "#f45b5b",
-  pink:     "#e879a0",
-  cyan:     "#22c4e0",
+  bg:       "#0f1117",
+  nav:      "#13161f",
+  sidebar:  "#13161f",
+  card:     "#1a1d2e",
+  cardHov:  "#1f2340",
+  border:   "#252840",
+  border2:  "#2d3155",
+  accent:   "#6c63ff",
+  accentV:  "#a78bfa",
+  text:     "#f0f2ff",
+  textSub:  "#8b93b8",
+  textMuted:"#4a5080",
+  green:    "#34d399",
+  yellow:   "#fbbf24",
+  orange:   "#fb923c",
+  red:      "#f87171",
+  pink:     "#f472b6",
+  cyan:     "#38bdf8",
+  indigo:   "#818cf8",
 };
 
 // ═══════════════════════════════════════════════════
-//  NAV CONFIG
+//  NAV CONFIG  — sidebar groups
 // ═══════════════════════════════════════════════════
 const SECTIONS = [
-  { key:"courses",   label:"Courses",   icon:"📚", color:"#22c4e0",
+  { key:"courses",   label:"Courses",   icon:"📚", color:"#38bdf8",
+    group:"LEARN",
     tabs:[
-      {id:"c_home",    label:"All Subjects",    icon:"◎"},
-      {id:"c_js",      label:"JavaScript",      icon:"◈"},
-      {id:"c_python",  label:"Python",          icon:"◉"},
-      {id:"c_cpp",     label:"C++",             icon:"◈"},
-      {id:"c_java",    label:"Java",            icon:"◉"},
-      {id:"c_dsa",     label:"DSA",             icon:"◈"},
-      {id:"c_sysdes",  label:"System Design",   icon:"◉"},
-      {id:"c_webdev",  label:"Web Dev",         icon:"◈"},
-      {id:"c_mdn",     label:"MDN Docs",        icon:"◉"},
-      {id:"c_gfg",     label:"GeeksForGeeks",   icon:"◈"},
+      {id:"c_home",    label:"All Subjects",    icon:"🏠"},
+      {id:"c_js",      label:"JavaScript",      icon:"🟨"},
+      {id:"c_python",  label:"Python",          icon:"🐍"},
+      {id:"c_cpp",     label:"C++",             icon:"⚙️"},
+      {id:"c_java",    label:"Java",            icon:"☕"},
+      {id:"c_dsa",     label:"DSA",             icon:"🌳"},
+      {id:"c_sysdes",  label:"System Design",   icon:"🏗"},
+      {id:"c_webdev",  label:"Web Dev",         icon:"🌐"},
+      {id:"c_mdn",     label:"MDN Docs",        icon:"📘"},
+      {id:"c_gfg",     label:"GeeksForGeeks",   icon:"🌿"},
     ]},
-  { key:"coding",    label:"Coding",    icon:"⌨",  color:"#22d3a0",
-    tabs:[{id:"cd_lc",label:"LeetCode",icon:"◈"},{id:"cd_hr",label:"HackerRank",icon:"◉"},{id:"cd_fcc",label:"freeCodeCamp",icon:"◈"},{id:"cd_ai",label:"AI Questions",icon:"✦"},{id:"cd_test",label:"Topic Tests",icon:"◉"}]},
-  { key:"resume",    label:"Resume",    icon:"◧",  color:"#f97d50",
-    tabs:[{id:"r_build",label:"Build Resume",icon:"✦"},{id:"r_ats",label:"ATS Score",icon:"◈"},{id:"r_test",label:"Resume Test",icon:"◉"},{id:"r_update",label:"Company Tailor",icon:"◧"}]},
-  { key:"interview", label:"Interview", icon:"✎",  color:"#7c5cf6",
-    tabs:[{id:"i_hr",label:"HR Questions",icon:"✦"},{id:"i_btech",label:"B.Tech Subjects",icon:"◈"}]},
-  { key:"progress",  label:"Progress",  icon:"◎",  color:"#4f8ef7",
-    tabs:[{id:"p_main",label:"My Progress",icon:"◎"}]},
-  { key:"chatbot",   label:"Chatbot",   icon:"◌",  color:"#e879a0",
-    tabs:[{id:"ch_course",label:"Course Doubts",icon:"✦"},{id:"ch_code",label:"Code Assistant",icon:"◈"}]},
+  { key:"coding",    label:"Coding",    icon:"💻", color:"#34d399",
+    group:"PRACTICE",
+    tabs:[{id:"cd_lc",label:"LeetCode",icon:"🟠"},{id:"cd_hr",label:"HackerRank",icon:"🟢"},{id:"cd_fcc",label:"freeCodeCamp",icon:"🔵"},{id:"cd_ai",label:"AI Questions",icon:"🤖"},{id:"cd_test",label:"Topic Tests",icon:"📝"}]},
+  { key:"resume",    label:"Resume",    icon:"📄", color:"#fb923c",
+    group:"CAREER",
+    tabs:[{id:"r_build",label:"Build Resume",icon:"✍️"},{id:"r_ats",label:"ATS Score",icon:"📊"},{id:"r_test",label:"Resume Test",icon:"🎯"},{id:"r_update",label:"Company Tailor",icon:"🏢"}]},
+  { key:"interview", label:"Interview Prep", icon:"🎤", color:"#a78bfa",
+    group:"CAREER",
+    tabs:[{id:"i_hr",label:"HR Questions",icon:"👔"},{id:"i_btech",label:"B.Tech Subjects",icon:"🎓"}]},
+  { key:"progress",  label:"Performance",   icon:"📈", color:"#6c63ff",
+    group:"AI",
+    tabs:[{id:"p_main",label:"My Progress",icon:"📈"}]},
+  { key:"chatbot",   label:"AI Chatbot",    icon:"🤖", color:"#f472b6",
+    group:"AI",
+    tabs:[{id:"ch_course",label:"Course Doubts",icon:"💬"},{id:"ch_code",label:"Code Assistant",icon:"💻"}]},
+];
+
+// sidebar group order
+const SIDEBAR_GROUPS = [
+  { key:"LEARN",    sections:["courses"] },
+  { key:"PRACTICE", sections:["coding"] },
+  { key:"CAREER",   sections:["resume","interview"] },
+  { key:"AI",       sections:["progress","chatbot"] },
 ];
 
 // ═══════════════════════════════════════════════════
@@ -162,8 +178,7 @@ export default function App() {
   const [user,     setUser]    = useState("");
   const [prog,     setProg]    = useState(DP());
   const [secKey,   setSK]      = useState("courses");
-  const [tabId,    setTID]     = useState("c_ai");
-  const [sbOpen,   setSB]      = useState(true);
+  const [tabId,    setTID]     = useState("c_home");
 
   const saveProg = p => { const u = LU(); u[user] = p; SU(u); setProg(p); };
   const checkBadges = p => {
@@ -189,7 +204,6 @@ export default function App() {
     if (amt > 0) p = { ...p, history: [...(p.history||[]), {date:new Date().toISOString(), xp:amt}].slice(-100) };
     saveProg(checkBadges(p));
   };
-
   const handleAuth = () => {
     const name = aName.trim().toLowerCase().replace(/\s+/g,"_");
     if (!name || !aPwd) { setAErr("Please fill both fields."); return; }
@@ -208,38 +222,38 @@ export default function App() {
   const logout = () => { setScreen("auth"); setUser(""); setProg(DP()); setAName(""); setAPwd(""); };
   const goSec = key => { setSK(key); setTID(SECTIONS.find(s=>s.key===key)?.tabs[0]?.id || ""); };
   const curSec = SECTIONS.find(s=>s.key===secKey);
+  const lv = Math.floor(prog.xp/100)+1;
 
   // ── AUTH ──────────────────────────────────────────
   if (screen === "auth") return (
-    <div style={{minHeight:"100vh",background:T.bg,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Sora','Segoe UI',sans-serif",padding:"20px",position:"relative",overflow:"hidden"}}>
-      {/* BG glow orbs */}
-      <div style={{position:"absolute",width:"500px",height:"500px",borderRadius:"50%",background:"radial-gradient(circle,#4f8ef720 0%,transparent 70%)",top:"-100px",left:"-100px",pointerEvents:"none"}}/>
-      <div style={{position:"absolute",width:"400px",height:"400px",borderRadius:"50%",background:"radial-gradient(circle,#7c5cf620 0%,transparent 70%)",bottom:"-80px",right:"-80px",pointerEvents:"none"}}/>
-      <div style={{width:"100%",maxWidth:"380px",position:"relative",zIndex:1}}>
-        <div style={{textAlign:"center",marginBottom:"32px"}}>
-          <div style={{width:"56px",height:"56px",borderRadius:"16px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"28px",margin:"0 auto 14px",boxShadow:"0 8px 32px #4f8ef740"}}>⚡</div>
-          <h1 style={{fontSize:"28px",fontWeight:800,color:T.text,margin:"0 0 6px",letterSpacing:"-0.5px"}}>DevForge</h1>
-          <p style={{color:T.textMuted,fontSize:"16px"}}>Complete Placement Preparation Platform</p>
+    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#0f1117 0%,#1a1040 100%)",display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"'Plus Jakarta Sans','Sora','Segoe UI',sans-serif",padding:"20px",position:"relative",overflow:"hidden"}}>
+      <div style={{position:"absolute",width:"600px",height:"600px",borderRadius:"50%",background:"radial-gradient(circle,#6c63ff15 0%,transparent 70%)",top:"-150px",left:"-150px",pointerEvents:"none"}}/>
+      <div style={{position:"absolute",width:"400px",height:"400px",borderRadius:"50%",background:"radial-gradient(circle,#38bdf815 0%,transparent 70%)",bottom:"-80px",right:"-80px",pointerEvents:"none"}}/>
+      <div style={{width:"100%",maxWidth:"400px",position:"relative",zIndex:1}}>
+        <div style={{textAlign:"center",marginBottom:"36px"}}>
+          <div style={{width:"64px",height:"64px",borderRadius:"18px",background:"linear-gradient(135deg,#6c63ff,#38bdf8)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"30px",margin:"0 auto 16px",boxShadow:"0 8px 40px #6c63ff50"}}>⚡</div>
+          <h1 style={{fontSize:"30px",fontWeight:800,color:T.text,margin:"0 0 6px",letterSpacing:"-0.5px"}}>DevForge</h1>
+          <p style={{color:T.textMuted,fontSize:"16px"}}>Your complete placement preparation hub</p>
         </div>
-        <div style={{background:"linear-gradient(135deg,#080c14,#0d1320)",border:`1px solid ${T.border2}`,borderRadius:"20px",padding:"28px",backdropFilter:"blur(20px)",boxShadow:"0 24px 80px #00000080"}}>
-          <h2 style={{color:T.text,fontSize:"19px",fontWeight:700,marginBottom:"22px",textAlign:"center"}}>
+        <div style={{background:"#1a1d2e",border:"1px solid #2d3155",borderRadius:"20px",padding:"32px",boxShadow:"0 24px 80px #00000080"}}>
+          <h2 style={{color:T.text,fontSize:"18px",fontWeight:700,marginBottom:"24px",textAlign:"center"}}>
             {authMode==="login" ? "Welcome back 👋" : "Create your account 🚀"}
           </h2>
           {[["Username",aName,setAName,"text","your_username"],["Password",aPwd,setAPwd,"password","••••••••"]].map(([lbl,val,set,type,ph])=>(
-            <div key={lbl} style={{marginBottom:"14px"}}>
-              <label style={{display:"block",fontSize:"14px",color:T.textSub,marginBottom:"6px",fontWeight:600,letterSpacing:"0.08em",textTransform:"uppercase"}}>{lbl}</label>
+            <div key={lbl} style={{marginBottom:"16px"}}>
+              <label style={{display:"block",fontSize:"13px",color:T.textSub,marginBottom:"7px",fontWeight:600,letterSpacing:"0.06em",textTransform:"uppercase"}}>{lbl}</label>
               <input type={type} value={val} onChange={e=>set(e.target.value)} placeholder={ph} onKeyDown={e=>e.key==="Enter"&&handleAuth()}
-                style={{width:"100%",padding:"11px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"17px",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
-                onFocus={e=>e.target.style.borderColor="#4f8ef7"} onBlur={e=>e.target.style.borderColor=T.border2}/>
+                style={{width:"100%",padding:"13px 16px",background:"#0f1117",border:"1px solid #2d3155",borderRadius:"11px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",boxSizing:"border-box",transition:"border-color 0.2s"}}
+                onFocus={e=>e.target.style.borderColor="#6c63ff"} onBlur={e=>e.target.style.borderColor="#2d3155"}/>
             </div>
           ))}
-          {aErr && <div style={{background:"#2d0a0a",border:"1px solid #f45b5b44",borderRadius:"8px",padding:"10px 12px",color:"#f45b5b",fontSize:"16px",marginBottom:"14px"}}>{aErr}</div>}
-          <button onClick={handleAuth} style={{width:"100%",padding:"12px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",border:"none",borderRadius:"10px",color:"#fff",fontWeight:700,fontSize:"17px",cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 20px #4f8ef740",letterSpacing:"0.02em"}}>
+          {aErr && <div style={{background:"#2d0a0a",border:"1px solid #f8717144",borderRadius:"8px",padding:"11px 14px",color:"#f87171",fontSize:"14px",marginBottom:"14px"}}>{aErr}</div>}
+          <button onClick={handleAuth} style={{width:"100%",padding:"14px",background:"linear-gradient(135deg,#6c63ff,#38bdf8)",border:"none",borderRadius:"11px",color:"#fff",fontWeight:700,fontSize:"16px",cursor:"pointer",fontFamily:"inherit",boxShadow:"0 4px 24px #6c63ff50",letterSpacing:"0.02em",marginTop:"4px"}}>
             {authMode==="login" ? "Sign In →" : "Create Account →"}
           </button>
-          <p style={{textAlign:"center",marginTop:"16px",color:T.textMuted,fontSize:"16px"}}>
+          <p style={{textAlign:"center",marginTop:"18px",color:T.textMuted,fontSize:"14px"}}>
             {authMode==="login" ? "No account? " : "Have an account? "}
-            <span onClick={()=>{setAMode(m=>m==="login"?"register":"login");setAErr("");}} style={{color:T.accent,cursor:"pointer",fontWeight:600}}>{authMode==="login"?"Register":"Login"}</span>
+            <span onClick={()=>{setAMode(m=>m==="login"?"register":"login");setAErr("");}} style={{color:T.accent,cursor:"pointer",fontWeight:700}}>{authMode==="login"?"Register":"Login"}</span>
           </p>
         </div>
       </div>
@@ -247,79 +261,101 @@ export default function App() {
     </div>
   );
 
-  const lv = Math.floor(prog.xp/100)+1;
-
   // ── APP SHELL ──────────────────────────────────────
   return (
-    <div style={{display:"flex",flexDirection:"column",minHeight:"100vh",background:T.bg,fontFamily:"'Sora','Segoe UI',sans-serif",color:T.text}}>
-      {/* ── TOPNAV ── */}
-      <nav style={{height:"80px",background:"#000000f0",backdropFilter:"blur(24px)",borderBottom:`1px solid ${T.border2}`,display:"flex",alignItems:"center",padding:"0 20px",gap:"8px",position:"sticky",top:0,zIndex:300,flexShrink:0}}>
-        <button onClick={()=>setSB(s=>!s)} style={{background:"none",border:"none",color:T.textMuted,cursor:"pointer",fontSize:"22px",padding:"8px",flexShrink:0,lineHeight:1}}>
-          {sbOpen ? "◁" : "▷"}
-        </button>
-        <div style={{display:"flex",alignItems:"center",gap:"9px",flexShrink:0,marginRight:"16px"}}>
-          <div style={{width:"34px",height:"34px",borderRadius:"10px",background:"linear-gradient(135deg,#4f8ef7,#7c5cf6)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"19px",boxShadow:"0 0 20px #4f8ef750"}}>⚡</div>
-          <span style={{fontWeight:800,fontSize:"24px",background:"linear-gradient(90deg,#4f8ef7,#7c5cf6)",WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent",letterSpacing:"-0.5px"}}>DevForge</span>
+    <div style={{display:"flex",minHeight:"100vh",background:T.bg,fontFamily:"'Plus Jakarta Sans','Sora','Segoe UI',sans-serif",color:T.text}}>
+
+      {/* ══ LEFT SIDEBAR ══ */}
+      <aside style={{width:"260px",background:T.sidebar,borderRight:`1px solid ${T.border}`,display:"flex",flexDirection:"column",flexShrink:0,position:"sticky",top:0,height:"100vh",overflowY:"auto"}}>
+        {/* Logo */}
+        <div style={{padding:"22px 20px 18px",borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",gap:"12px"}}>
+          <div style={{width:"38px",height:"38px",borderRadius:"11px",background:"linear-gradient(135deg,#6c63ff,#38bdf8)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"18px",flexShrink:0,boxShadow:"0 0 18px #6c63ff50"}}>⚡</div>
+          <div>
+            <div style={{fontWeight:800,fontSize:"18px",color:T.text,letterSpacing:"-0.3px"}}>DevForge</div>
+            <div style={{fontSize:"12px",color:T.textMuted}}>Placement Prep</div>
+          </div>
         </div>
-        {/* Section pills */}
-        <div style={{display:"flex",gap:"4px"}}>
-          {SECTIONS.map(s=>(
-            <button key={s.key} onClick={()=>goSec(s.key)} style={{padding:"10px 20px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"19px",fontWeight:700,background:secKey===s.key?`${s.color}20`:"transparent",color:secKey===s.key?s.color:T.textMuted,transition:"all 0.15s",borderBottom:secKey===s.key?`2.5px solid ${s.color}`:"2.5px solid transparent",letterSpacing:"0.01em"}}>
-              {s.icon} {s.label}
-            </button>
+
+        {/* Grouped navigation */}
+        <div style={{flex:1,padding:"12px 10px",overflowY:"auto"}}>
+          {SIDEBAR_GROUPS.map(grp=>(
+            <div key={grp.key} style={{marginBottom:"8px"}}>
+              <div style={{fontSize:"11px",fontWeight:700,color:T.textMuted,letterSpacing:"0.12em",padding:"10px 12px 6px",textTransform:"uppercase"}}>{grp.key}</div>
+              {grp.sections.map(sk=>{
+                const sec = SECTIONS.find(s=>s.key===sk);
+                const isActiveSec = secKey===sk;
+                return(
+                  <div key={sk}>
+                    {/* Section header — clickable */}
+                    <button onClick={()=>goSec(sk)} style={{width:"100%",display:"flex",alignItems:"center",gap:"12px",padding:"11px 12px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"15px",fontWeight:isActiveSec?700:500,background:isActiveSec?`${sec.color}18`:"transparent",color:isActiveSec?sec.color:T.textSub,marginBottom:"2px",textAlign:"left",transition:"all 0.15s"}}>
+                      <span style={{fontSize:"17px",width:"22px",textAlign:"center"}}>{sec.icon}</span>
+                      <span style={{flex:1}}>{sec.label}</span>
+                      {isActiveSec && <span style={{fontSize:"10px",color:sec.color}}>▾</span>}
+                    </button>
+                    {/* Sub-tabs when section active */}
+                    {isActiveSec && (
+                      <div style={{marginLeft:"10px",marginBottom:"4px"}}>
+                        {sec.tabs.map(t=>(
+                          <button key={t.id} onClick={()=>setTID(t.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:"10px",padding:"9px 12px 9px 14px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"14px",fontWeight:tabId===t.id?700:400,background:tabId===t.id?`${sec.color}20`:"transparent",color:tabId===t.id?sec.color:T.textMuted,marginBottom:"1px",textAlign:"left",transition:"all 0.12s",borderLeft:tabId===t.id?`3px solid ${sec.color}`:"3px solid transparent"}}>
+                            <span style={{fontSize:"15px",width:"18px",textAlign:"center"}}>{t.icon}</span>
+                            <span style={{flex:1}}>{t.label}</span>
+                            {tabId===t.id && <div style={{width:"6px",height:"6px",borderRadius:"50%",background:sec.color}}/>}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           ))}
         </div>
-        <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:"10px",flexShrink:0}}>
-          <div style={{display:"flex",alignItems:"center",gap:"6px",background:T.card,border:`1px solid ${T.border2}`,borderRadius:"999px",padding:"6px 14px"}}>
-            <span style={{fontSize:"17px",color:T.orange,fontWeight:700}}>🔥{prog.streak}</span>
-            <div style={{width:"1px",height:"14px",background:T.border2}}/>
-            <span style={{fontSize:"17px",color:T.accent,fontWeight:700}}>⚡Lv{lv}</span>
-            <div style={{width:"1px",height:"14px",background:T.border2}}/>
-            <span style={{fontSize:"17px",color:T.textMuted,fontWeight:600}}>{prog.xp}xp</span>
-          </div>
-          <div style={{width:"34px",height:"34px",borderRadius:"50%",background:`linear-gradient(135deg,${curSec?.color||T.accent},#7c5cf6)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"16px",fontWeight:800,cursor:"pointer",boxShadow:`0 0 14px ${curSec?.color||T.accent}50`}}>{user[0]?.toUpperCase()}</div>
-          <button onClick={logout} style={{padding:"7px 13px",borderRadius:"8px",border:`1px solid ${T.border2}`,background:"none",color:T.textMuted,cursor:"pointer",fontSize:"17px",fontFamily:"inherit"}}>Exit</button>
-        </div>
-      </nav>
 
-      <div style={{display:"flex",flex:1,overflow:"hidden"}}>
-        {/* ── SIDEBAR ── */}
-        {sbOpen && (
-          <aside style={{width:"250px",background:T.sidebar,borderRight:`1px solid ${T.border2}`,display:"flex",flexDirection:"column",flexShrink:0}}>
-            {/* Section name */}
-            <div style={{padding:"18px 16px 14px",borderBottom:`1px solid ${T.border2}`}}>
-              <div style={{fontSize:"16px",fontWeight:700,color:curSec?.color,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:"4px"}}>{curSec?.icon} {curSec?.label}</div>
-              <div style={{fontSize:"17px",color:T.textMuted}}>{curSec?.tabs.length} sections</div>
-            </div>
-            {/* Tabs */}
-            <div style={{padding:"10px 10px",flex:1,overflowY:"auto"}}>
-              {curSec?.tabs.map(t=>(
-                <button key={t.id} onClick={()=>setTID(t.id)} style={{width:"100%",display:"flex",alignItems:"center",gap:"11px",padding:"16px 16px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"19px",fontWeight:tabId===t.id?700:500,background:tabId===t.id?`${curSec.color}18`:"transparent",color:tabId===t.id?curSec.color:T.textMuted,marginBottom:"3px",textAlign:"left",transition:"all 0.15s",borderLeft:tabId===t.id?`3px solid ${curSec.color}`:"3px solid transparent"}}>
-                  <span style={{fontSize:"14px",opacity:0.6}}>{t.icon}</span>
-                  <span style={{flex:1,letterSpacing:"-0.1px"}}>{t.label}</span>
-                </button>
-              ))}
+        {/* Bottom user card */}
+        <div style={{padding:"14px",borderTop:`1px solid ${T.border}`}}>
+          <div style={{background:"#0f1117",borderRadius:"12px",padding:"14px",border:`1px solid ${T.border2}`}}>
+            <div style={{display:"flex",alignItems:"center",gap:"10px",marginBottom:"12px"}}>
+              <div style={{width:"36px",height:"36px",borderRadius:"50%",background:`linear-gradient(135deg,${curSec?.color||T.accent},#6c63ff)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"15px",fontWeight:800,flexShrink:0}}>{user[0]?.toUpperCase()}</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:"14px",fontWeight:700,color:T.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{user}</div>
+                <div style={{fontSize:"12px",color:T.textMuted}}>Level {lv} · {prog.xp} XP</div>
+              </div>
+              <button onClick={logout} title="Logout" style={{background:"none",border:"none",color:T.textMuted,cursor:"pointer",fontSize:"16px",padding:"4px",lineHeight:1}}>⏻</button>
             </div>
             {/* XP bar */}
-            <div style={{padding:"14px",borderTop:`1px solid ${T.border2}`}}>
-              <div style={{display:"flex",justifyContent:"space-between",fontSize:"14px",color:T.textMuted,marginBottom:"6px"}}>
-                <span style={{fontWeight:700,color:T.textSub}}>Level {lv}</span><span>{prog.xp%100}/100 xp</span>
-              </div>
-              <div style={{background:"#0f1826",borderRadius:"999px",height:"5px"}}>
-                <div style={{width:`${prog.xp%100}%`,height:"100%",background:`linear-gradient(90deg,${T.accent},${T.accentV})`,borderRadius:"999px",transition:"width 0.5s"}}/>
-              </div>
-              <div style={{display:"flex",justifyContent:"space-between",marginTop:"10px"}}>
-                <span style={{fontSize:"16px",color:T.orange,fontWeight:700}}>🔥 {prog.streak}d streak</span>
-                <span style={{fontSize:"16px",color:T.textMuted}}>💻 {prog.totalSolved}</span>
-              </div>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:"11px",color:T.textMuted,marginBottom:"5px"}}>
+              <span style={{color:T.accent,fontWeight:600}}>Lv {lv}</span><span>{prog.xp%100}/100 xp</span>
             </div>
-          </aside>
-        )}
+            <div style={{background:T.border,borderRadius:"999px",height:"5px"}}>
+              <div style={{width:`${prog.xp%100}%`,height:"100%",background:`linear-gradient(90deg,${T.accent},${T.cyan})`,borderRadius:"999px",transition:"width 0.5s"}}/>
+            </div>
+            <div style={{display:"flex",justifyContent:"space-between",marginTop:"10px",fontSize:"12px"}}>
+              <span style={{color:T.orange,fontWeight:700}}>🔥 {prog.streak}d streak</span>
+              <span style={{color:T.textMuted}}>💻 {prog.totalSolved} solved</span>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-        {/* ── MAIN ── */}
-        <main style={{flex:1,overflowY:"auto",padding:"32px 36px",position:"relative"}}>
-          {/* Ambient background glow */}
-          <div style={{position:"fixed",top:"20%",right:"5%",width:"400px",height:"400px",borderRadius:"50%",background:`radial-gradient(circle,${curSec?.color||T.accent}06 0%,transparent 70%)`,pointerEvents:"none",zIndex:0}}/>
+      {/* ══ RIGHT SIDE ══ */}
+      <div style={{flex:1,display:"flex",flexDirection:"column",minWidth:0}}>
+
+        {/* ── TOP NAV BAR ── */}
+        <nav style={{height:"62px",background:T.nav,borderBottom:`1px solid ${T.border}`,display:"flex",alignItems:"center",padding:"0 28px",gap:"6px",position:"sticky",top:0,zIndex:200,flexShrink:0}}>
+          {SECTIONS.map(s=>(
+            <button key={s.key} onClick={()=>goSec(s.key)} style={{padding:"8px 18px",borderRadius:"999px",border:secKey===s.key?`1.5px solid ${s.color}`:"1.5px solid transparent",cursor:"pointer",fontFamily:"inherit",fontSize:"15px",fontWeight:secKey===s.key?700:500,background:secKey===s.key?`${s.color}15`:"transparent",color:secKey===s.key?s.color:T.textSub,transition:"all 0.15s",whiteSpace:"nowrap"}}>
+              {s.label}
+            </button>
+          ))}
+          {/* right side stats */}
+          <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:"12px",flexShrink:0}}>
+            <div style={{fontSize:"14px",color:T.textSub,fontWeight:600}}>Student</div>
+            <div style={{width:"34px",height:"34px",borderRadius:"50%",background:`linear-gradient(135deg,${curSec?.color||T.accent},#6c63ff)`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"14px",fontWeight:800,cursor:"pointer",boxShadow:`0 0 14px ${curSec?.color||T.accent}50`,flexShrink:0}}>{user[0]?.toUpperCase()}</div>
+          </div>
+        </nav>
+
+        {/* ── MAIN CONTENT ── */}
+        <main style={{flex:1,overflowY:"auto",padding:"32px 36px",background:T.bg}}>
           <div style={{position:"relative",zIndex:1}}>
             {tabId==="c_home"   && <CoursesHome  prog={prog} setTID={setTID}/>}
             {tabId==="c_js"     && <SubjectPage subject="JavaScript" prog={prog} addXP={addXP}/>}
@@ -353,80 +389,86 @@ export default function App() {
   );
 }
 
+
+
 // ═══════════════════════════════════════════════════
 //  GLOBAL STYLES
 // ═══════════════════════════════════════════════════
 function GS(){ return <style>{`
-  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
   *{box-sizing:border-box;margin:0;padding:0;}
-  ::-webkit-scrollbar{width:5px;}
-  ::-webkit-scrollbar-track{background:#000;}
-  ::-webkit-scrollbar-thumb{background:#0f1826;border-radius:3px;}
-  button:hover:not(:disabled){opacity:0.82;transform:translateY(-1px);}
+  body{background:#0f1117;}
+  ::-webkit-scrollbar{width:6px;}
+  ::-webkit-scrollbar-track{background:#13161f;}
+  ::-webkit-scrollbar-thumb{background:#2d3155;border-radius:4px;}
+  ::-webkit-scrollbar-thumb:hover{background:#3d4175;}
+  button:hover:not(:disabled){opacity:0.88;transform:translateY(-1px);}
   button{transition:all 0.15s;}
   button:disabled{opacity:0.35;cursor:not-allowed!important;transform:none!important;}
   a{text-decoration:none;}
-  input,textarea,select{font-family:'Sora','Segoe UI',sans-serif!important;}
+  input,textarea,select{font-family:'Plus Jakarta Sans','Segoe UI',sans-serif!important;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-  .fin{animation:fadeUp 0.25s ease}
-  .card-hover:hover{background:${T.cardHov}!important;border-color:${T.border2}!important;transform:translateY(-3px);}
-  .card-hover{transition:all 0.2s!important;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .fin{animation:fadeUp 0.28s ease}
+  .mod-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.4)!important;}
+  .mod-card{transition:all 0.2s ease!important;}
+  .nav-item:hover{background:rgba(108,99,255,0.08)!important;color:#f0f2ff!important;}
 `}</style>; }
 
 // ═══════════════════════════════════════════════════
 //  SHARED UI COMPONENTS
 // ═══════════════════════════════════════════════════
 function Card({children,style={},className=""}){
-  return <div className={className} style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",padding:"22px",...style}}>{children}</div>;
+  return <div className={className} style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"22px",...style}}>{children}</div>;
 }
 function GCard({children,color=T.accent,style={}}){
-  return <div style={{background:`linear-gradient(135deg,${T.card},${T.cardHov})`,border:`1px solid ${color}35`,borderRadius:"16px",padding:"22px",boxShadow:`0 4px 30px ${color}10`,...style}}>{children}</div>;
+  return <div style={{background:`linear-gradient(135deg,${T.card},${T.cardHov})`,border:`1px solid ${color}30`,borderRadius:"14px",padding:"22px",boxShadow:`0 4px 24px ${color}12`,...style}}>{children}</div>;
 }
 function Btn({children,onClick,disabled,color=T.accent,outline=false,style={}}){
-  return <button onClick={onClick} disabled={disabled} style={{padding:"10px 20px",borderRadius:"10px",border:outline?`1px solid ${color}`:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"19px",background:outline?"transparent":`linear-gradient(135deg,${color},${color}cc)`,color:outline?color:"#fff",letterSpacing:"0.01em",...style}}>{children}</button>;
+  return <button onClick={onClick} disabled={disabled} style={{padding:"11px 22px",borderRadius:"10px",border:outline?`1.5px solid ${color}`:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:outline?"transparent":`linear-gradient(135deg,${color},${color}bb)`,color:outline?color:"#fff",letterSpacing:"0.01em",boxShadow:outline?"none":`0 4px 18px ${color}35`,...style}}>{children}</button>;
 }
-function PageTitle({children,color=T.accent}){
+function PageTitle({children,color=T.accent,sub=""}){
   return (
-    <div style={{marginBottom:"26px"}}>
-      <h2 style={{fontSize:"32px",fontWeight:800,color:T.text,letterSpacing:"-0.7px"}}>{children}</h2>
-      <div style={{width:"40px",height:"3px",background:`linear-gradient(90deg,${color},transparent)`,marginTop:"8px",borderRadius:"2px"}}/>
+    <div style={{marginBottom:"28px"}}>
+      <div style={{fontSize:"12px",fontWeight:700,color,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:"8px"}}>WELCOME TO</div>
+      <h2 style={{fontSize:"30px",fontWeight:800,color:T.text,letterSpacing:"-0.5px",lineHeight:1.2}}>{children}</h2>
+      {sub && <p style={{fontSize:"15px",color:T.textSub,marginTop:"10px",lineHeight:1.6}}>{sub}</p>}
     </div>
   );
 }
 function Badge2({children,color=T.accent}){
-  return <span style={{fontSize:"15px",fontWeight:700,color,background:`${color}18`,padding:"4px 12px",borderRadius:"999px",display:"inline-block",border:`1px solid ${color}30`}}>{children}</span>;
+  return <span style={{fontSize:"13px",fontWeight:700,color,background:`${color}18`,padding:"4px 12px",borderRadius:"999px",display:"inline-block",border:`1px solid ${color}28`}}>{children}</span>;
 }
 function TA({value,onChange,placeholder,rows=4,readOnly=false,style={}}){
   return <textarea value={value} onChange={onChange} placeholder={placeholder} readOnly={readOnly}
-    style={{width:"100%",minHeight:`${rows*44}px`,padding:"14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"'JetBrains Mono','Fira Code',monospace",fontSize:"16px",outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.7,...style}}/>;
+    style={{width:"100%",minHeight:`${rows*44}px`,padding:"14px 16px",background:T.bg,border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"'JetBrains Mono','Fira Code',monospace",fontSize:"14px",outline:"none",resize:"vertical",boxSizing:"border-box",lineHeight:1.75,...style}}/>;
 }
 function InpField({value,onChange,placeholder,style={},type="text"}){
   return <input type={type} value={value} onChange={onChange} placeholder={placeholder}
-    style={{padding:"11px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"17px",outline:"none",...style}}
+    style={{padding:"12px 16px",background:T.bg,border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",...style}}
     onFocus={e=>e.target.style.borderColor=T.accent} onBlur={e=>e.target.style.borderColor=T.border2}/>;
 }
 function SelField({value,onChange,options,style={}}){
-  return <select value={value} onChange={e=>onChange(e.target.value)} style={{padding:"10px 14px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"17px",outline:"none",...style}}>
+  return <select value={value} onChange={e=>onChange(e.target.value)} style={{padding:"11px 16px",background:T.bg,border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"15px",outline:"none",...style}}>
     {options.map(o=><option key={o} value={o}>{o}</option>)}
   </select>;
 }
 function AIBox({title,content,color=T.accent}){
-  return <div style={{marginTop:"16px",padding:"18px",background:"#000000",borderRadius:"12px",border:`1px solid ${color}30`,borderLeft:`3px solid ${color}`}}>
-    <div style={{color,fontWeight:700,marginBottom:"9px",fontSize:"15px",letterSpacing:"0.1em",textTransform:"uppercase"}}>{title}</div>
-    <p style={{color:"#b0c4e0",fontSize:"18px",lineHeight:2.0,whiteSpace:"pre-wrap"}}>{content}</p>
+  return <div style={{marginTop:"18px",padding:"20px",background:T.bg,borderRadius:"12px",border:`1px solid ${color}25`,borderLeft:`4px solid ${color}`}}>
+    <div style={{color,fontWeight:700,marginBottom:"10px",fontSize:"12px",letterSpacing:"0.12em",textTransform:"uppercase"}}>{title}</div>
+    <p style={{color:"#a8bbd8",fontSize:"15px",lineHeight:1.9,whiteSpace:"pre-wrap"}}>{content}</p>
   </div>;
 }
 function EmptyState({icon,title,sub}){
   return <div style={{textAlign:"center",padding:"70px 20px",color:T.textMuted}}>
     <div style={{fontSize:"52px",marginBottom:"16px",opacity:0.4}}>{icon}</div>
-    <div style={{fontSize:"22px",fontWeight:600,color:T.textSub,marginBottom:"8px"}}>{title}</div>
-    <div style={{fontSize:"18px"}}>{sub}</div>
+    <div style={{fontSize:"20px",fontWeight:600,color:T.textSub,marginBottom:"8px"}}>{title}</div>
+    <div style={{fontSize:"15px",lineHeight:1.6,maxWidth:"340px",margin:"0 auto"}}>{sub}</div>
   </div>;
 }
 const dCol = d => d==="Easy"?T.green:d==="Medium"?T.cyan:T.red;
-const subCol = {OS:T.accent,DBMS:T.cyan,CN:T.green,OOP:T.pink,DSA:T.accentV};
+const subCol = {OS:T.accent,DBMS:T.cyan,CN:T.green,OOP:T.pink,DSA:T.indigo};
+
 
 
 // ═══════════════════════════════════════════════════
@@ -447,88 +489,108 @@ const SUBJECT_TAB_IDS = {
   "DSA":"c_dsa","System Design":"c_sysdes","Web Dev":"c_webdev"
 };
 
+
 // ═══════════════════════════════════════════════════
-//  COURSES — Home dashboard (all subjects grid)
+//  COURSES — Dashboard (Placement Prep style)
 // ═══════════════════════════════════════════════════
 function CoursesHome({prog,setTID}){
   const done = prog.completedTopics||[];
+  const totalTopics = Object.values(TOPICS_BY_LANG).flat().length;
+  const doneCount = done.length;
+
+  // All modules for the "ALL MODULES" section
+  const ALL_MODULES = [
+    {id:"c_js",     name:"JavaScript",     desc:"Variables, closures, async, DOM, ES6+",   icon:"🟨", color:"#f7df1e", tc:"#000"},
+    {id:"c_python", name:"Python",         desc:"OOP, decorators, async, standard library", icon:"🐍", color:"#3776ab", tc:"#fff"},
+    {id:"c_cpp",    name:"C++",            desc:"Pointers, STL, templates, memory mgmt",    icon:"⚙️", color:"#00599c", tc:"#fff"},
+    {id:"c_java",   name:"Java",           desc:"JVM, collections, multithreading, Spring", icon:"☕", color:"#ed8b00", tc:"#fff"},
+    {id:"c_dsa",    name:"DSA",            desc:"Arrays, trees, graphs, DP, algorithms",    icon:"🌳", color:"#a78bfa", tc:"#fff"},
+    {id:"c_sysdes", name:"System Design",  desc:"Load balancing, caching, CAP theorem",     icon:"🏗", color:"#38bdf8", tc:"#000"},
+    {id:"c_webdev", name:"Web Dev",        desc:"HTML, CSS, React, Node.js, REST APIs",      icon:"🌐", color:"#f472b6", tc:"#fff"},
+    {id:"c_mdn",    name:"MDN Docs",       desc:"Official Mozilla web documentation",        icon:"📘", color:"#6c63ff", tc:"#fff"},
+    {id:"c_gfg",    name:"GeeksForGeeks",  desc:"DSA, CS fundamentals, interview prep",      icon:"🌿", color:"#34d399", tc:"#000"},
+  ];
+
   return(
     <div className="fin">
-      <PageTitle color={T.cyan}>📚 All Subjects</PageTitle>
-      <p style={{color:T.textSub,fontSize:"18px",marginBottom:"28px",lineHeight:1.6}}>
-        Each subject has 10 topics with AI-generated notes, code examples, and interview practice.
-      </p>
-      {/* Subject cards grid */}
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(330px,1fr))",gap:"20px",marginBottom:"32px"}}>
-        {Object.entries(SUBJECT_META).map(([subj,meta])=>{
-          const topics = TOPICS_BY_LANG[subj]||[];
-          const completed = topics.filter(t=>done.includes(`${subj}_${t}`)).length;
-          const pct = topics.length ? Math.round(completed/topics.length*100) : 0;
-          return(
-            <div key={subj} onClick={()=>setTID(SUBJECT_TAB_IDS[subj])} className="card-hover"
-              style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"20px",overflow:"hidden",cursor:"pointer"}}>
-              {/* Color header */}
-              <div style={{background:`linear-gradient(135deg,${meta.color}25,${meta.color}08)`,borderBottom:`1px solid ${meta.color}25`,padding:"26px 26px 22px"}}>
-                <div style={{display:"flex",alignItems:"center",gap:"16px",marginBottom:"16px"}}>
-                  <div style={{width:"56px",height:"56px",borderRadius:"16px",background:meta.color,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"21px",fontWeight:900,color:meta.textColor,flexShrink:0,boxShadow:`0 6px 24px ${meta.color}55`,letterSpacing:"-1px"}}>
-                    {meta.icon}
-                  </div>
-                  <div style={{flex:1}}>
-                    <h3 style={{fontSize:"30px",fontWeight:900,color:T.text,letterSpacing:"-0.6px",marginBottom:"6px"}}>{subj}</h3>
-                    <p style={{fontSize:"19px",color:T.textSub,lineHeight:1.6}}>{meta.desc}</p>
-                  </div>
-                </div>
-                <div style={{background:"#ffffff10",borderRadius:"999px",height:"7px",marginBottom:"9px"}}>
-                  <div style={{width:`${pct}%`,height:"100%",background:meta.color,borderRadius:"999px",transition:"width 0.6s"}}/>
-                </div>
-                <div style={{display:"flex",justifyContent:"space-between",fontSize:"18px"}}>
-                  <span style={{color:meta.color,fontWeight:700}}>{pct}% complete</span>
-                  <span style={{color:T.textMuted}}>{completed} / {topics.length} topics</span>
-                </div>
+
+      {/* ── HERO BANNER ── */}
+      <div style={{background:"linear-gradient(135deg,#1a1d2e 0%,#1e1a3a 60%,#1a2040 100%)",border:`1px solid ${T.border2}`,borderRadius:"18px",padding:"40px 44px",marginBottom:"36px",position:"relative",overflow:"hidden",display:"flex",alignItems:"center",justifyContent:"space-between",gap:"32px"}}>
+        {/* bg decoration */}
+        <div style={{position:"absolute",top:"-60px",right:"120px",width:"280px",height:"280px",borderRadius:"50%",background:"radial-gradient(circle,#6c63ff12 0%,transparent 70%)",pointerEvents:"none"}}/>
+        <div style={{position:"absolute",bottom:"-40px",right:"-40px",width:"200px",height:"200px",borderRadius:"50%",background:"radial-gradient(circle,#38bdf810 0%,transparent 70%)",pointerEvents:"none"}}/>
+        <div style={{position:"relative",zIndex:1}}>
+          <div style={{fontSize:"12px",fontWeight:700,color:T.accent,letterSpacing:"0.14em",textTransform:"uppercase",marginBottom:"12px"}}>WELCOME TO</div>
+          <h1 style={{fontSize:"36px",fontWeight:900,color:T.text,letterSpacing:"-0.8px",lineHeight:1.2,marginBottom:"6px"}}>
+            DevForge Placement
+          </h1>
+          <h1 style={{fontSize:"36px",fontWeight:900,color:T.accent,letterSpacing:"-0.8px",lineHeight:1.2,marginBottom:"18px"}}>
+            Preparation Hub
+          </h1>
+          <p style={{fontSize:"16px",color:T.textSub,lineHeight:1.7,maxWidth:"480px"}}>
+            Your complete placement preparation platform. Master DSA, build the perfect resume, ace HR interviews, and track your progress — all in one place. 🚀
+          </p>
+          {/* quick stats */}
+          <div style={{display:"flex",gap:"24px",marginTop:"24px",flexWrap:"wrap"}}>
+            {[["📚","Topics Done",`${doneCount}/${totalTopics}`],["🔥","Day Streak",`${prog.streak}d`],["⚡","Total XP",`${prog.xp}`],["💻","Problems",`${prog.totalSolved}`]].map(([ic,lbl,val])=>(
+              <div key={lbl} style={{textAlign:"center"}}>
+                <div style={{fontSize:"13px",color:T.textMuted,marginBottom:"3px"}}>{ic} {lbl}</div>
+                <div style={{fontSize:"22px",fontWeight:800,color:T.text}}>{val}</div>
               </div>
-              {/* Topics grid */}
-              <div style={{padding:"18px 26px 22px"}}>
-                <div style={{fontSize:"16px",color:T.textMuted,fontWeight:700,letterSpacing:"0.1em",marginBottom:"13px"}}>TOPICS</div>
-                <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"7px",marginBottom:"18px"}}>
-                  {topics.slice(0,8).map(t=>{
-                    const isDone=done.includes(`${subj}_${t}`);
-                    return(
-                      <div key={t} style={{display:"flex",alignItems:"center",gap:"9px"}}>
-                        <div style={{width:"18px",height:"18px",borderRadius:"5px",background:isDone?meta.color:"transparent",border:`1.5px solid ${isDone?meta.color:T.border2}`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"13px",color:isDone?meta.textColor:"transparent",flexShrink:0,fontWeight:900}}>✓</div>
-                        <span style={{fontSize:"17px",color:isDone?T.textSub:T.textMuted,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{t}</span>
-                      </div>
-                    );
-                  })}
-                  {topics.length>8&&<div style={{fontSize:"16px",color:T.textMuted,gridColumn:"1/-1"}}>+{topics.length-8} more...</div>}
+            ))}
+          </div>
+        </div>
+        {/* Right action buttons */}
+        <div style={{display:"flex",flexDirection:"column",gap:"12px",flexShrink:0,position:"relative",zIndex:1}}>
+          <button onClick={()=>setTID("r_ats")} style={{padding:"14px 24px",borderRadius:"12px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:`linear-gradient(135deg,${T.accent},#38bdf8)`,color:"#fff",boxShadow:`0 6px 24px ${T.accent}50`,display:"flex",alignItems:"center",gap:"10px",whiteSpace:"nowrap"}}>
+            <span>📊</span> Check ATS Score
+          </button>
+          <button onClick={()=>setTID("i_hr")} style={{padding:"14px 24px",borderRadius:"12px",border:`1.5px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:"#1a1d2e",color:T.text,display:"flex",alignItems:"center",gap:"10px",whiteSpace:"nowrap"}}>
+            <span>🎤</span> Interview Prep
+          </button>
+          <button onClick={()=>setTID("ch_code")} style={{padding:"14px 24px",borderRadius:"12px",border:`1.5px solid ${T.border2}`,cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:"#1a1d2e",color:T.text,display:"flex",alignItems:"center",gap:"10px",whiteSpace:"nowrap"}}>
+            <span>🤖</span> Ask AI Chatbot
+          </button>
+        </div>
+      </div>
+
+      {/* ── ALL MODULES ── */}
+      <div style={{fontSize:"13px",fontWeight:700,color:T.textMuted,letterSpacing:"0.14em",marginBottom:"18px"}}>ALL MODULES</div>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:"16px"}}>
+        {ALL_MODULES.map(m=>{
+          const topics = TOPICS_BY_LANG[m.name]||[];
+          const cDone = topics.filter(t=>done.includes(`${m.name}_${t}`)).length;
+          const pct = topics.length ? Math.round(cDone/topics.length*100) : null;
+          return(
+            <div key={m.id} onClick={()=>setTID(m.id)} className="mod-card"
+              style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"16px",overflow:"hidden",cursor:"pointer",boxShadow:"0 4px 20px rgba(0,0,0,0.25)"}}>
+              {/* colored top border */}
+              <div style={{height:"4px",background:m.color}}/>
+              <div style={{padding:"22px 22px 18px"}}>
+                {/* icon */}
+                <div style={{width:"48px",height:"48px",borderRadius:"12px",background:`${m.color}18`,border:`1px solid ${m.color}28`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"22px",marginBottom:"16px"}}>
+                  {m.icon}
                 </div>
-                <div style={{padding:"11px 16px",background:`${meta.color}15`,borderRadius:"10px",border:`1px solid ${meta.color}25`,textAlign:"center"}}>
-                  <span style={{fontSize:"19px",fontWeight:700,color:meta.color}}>Start {subj} →</span>
-                </div>
+                <h3 style={{fontSize:"18px",fontWeight:800,color:T.text,marginBottom:"6px"}}>{m.name}</h3>
+                <p style={{fontSize:"13px",color:T.textMuted,lineHeight:1.6,marginBottom:"16px"}}>{m.desc}</p>
+                {pct!==null && (
+                  <div style={{marginBottom:"14px"}}>
+                    <div style={{background:T.border,borderRadius:"999px",height:"4px"}}>
+                      <div style={{width:`${pct}%`,height:"100%",background:m.color,borderRadius:"999px",transition:"width 0.5s"}}/>
+                    </div>
+                    <div style={{fontSize:"12px",color:T.textMuted,marginTop:"5px"}}>{cDone}/{topics.length} topics · {pct}%</div>
+                  </div>
+                )}
+                <div style={{fontSize:"14px",fontWeight:700,color:m.color}}>Open →</div>
               </div>
             </div>
           );
         })}
       </div>
-
-      {/* External resources */}
-      <div style={{fontSize:"18px",fontWeight:700,color:T.textMuted,letterSpacing:"0.1em",marginBottom:"16px"}}>EXTERNAL RESOURCES</div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"16px"}}>
-        {[["c_mdn","MDN Web Docs","#4f8ef7","Official Mozilla documentation — Web APIs, HTML, CSS, JavaScript","📘"],
-          ["c_gfg","GeeksForGeeks","#22d3a0","DSA, algorithms, CS fundamentals, interview prep","🌿"]].map(([id,name,color,desc,icon])=>(
-          <div key={id} onClick={()=>setTID(id)} className="card-hover"
-            style={{background:T.card,border:`1px solid ${color}30`,borderRadius:"18px",padding:"24px",cursor:"pointer",display:"flex",gap:"18px",alignItems:"center"}}>
-            <div style={{fontSize:"38px",width:"56px",height:"56px",display:"flex",alignItems:"center",justifyContent:"center",background:`${color}18`,borderRadius:"16px",flexShrink:0}}>{icon}</div>
-            <div>
-              <h4 style={{fontSize:"24px",fontWeight:800,color:T.text,marginBottom:"8px"}}>{name}</h4>
-              <p style={{fontSize:"18px",color:T.textMuted,lineHeight:1.5,marginBottom:"8px"}}>{desc}</p>
-              <span style={{fontSize:"18px",color,fontWeight:700}}>Open →</span>
-            </div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }
+
 
 // ═══════════════════════════════════════════════════
 //  COURSES — Per-Subject Page (same layout for ALL subjects)
@@ -746,30 +808,33 @@ function CoursesGFG(){
   return <EmbedReader name="GeeksForGeeks" color="#22d3a0" links={links}/>;
 }
 function EmbedReader({name,color,links}){
-  const [sel,setSel]=useState(links[0].l);
-  const cur=links.find(l=>l.l===sel)||links[0];
   return(
     <div className="fin">
       <PageTitle color={color}>{name}</PageTitle>
-      <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",padding:"16px",marginBottom:"16px"}}>
-        <div style={{display:"flex",gap:"8px",flexWrap:"wrap"}}>
-          {links.map(l=>(
-            <button key={l.l} onClick={()=>setSel(l.l)} style={{padding:"9px 16px",borderRadius:"9px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"18px",fontWeight:600,background:sel===l.l?color:T.border2,color:sel===l.l?"#fff":T.textMuted,transition:"all 0.15s"}}>
-              {l.l}
-            </button>
-          ))}
-        </div>
+      <div style={{background:`linear-gradient(135deg,${color}18,${color}06)`,border:`1px solid ${color}30`,borderRadius:"18px",padding:"32px 36px",marginBottom:"24px"}}>
+        <div style={{fontSize:"13px",fontWeight:700,color,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:"10px"}}>DOCUMENTATION</div>
+        <h2 style={{fontSize:"30px",fontWeight:900,color:T.text,letterSpacing:"-0.5px",marginBottom:"10px"}}>{name}</h2>
+        <p style={{fontSize:"15px",color:T.textSub,lineHeight:1.6}}>Click any section below to open it directly in a new tab.</p>
       </div>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"12px",flexWrap:"wrap",gap:"8px"}}>
-        <h3 style={{fontSize:"24px",fontWeight:700,color}}>{sel}</h3>
-        <a href={cur.u} target="_blank" rel="noreferrer" style={{padding:"9px 18px",borderRadius:"9px",background:color,color:"#fff",fontWeight:700,fontSize:"18px"}}>Open Full ↗</a>
-      </div>
-      <div style={{background:T.card,border:`1px solid ${T.border2}`,borderRadius:"16px",overflow:"hidden"}}>
-        <iframe src={cur.u} style={{width:"100%",height:"640px",border:"none"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))",gap:"14px"}}>
+        {links.map(l=>(
+          <a key={l.l} href={l.u} target="_blank" rel="noreferrer"
+            style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"14px",padding:"22px",display:"flex",flexDirection:"column",gap:"10px",textDecoration:"none",transition:"all 0.18s",cursor:"pointer"}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor=color;e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow=`0 8px 28px ${color}20`;}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor=T.border;e.currentTarget.style.transform="none";e.currentTarget.style.boxShadow="none";}}>
+            <div style={{width:"40px",height:"40px",borderRadius:"10px",background:`${color}20`,border:`1px solid ${color}30`,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"20px"}}>📄</div>
+            <div>
+              <div style={{fontSize:"16px",fontWeight:700,color:T.text,marginBottom:"5px"}}>{l.l}</div>
+              <div style={{fontSize:"13px",color:T.textMuted,lineHeight:1.5}}>{l.u.replace("https://","").split("/").slice(0,3).join("/")}</div>
+            </div>
+            <div style={{fontSize:"14px",fontWeight:700,color,marginTop:"auto"}}>Open ↗</div>
+          </a>
+        ))}
       </div>
     </div>
   );
 }
+
 
 
 // ═══════════════════════════════════════════════════
@@ -778,26 +843,84 @@ function EmbedReader({name,color,links}){
 function ExtSite({url,name,color,links,prog,field,addXP}){
   const val=prog[field]||0;
   const [inp,setInp]=useState(val);
+  const pct=Math.min(Math.round(val/500*100),100);
   return(
     <div className="fin">
       <PageTitle color={color}>{name}</PageTitle>
-      <GCard color={color} style={{marginBottom:"14px"}}>
-        <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"16px"}}>
-          {links.map(([l,u])=><a key={l} href={u} target="_blank" rel="noreferrer" style={{padding:"8px 14px",borderRadius:"8px",background:color,color:"#fff",fontWeight:700,fontSize:"15px"}}>{l} ↗</a>)}
+      {/* Hero launch card */}
+      <div style={{background:`linear-gradient(135deg,${color}18,${color}06)`,border:`1px solid ${color}30`,borderRadius:"18px",padding:"36px 40px",marginBottom:"24px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:"-40px",right:"-40px",width:"200px",height:"200px",borderRadius:"50%",background:`radial-gradient(circle,${color}15 0%,transparent 70%)`,pointerEvents:"none"}}/>
+        <div style={{fontSize:"13px",fontWeight:700,color,letterSpacing:"0.12em",textTransform:"uppercase",marginBottom:"12px"}}>PRACTICE ON</div>
+        <h2 style={{fontSize:"34px",fontWeight:900,color:T.text,letterSpacing:"-0.6px",marginBottom:"8px"}}>{name}</h2>
+        <p style={{fontSize:"15px",color:T.textSub,marginBottom:"28px",lineHeight:1.6}}>
+          Click any section below to open {name} in a new tab and start practicing.
+        </p>
+        {/* Big open buttons */}
+        <div style={{display:"flex",gap:"12px",flexWrap:"wrap",marginBottom:"32px"}}>
+          {links.map(([l,u])=>(
+            <a key={l} href={u} target="_blank" rel="noreferrer" style={{padding:"14px 24px",borderRadius:"12px",background:color,color:"#fff",fontWeight:700,fontSize:"16px",display:"flex",alignItems:"center",gap:"8px",boxShadow:`0 4px 20px ${color}40`,textDecoration:"none",transition:"all 0.15s"}}>
+              {l} <span style={{fontSize:"18px"}}>↗</span>
+            </a>
+          ))}
         </div>
-        <div style={{display:"flex",alignItems:"center",gap:"10px",flexWrap:"wrap"}}>
-          <span style={{fontSize:"16px",color:T.textSub}}>Problems solved:</span>
-          <input type="number" min="0" value={inp} onChange={e=>setInp(Number(e.target.value))} style={{width:"75px",padding:"7px",background:"#000000",border:`1px solid ${T.border2}`,borderRadius:"7px",color:T.text,fontFamily:"inherit",fontSize:"16px",outline:"none",textAlign:"center"}}/>
-          <Btn onClick={()=>{addXP(0,{[field]:inp});alert(`✅ Saved: ${inp} problems`);}} color={color}>Save</Btn>
+        {/* Progress tracker */}
+        <div style={{background:T.card,borderRadius:"14px",padding:"22px",border:`1px solid ${T.border2}`}}>
+          <div style={{fontSize:"14px",fontWeight:700,color:T.textMuted,letterSpacing:"0.1em",marginBottom:"16px",textTransform:"uppercase"}}>Your Progress</div>
+          <div style={{display:"flex",alignItems:"center",gap:"16px",marginBottom:"16px",flexWrap:"wrap"}}>
+            <span style={{fontSize:"16px",color:T.textSub,fontWeight:500}}>Problems solved:</span>
+            <input type="number" min="0" value={inp} onChange={e=>setInp(Number(e.target.value))}
+              style={{width:"90px",padding:"10px 14px",background:T.bg,border:`1.5px solid ${T.border2}`,borderRadius:"10px",color:T.text,fontFamily:"inherit",fontSize:"16px",outline:"none",textAlign:"center",fontWeight:700}}/>
+            <button onClick={()=>{addXP(0,{[field]:inp});}} style={{padding:"10px 22px",borderRadius:"10px",border:"none",cursor:"pointer",fontFamily:"inherit",fontWeight:700,fontSize:"15px",background:color,color:"#fff",boxShadow:`0 4px 16px ${color}40`}}>Save Progress</button>
+          </div>
+          {/* Progress bar */}
+          <div style={{marginBottom:"10px"}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:"8px"}}>
+              <span style={{fontSize:"14px",color:T.textMuted}}>{val} / 500 problems</span>
+              <span style={{fontSize:"14px",color,fontWeight:700}}>{pct}%</span>
+            </div>
+            <div style={{background:T.border,borderRadius:"999px",height:"8px",overflow:"hidden"}}>
+              <div style={{width:`${pct}%`,height:"100%",background:`linear-gradient(90deg,${color},${color}88)`,borderRadius:"999px",transition:"width 0.6s",boxShadow:`0 0 10px ${color}60`}}/>
+            </div>
+          </div>
+          {/* Milestones */}
+          <div style={{display:"flex",gap:"12px",marginTop:"16px",flexWrap:"wrap"}}>
+            {[[50,"🌱","Beginner"],[100,"⭐","Intermediate"],[250,"🔥","Advanced"],[500,"💎","Expert"]].map(([target,icon,lbl])=>(
+              <div key={target} style={{display:"flex",alignItems:"center",gap:"6px",padding:"6px 12px",borderRadius:"8px",background:val>=target?`${color}20`:T.bg,border:`1px solid ${val>=target?color:T.border}`,opacity:val>=target?1:0.45}}>
+                <span style={{fontSize:"16px"}}>{icon}</span>
+                <span style={{fontSize:"13px",fontWeight:700,color:val>=target?color:T.textMuted}}>{target}+ {lbl}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div style={{marginTop:"12px",background:T.border2,borderRadius:"999px",height:"5px"}}>
-          <div style={{width:`${Math.min(val,500)/5}%`,height:"100%",background:`linear-gradient(90deg,${color},${color}99)`,borderRadius:"999px"}}/>
+      </div>
+
+      {/* Tips card */}
+      <div style={{background:T.card,border:`1px solid ${T.border}`,borderRadius:"16px",padding:"24px"}}>
+        <div style={{fontSize:"14px",fontWeight:700,color:T.textMuted,letterSpacing:"0.1em",marginBottom:"16px",textTransform:"uppercase"}}>💡 Tips for {name}</div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))",gap:"14px"}}>
+          {(name==="LeetCode"?[
+            ["Start Easy","Solve all Easy problems first before jumping to Medium"],
+            ["Pattern Focus","Learn patterns: Two Pointers, Sliding Window, BFS/DFS"],
+            ["Daily Goal","Aim for at least 1-2 problems per day consistently"],
+            ["Review Wrong","Re-attempt failed problems after 3 days"],
+          ]:name==="HackerRank"?[
+            ["Get Certified","Complete skill certifications — they impress recruiters"],
+            ["Interview Kit","Use the 'Interview Preparation Kit' structured path"],
+            ["Domains","Practice SQL, Python, Java domains for variety"],
+            ["Leaderboard","Compete in contests to build competitive coding skills"],
+          ]:[
+            ["Stay Consistent","Practice every day, even if just 30 minutes"],
+            ["Track Progress","Log your solved count regularly to stay motivated"],
+            ["Join Community","Use forums and discussions to learn better approaches"],
+            ["Review Solutions","Always study optimal solutions after solving"],
+          ]).map(([title,tip])=>(
+            <div key={title} style={{background:T.bg,borderRadius:"10px",padding:"16px",border:`1px solid ${T.border}`}}>
+              <div style={{fontSize:"14px",fontWeight:700,color,marginBottom:"6px"}}>{title}</div>
+              <div style={{fontSize:"13px",color:T.textMuted,lineHeight:1.6}}>{tip}</div>
+            </div>
+          ))}
         </div>
-        <div style={{fontSize:"14px",color:T.textMuted,marginTop:"5px"}}>{val} solved</div>
-      </GCard>
-      <Card style={{padding:"0",overflow:"hidden",borderRadius:"14px"}}>
-        <iframe src={url} style={{width:"100%",height:"580px",border:"none"}} title={name} sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-top-navigation" loading="lazy"/>
-      </Card>
+      </div>
     </div>
   );
 }
