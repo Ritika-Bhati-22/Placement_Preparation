@@ -627,37 +627,22 @@ function SubjectPage({subject,prog,addXP}){
     if(!selTopic) return;
     setLoad(true); setNotes("");
     try {
+      const lang = subject.toLowerCase().includes("python")?"python":subject.toLowerCase().includes("java")&&!subject.includes("Script")?"java":"javascript";
+      const fence = "```";
+      const prompt = "Write study notes on \"" + selTopic + "\" in " + subject + ". Structure:\n\n" +
+        "## What is it?\nClear definition in 2-3 lines.\n\n" +
+        "## Why it matters\nReal use cases.\n\n" +
+        "## How it works\nStep by step explanation.\n\n" +
+        "## Code Example\n" + fence + lang + "\n// Working example with comments\n" + fence + "\n\n" +
+        "## Interview Questions\n1. Q1?\n2. Q2?\n3. Q3?\n\n" +
+        "## Key Points\n- Point 1\n- Point 2\n- Point 3";
       const r = await callAI(
-        [{role:"user",content:`Write study notes on "${selTopic}" in ${subject}. Structure:
-
-## What is it?
-Clear definition in 2-3 lines.
-
-## Why it matters
-Real use cases.
-
-## How it works
-Step by step explanation.
-
-## Code Example
-\`\`\`${subject.toLowerCase().includes("python")?"python":subject.toLowerCase().includes("java")&&!subject.includes("Script")?"java":"javascript"}
-// Working example with comments
-\`\`\`
-
-## Interview Questions
-1. Q1?
-2. Q2?
-3. Q3?
-
-## Key Points
-- Point 1
-- Point 2
-- Point 3`}],
-        `You are an expert ${subject} teacher. Write clear, practical study notes. Keep it concise but complete.`
+        [{role:"user",content:prompt}],
+        "You are an expert " + subject + " teacher. Write clear, practical study notes. Keep it concise but complete."
       );
       if(r && !r.includes("error") && r.length > 50) {
         setNotes(r);
-        const key = \`\${subject}_\${selTopic}\`;
+        const key = `${subject}_${selTopic}`;
         if(!done.includes(key)) addXP(15,{completedTopics:[...done,key]});
       } else {
         setNotes("⚠️ Could not generate notes. Please check your internet connection and try again.");
@@ -1010,7 +995,8 @@ function AIQuestions({prog,addXP}){
   };
   const getReview=async()=>{
     setRL(true);setRev("");
-    const r=await callAI([{role:"user",content:`Review this ${lang} solution for "${q.title}":\n\`\`\`${lang}\n${code}\n\`\`\`\nCover: correctness, time/space complexity, improvements, edge cases.`}],"Senior SWE. Specific, constructive code review.");
+    const fence="```";
+    const r=await callAI([{role:"user",content:"Review this "+lang+" solution for \""+q.title+"\":\n"+fence+lang+"\n"+code+"\n"+fence+"\nCover: correctness, time/space complexity, improvements, edge cases."}],"Senior SWE. Specific, constructive code review.");
     setRev(r);setRL(false);
   };
 
@@ -1137,9 +1123,9 @@ function ResumeBuild({prog,addXP}){
   const generate = async () => {
     setLoad(true); setRes("");
     const tmplInstructions = {
-      classic: "Single column layout. Name centered at top. Sections: Education, Skills, Experience, Projects, Achievements. Use \section{} for headers. ATS-friendly.",
-      modern:  "Minipage layout: left 35% sidebar (skills, links, education), right 65% main content (experience, projects). Use \begin{minipage} structure.",
-      minimal: "Ultra minimal. Name + contact in header. Thin \hrule separators. No boxes, no colors. Just clean typography. Very ATS-safe.",
+      classic: "Single column layout. Name at top center. Sections: Education, Skills, Experience, Projects, Achievements. Standard ATS-friendly LaTeX structure.",
+      modern:  "Two-column layout: left 35% sidebar with skills and education, right 65% with experience and projects. Professional modern look.",
+      minimal: "Ultra minimal layout. Name + contact in header. Simple horizontal rule separators. Clean typography. Maximum ATS compatibility.",
     };
     try {
       const r = await callAI([{role:"user",content:`Create a complete, compilable LaTeX resume. Template style: ${tmplInstructions[template]}
@@ -1156,7 +1142,7 @@ Achievements: ${d.achievements||"Add your achievements here"}
 
 Output ONLY the complete LaTeX code starting with \documentclass. No explanation, no markdown.`}],
         "Expert LaTeX resume writer. Output ONLY valid compilable LaTeX code. Start with \documentclass. No markdown fences.");
-      if(r && r.includes("\documentclass")) {
+      if(r && r.includes("\\documentclass")) {
         setRes(r); addXP(100,{resumeBuilt:true}); setStep(3);
       } else if(r && r.length > 200) {
         // Try to extract latex if wrapped in markdown
@@ -1217,16 +1203,11 @@ Output ONLY the complete LaTeX code starting with \documentclass. No explanation
               </div>
             ))}
           </div>
-          {[["skills","SKILLS (comma separated)","Python, React, Node.js, SQL, Git, Docker, AWS",2],
-            ["experience","EXPERIENCE","Company Name | Role | Jun 2024 – Aug 2024
-• Built feature X, improved Y by 40%
-• Worked on Z using React + Node.js",4],
-            ["projects","PROJECTS","Project Name | Tech Stack | github.com/link
-• What it does and its impact
-• Key features and your contributions",4],
-            ["achievements","ACHIEVEMENTS","• LeetCode 400+ problems, Top 5%
-• HackIndia 2024 – 1st Place
-• Google DSC Lead 2023-24",3]
+          {[
+            ["skills","SKILLS (comma separated)","Python, React, Node.js, SQL, Git, Docker, AWS",2],
+            ["experience","EXPERIENCE","Company Name | Role | Jun 2024 - Aug 2024\n- Built feature X, improved Y by 40%\n- Worked on Z using React + Node.js",4],
+            ["projects","PROJECTS","Project Name | Tech Stack | github.com/link\n- What it does and its impact\n- Key features and your contributions",4],
+            ["achievements","ACHIEVEMENTS","- LeetCode 400+ problems, Top 5%\n- HackIndia 2024 - 1st Place\n- Google DSC Lead 2023-24",3]
           ].map(([k,lbl,ph,rows])=>(
             <div key={k} style={{marginBottom:"14px"}}>
               <div style={{fontSize:"12px",color:T.textMuted,fontWeight:700,letterSpacing:"0.08em",marginBottom:"6px",textTransform:"uppercase"}}>{lbl}</div>
@@ -1613,185 +1594,196 @@ function ResumeTailor({addXP}){
 //  INTERVIEW — HR (UNLIMITED AI)
 // ═══════════════════════════════════════════════════
 function InterviewHR({prog,addXP}){
-  const [mode,setMode]=useState("practice"); // practice | generate | strategy
+  const [mode,setMode]=useState("practice");
   const [sel,setSel]=useState(null);
   const [answer,setAns]=useState("");
   const [feedback,setFB]=useState("");
   const [loading,setLoad]=useState(false);
-  // AI-generated unlimited questions
   const [genTopic,setGenTopic]=useState("General HR");
   const [genQ,setGenQ]=useState(null);
   const [genLoad,setGL]=useState(false);
   const [strategy,setStrat]=useState("");
+  const [activeCat,setActiveCat]=useState("All");
 
   const hrTopics=["General HR","Leadership & Teamwork","Problem Solving","Career Goals","Strengths & Weaknesses","Company Research","Conflict Resolution","Achievement & Impact","Work Style & Culture","Salary Negotiation","Fresher-Specific","Internship Experience"];
 
   const PRESET_HRQ = [
-    // Basics
-    {id:1,  cat:"Basics",       q:"Tell me about yourself.",                                        hint:"Education → Skills → Projects → Career goal"},
-    {id:2,  cat:"Basics",       q:"Why should we hire you?",                                        hint:"Your unique value + alignment with role"},
-    {id:3,  cat:"Basics",       q:"Walk me through your resume.",                                   hint:"Highlight key milestones, keep it under 2 min"},
-    {id:4,  cat:"Basics",       q:"What are your greatest strengths?",                              hint:"3 strengths with real examples"},
-    {id:5,  cat:"Basics",       q:"What is your greatest weakness?",                                hint:"Real weakness + concrete improvement steps"},
-    // Career & Goals
-    {id:6,  cat:"Career",       q:"Where do you see yourself in 5 years?",                          hint:"Growth within company, leadership or technical depth"},
-    {id:7,  cat:"Career",       q:"Why do you want to work here?",                                  hint:"Research company mission, products, culture"},
-    {id:8,  cat:"Career",       q:"Why are you leaving your current job / college?",                hint:"Frame positively — growth, new challenges"},
-    {id:9,  cat:"Career",       q:"What type of work environment do you prefer?",                   hint:"Align with company culture"},
-    {id:10, cat:"Career",       q:"What are you looking for in this role?",                         hint:"Learning, impact, alignment with your goals"},
-    // Behavioral (STAR)
-    {id:11, cat:"Behavioral",   q:"Tell me about a time you failed. What did you learn?",           hint:"Own it, growth mindset, what changed after"},
-    {id:12, cat:"Behavioral",   q:"Describe your most challenging project.",                        hint:"Situation → Your role → Actions → Outcome"},
-    {id:13, cat:"Behavioral",   q:"Tell about a team conflict and how you resolved it.",            hint:"STAR — focus on resolution & relationship"},
-    {id:14, cat:"Behavioral",   q:"Give an example of going above and beyond for a task.",          hint:"Show initiative, impact, ownership"},
-    {id:15, cat:"Behavioral",   q:"Describe a time you had to learn something new quickly.",        hint:"Adaptability, resourcefulness, outcome"},
-    {id:16, cat:"Behavioral",   q:"Tell me about a time you disagreed with a team decision.",       hint:"Respectful pushback + accepted final decision"},
-    {id:17, cat:"Behavioral",   q:"Describe a time you managed multiple deadlines.",                hint:"Prioritization, time management, result"},
-    {id:18, cat:"Behavioral",   q:"Tell me about a time you showed leadership without a title.",    hint:"Initiative, influence, team outcome"},
-    // Situational
-    {id:19, cat:"Situational",  q:"How do you handle criticism or negative feedback?",              hint:"Openness, specific example, growth"},
-    {id:20, cat:"Situational",  q:"What would you do if you disagreed with your manager?",         hint:"Communicate respectfully, data-driven, align"},
-    {id:21, cat:"Situational",  q:"How do you handle pressure and tight deadlines?",               hint:"Real framework + calming strategy + example"},
-    {id:22, cat:"Situational",  q:"If you had to choose between quality and speed, what would you pick?", hint:"Context-dependent answer with reasoning"},
-    {id:23, cat:"Situational",  q:"What would you do if a team member wasn't contributing?",       hint:"Communication, empathy, escalation path"},
-    // Fresher-Specific
-    {id:24, cat:"Fresher",      q:"You have no work experience. Why should we hire you?",          hint:"Projects, skills, learning speed, enthusiasm"},
-    {id:25, cat:"Fresher",      q:"How do your college projects prepare you for this role?",       hint:"Map project skills to job requirements"},
-    {id:26, cat:"Fresher",      q:"What salary do you expect as a fresher?",                       hint:"Research market rate, give a range, show flexibility"},
-    {id:27, cat:"Fresher",      q:"Are you okay with relocation / night shifts / travel?",         hint:"Be honest but positive — mention flexibility"},
-    // Closing
-    {id:28, cat:"Closing",      q:"Do you have any questions for us?",                             hint:"Ask about tech stack, team culture, growth path"},
-    {id:29, cat:"Closing",      q:"What motivates you to do your best work?",                      hint:"Intrinsic + extrinsic motivation tied to role"},
-    {id:30, cat:"Closing",      q:"How soon can you join?",                                        hint:"Be specific, mention any notice period"},
+    {id:1,  cat:"Basics",     q:"Tell me about yourself.",                                     hint:"Education → Skills → Projects → Career goal"},
+    {id:2,  cat:"Basics",     q:"Why should we hire you?",                                     hint:"Your unique value + alignment with role"},
+    {id:3,  cat:"Basics",     q:"Walk me through your resume.",                                hint:"Highlight key milestones, keep it under 2 min"},
+    {id:4,  cat:"Basics",     q:"What are your greatest strengths?",                           hint:"3 strengths with real examples"},
+    {id:5,  cat:"Basics",     q:"What is your greatest weakness?",                             hint:"Real weakness + concrete improvement steps"},
+    {id:6,  cat:"Career",     q:"Where do you see yourself in 5 years?",                       hint:"Growth within company, leadership or technical depth"},
+    {id:7,  cat:"Career",     q:"Why do you want to work here?",                               hint:"Research company mission, products, culture"},
+    {id:8,  cat:"Career",     q:"Why are you leaving your current job / college?",             hint:"Frame positively — growth, new challenges"},
+    {id:9,  cat:"Career",     q:"What type of work environment do you prefer?",                hint:"Align with company culture"},
+    {id:10, cat:"Career",     q:"What are you looking for in this role?",                      hint:"Learning, impact, alignment with your goals"},
+    {id:11, cat:"Behavioral", q:"Tell me about a time you failed. What did you learn?",        hint:"Own it, growth mindset, what changed after"},
+    {id:12, cat:"Behavioral", q:"Describe your most challenging project.",                     hint:"Situation → Your role → Actions → Outcome"},
+    {id:13, cat:"Behavioral", q:"Tell about a team conflict and how you resolved it.",         hint:"STAR — focus on resolution & relationship"},
+    {id:14, cat:"Behavioral", q:"Give an example of going above and beyond for a task.",       hint:"Show initiative, impact, ownership"},
+    {id:15, cat:"Behavioral", q:"Describe a time you had to learn something new quickly.",     hint:"Adaptability, resourcefulness, outcome"},
+    {id:16, cat:"Behavioral", q:"Tell me about a time you disagreed with a team decision.",    hint:"Respectful pushback + accepted final decision"},
+    {id:17, cat:"Behavioral", q:"Describe a time you managed multiple deadlines.",             hint:"Prioritization, time management, result"},
+    {id:18, cat:"Behavioral", q:"Tell me about a time you showed leadership without a title.", hint:"Initiative, influence, team outcome"},
+    {id:19, cat:"Situational",q:"How do you handle criticism or negative feedback?",           hint:"Openness, specific example, growth"},
+    {id:20, cat:"Situational",q:"What would you do if you disagreed with your manager?",      hint:"Communicate respectfully, data-driven, align"},
+    {id:21, cat:"Situational",q:"How do you handle pressure and tight deadlines?",            hint:"Real framework + calming strategy + example"},
+    {id:22, cat:"Situational",q:"If you had to choose between quality and speed?",            hint:"Context-dependent answer with reasoning"},
+    {id:23, cat:"Situational",q:"What would you do if a team member wasn't contributing?",    hint:"Communication, empathy, escalation path"},
+    {id:24, cat:"Fresher",    q:"You have no work experience. Why should we hire you?",       hint:"Projects, skills, learning speed, enthusiasm"},
+    {id:25, cat:"Fresher",    q:"How do your college projects prepare you for this role?",    hint:"Map project skills to job requirements"},
+    {id:26, cat:"Fresher",    q:"What salary do you expect as a fresher?",                    hint:"Research market rate, give a range, show flexibility"},
+    {id:27, cat:"Fresher",    q:"Are you okay with relocation / night shifts / travel?",      hint:"Be honest but positive — mention flexibility"},
+    {id:28, cat:"Closing",    q:"Do you have any questions for us?",                          hint:"Ask about tech stack, team culture, growth path"},
+    {id:29, cat:"Closing",    q:"What motivates you to do your best work?",                   hint:"Intrinsic + extrinsic motivation tied to role"},
+    {id:30, cat:"Closing",    q:"How soon can you join?",                                     hint:"Be specific, mention any notice period"},
   ];
 
-  const generateNewQ=async()=>{
+  const cats = ["All",...[...new Set(PRESET_HRQ.map(q=>q.cat))]];
+  const filtered = activeCat==="All" ? PRESET_HRQ : PRESET_HRQ.filter(q=>q.cat===activeCat);
+
+  const generateNewQ = async()=>{
     setGL(true);setGenQ(null);setFB("");setAns("");
-    const r=await callAI([{role:"user",content:`Generate a unique, insightful HR interview question on the topic "${genTopic}" that is commonly asked at top tech companies (Google, Amazon, Microsoft, startups).\n\nReturn ONLY a JSON object:\n{"q":"question text","hint":"what to focus on","why":"why interviewers ask this","category":"${genTopic}"}`}],
-      "Senior HR interviewer. Generate creative, realistic questions. Return ONLY valid JSON.");
-    try{const p=JSON.parse(r.replace(/```json|```/g,"").trim());setGenQ(p);}catch{setGenQ({q:"Tell me about a time you had to learn something completely new in a short timeframe.",hint:"Adaptability, learning speed, resourcefulness",why:"Tests growth mindset and adaptability",category:genTopic});}
+    const r=await callAI([{role:"user",content:`Generate a unique HR interview question on "${genTopic}" asked at top tech companies.\nReturn ONLY JSON: {"q":"...","hint":"...","why":"...","category":"${genTopic}"}`}],
+      "Senior HR interviewer. Return ONLY valid JSON.");
+    try{const p=JSON.parse(r.replace(/```json|```/g,"").trim());setGenQ(p);}
+    catch{setGenQ({q:"Tell me about a time you had to learn something new in a short timeframe.",hint:"Adaptability, learning speed, resourcefulness",why:"Tests growth mindset",category:genTopic});}
     setGL(false);
   };
 
-  const getFeedback=async(question)=>{
+  const getFeedback = async(question)=>{
     if(!answer.trim())return;setLoad(true);setFB("");
-    const r=await callAI([{role:"user",content:`HR Question: ${question}\n\nCandidate's Answer: ${answer}\n\nProvide:\n1. ✅ Strengths of this answer\n2. ⚠️ What's missing or weak\n3. 💡 Ideal answer structure\n4. 📊 Score: /10\n5. 🔄 One-line improved version`}],
-      "Senior HR interviewer at top tech company. Honest, specific, encouraging feedback.");
+    const r=await callAI([{role:"user",content:`HR Question: ${question}\nAnswer: ${answer}\n\nProvide:\n1. ✅ Strengths\n2. ⚠️ What's missing\n3. 💡 Ideal structure\n4. 📊 Score /10\n5. 🔄 Improved version`}],
+      "Senior HR interviewer. Honest, specific, encouraging feedback.");
     setFB(r);addXP(25,{interviewAnswered:prog.interviewAnswered+1});setLoad(false);
   };
 
-  const getStrategy=async(question)=>{
+  const getStrategy = async(question)=>{
     setLoad(true);setStrat("");
-    const r=await callAI([{role:"user",content:`Provide the best answering strategy for this HR question:\n"${question}"\n\nInclude:\n1. Framework to use\n2. Key points to cover (bullet format)\n3. Strong sample answer\n4. What NOT to say\n5. Pro tip`}],
-      "Career coach. Practical, specific HR interview strategy.");
+    const r=await callAI([{role:"user",content:`Best answering strategy for: "${question}"\nInclude: 1.Framework 2.Key points 3.Sample answer 4.What NOT to say 5.Pro tip`}],
+      "Career coach. Practical, specific strategy.");
     setStrat(r);setLoad(false);
   };
-
-  const activeSel = mode==="generate" ? genQ : sel;
 
   return(
     <div className="fin">
       <PageTitle color={T.accentV}>👔 HR Questions</PageTitle>
+
       {/* Mode tabs */}
-      <div style={{display:"flex",gap:"6px",marginBottom:"18px",padding:"4px",background:T.sidebar,borderRadius:"10px",width:"fit-content",border:`1px solid ${T.border2}`}}>
-        {[["practice","📋 Preset Questions"],["generate","🤖 AI Generate (Unlimited)"]].map(([m,lbl])=>(
-          <button key={m} onClick={()=>{setMode(m);setSel(null);setGenQ(null);setFB("");setStrat("");setAns("");}} style={{padding:"7px 16px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"16px",fontWeight:600,background:mode===m?T.accentV:"transparent",color:mode===m?"#fff":T.textMuted,transition:"all 0.15s"}}>{lbl}</button>
+      <div style={{display:"flex",gap:"6px",marginBottom:"20px",padding:"4px",background:"#080808",borderRadius:"10px",width:"fit-content",border:`1px solid ${T.border2}`}}>
+        {[["practice","📋 Preset (30 Qs)"],["generate","🤖 AI Generate (Unlimited)"]].map(([m,lbl])=>(
+          <button key={m} onClick={()=>{setMode(m);setSel(null);setGenQ(null);setFB("");setStrat("");setAns("");}}
+            style={{padding:"8px 18px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"15px",fontWeight:600,background:mode===m?T.accentV:"transparent",color:mode===m?"#fff":T.textMuted,transition:"all 0.15s"}}>
+            {lbl}
+          </button>
         ))}
       </div>
 
-      {/* PRESET MODE */}
+      {/* ── PRESET MODE ── */}
       {mode==="practice" && (
-        <>
-        {/* Category filter */}
-        {(()=>{
-          const cats=["All",...[...new Set(PRESET_HRQ.map(q=>q.cat))]];
-          const [activeCat,setActiveCat]=useState("All");
-          const filtered=activeCat==="All"?PRESET_HRQ:PRESET_HRQ.filter(q=>q.cat===activeCat);
-          return(
         <div>
+          {/* Category pills */}
           <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"16px"}}>
             {cats.map(cat=>(
-              <button key={cat} onClick={()=>setActiveCat(cat)} style={{padding:"6px 14px",borderRadius:"999px",border:`1px solid ${activeCat===cat?T.accentV:"#333"}`,background:activeCat===cat?`${T.accentV}20`:"transparent",color:activeCat===cat?T.accentV:T.textMuted,fontFamily:"inherit",fontWeight:600,fontSize:"13px",cursor:"pointer",transition:"all 0.15s"}}>
-                {cat} {cat!=="All"&&<span style={{fontSize:"11px",opacity:0.7}}>({PRESET_HRQ.filter(q=>q.cat===cat).length})</span>}
+              <button key={cat} onClick={()=>{setActiveCat(cat);setSel(null);setAns("");setFB("");setStrat("");}}
+                style={{padding:"6px 14px",borderRadius:"999px",border:`1px solid ${activeCat===cat?T.accentV:"#333"}`,background:activeCat===cat?`${T.accentV}20`:"transparent",color:activeCat===cat?T.accentV:T.textMuted,fontFamily:"inherit",fontWeight:600,fontSize:"13px",cursor:"pointer",transition:"all 0.15s"}}>
+                {cat}{cat!=="All"&&<span style={{fontSize:"11px",opacity:0.6}}> ({PRESET_HRQ.filter(q=>q.cat===cat).length})</span>}
               </button>
             ))}
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"340px 1fr",gap:"16px",alignItems:"start"}}>
-          <div style={{display:"flex",flexDirection:"column",gap:"6px",maxHeight:"70vh",overflowY:"auto",paddingRight:"4px"}}>
-            {filtered.map(q=>(
-              <div key={q.id} onClick={()=>{setSel(q);setAns("");setFB("");setStrat("");}} className="card-hover" style={{padding:"12px 14px",borderRadius:"10px",border:`1px solid ${sel?.id===q.id?T.accentV:"#252525"}`,background:sel?.id===q.id?`${T.accentV}18`:"#0e0e0e",cursor:"pointer",flexShrink:0}}>
-                <div style={{display:"flex",alignItems:"flex-start",gap:"8px"}}>
-                  <span style={{fontSize:"11px",padding:"2px 7px",borderRadius:"999px",background:`${T.accentV}20`,color:T.accentV,fontWeight:700,whiteSpace:"nowrap",marginTop:"2px"}}>{q.cat}</span>
-                  <p style={{fontSize:"14px",fontWeight:600,color:T.text,lineHeight:1.5}}>{q.q}</p>
+
+          {/* Two-col layout */}
+          <div style={{display:"grid",gridTemplateColumns:"320px 1fr",gap:"16px",alignItems:"start"}}>
+            {/* Question list */}
+            <div style={{display:"flex",flexDirection:"column",gap:"5px",maxHeight:"70vh",overflowY:"auto",paddingRight:"4px"}}>
+              {filtered.map(q=>(
+                <div key={q.id} onClick={()=>{setSel(q);setAns("");setFB("");setStrat("");}}
+                  style={{padding:"11px 13px",borderRadius:"10px",border:`1px solid ${sel?.id===q.id?T.accentV:"#252525"}`,background:sel?.id===q.id?`${T.accentV}15`:"#0e0e0e",cursor:"pointer",transition:"all 0.15s"}}>
+                  <div style={{display:"flex",alignItems:"flex-start",gap:"8px"}}>
+                    <span style={{fontSize:"11px",padding:"2px 7px",borderRadius:"999px",background:`${T.accentV}18`,color:T.accentV,fontWeight:700,whiteSpace:"nowrap",marginTop:"2px",flexShrink:0}}>{q.cat}</span>
+                    <p style={{fontSize:"13px",fontWeight:600,color:T.text,lineHeight:1.5,margin:0}}>{q.q}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div>
-            {sel ? (
-              <Card>
-                <div style={{fontSize:"12px",fontWeight:700,color:T.accentV,letterSpacing:"0.08em",marginBottom:"8px",textTransform:"uppercase"}}>{sel.cat}</div>
-                <h3 style={{fontSize:"18px",fontWeight:700,color:T.text,marginBottom:"8px",lineHeight:1.6}}>"{sel.q}"</h3>
-                <div style={{fontSize:"13px",color:T.textMuted,marginBottom:"16px",padding:"10px 14px",background:"#0a0a0a",borderRadius:"8px",borderLeft:`3px solid ${T.accentV}`}}>💡 {sel.hint}</div>
-                <div style={{display:"flex",gap:"6px",marginBottom:"14px"}}>
-                  <Btn onClick={()=>getStrategy(sel.q)} outline color={T.accentV} style={{flex:1,textAlign:"center"}} disabled={loading}>{loading?"⏳...":"💡 Best Strategy"}</Btn>
+              ))}
+            </div>
+
+            {/* Right panel */}
+            <div>
+              {sel ? (
+                <Card>
+                  <div style={{fontSize:"12px",fontWeight:700,color:T.accentV,letterSpacing:"0.08em",marginBottom:"8px"}}>{sel.cat}</div>
+                  <h3 style={{fontSize:"18px",fontWeight:700,color:T.text,marginBottom:"10px",lineHeight:1.6}}>"{sel.q}"</h3>
+                  <div style={{padding:"10px 14px",background:"#0a0a0a",borderRadius:"8px",borderLeft:`3px solid ${T.accentV}`,marginBottom:"16px"}}>
+                    <span style={{fontSize:"13px",color:T.textMuted}}>💡 {sel.hint}</span>
+                  </div>
+                  <Btn onClick={()=>getStrategy(sel.q)} outline color={T.accentV} style={{width:"100%",marginBottom:"12px"}} disabled={loading}>
+                    {loading?"⏳ Loading...":"💡 Get Best Strategy"}
+                  </Btn>
+                  <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Write your answer here... (Use STAR method for behavioral Qs)" rows={6}/>
+                  <Btn onClick={()=>getFeedback(sel.q)} disabled={loading||!answer.trim()} color={T.accentV} style={{marginTop:"10px",width:"100%"}}>
+                    {loading?"⏳ Getting feedback...":"🤖 Get AI Feedback (+25 XP)"}
+                  </Btn>
+                  {strategy&&<AIBox title="Best Strategy" content={strategy} color={T.accentV}/>}
+                  {feedback&&<AIBox title="AI Feedback" content={feedback} color={T.accentV}/>}
+                </Card>
+              ) : (
+                <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"300px",border:`1px dashed #252525`,borderRadius:"14px"}}>
+                  <EmptyState icon="👔" title="Select a question" sub="Click any question to practice and get AI feedback"/>
                 </div>
-                <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Write your answer here... (Use STAR method for behavioral Qs)" rows={6}/>
-                <Btn onClick={()=>getFeedback(sel.q)} disabled={loading||!answer.trim()} color={T.accentV} style={{marginTop:"10px",width:"100%"}}>{loading?"⏳ Getting feedback...":"🤖 Get AI Feedback (+25 XP)"}</Btn>
-                {strategy&&<AIBox title="Best Strategy" content={strategy} color={T.accentV}/>}
-                {feedback&&<AIBox title="AI Feedback" content={feedback} color={T.accentV}/>}
-              </Card>
-            ) : (
-              <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"300px",border:`1px dashed #252525`,borderRadius:"14px"}}>
-                <EmptyState icon="👔" title="Select a question to practice" sub="Get AI feedback on your answers"/>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      {/* AI GENERATE UNLIMITED MODE */}
+      {/* ── AI GENERATE MODE ── */}
       {mode==="generate" && (
         <div>
           <GCard color={T.accentV} style={{marginBottom:"16px"}}>
-            <div style={{fontSize:"16px",color:T.textSub,fontWeight:600,marginBottom:"10px"}}>🤖 Generate Unlimited HR Questions</div>
-            <div style={{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"14px"}}>
+            <div style={{fontSize:"15px",color:T.textSub,fontWeight:600,marginBottom:"12px"}}>🤖 Generate Unlimited HR Questions with AI</div>
+            <div style={{display:"flex",gap:"6px",flexWrap:"wrap",marginBottom:"14px"}}>
               {hrTopics.map(t=>(
-                <button key={t} onClick={()=>setGenTopic(t)} style={{padding:"6px 12px",borderRadius:"8px",border:"none",cursor:"pointer",fontFamily:"inherit",fontSize:"15px",fontWeight:600,background:genTopic===t?T.accentV:"#080c14",color:genTopic===t?"#fff":T.textMuted,transition:"all 0.15s"}}>{t}</button>
+                <button key={t} onClick={()=>setGenTopic(t)}
+                  style={{padding:"6px 12px",borderRadius:"8px",border:`1px solid ${genTopic===t?T.accentV:"#333"}`,cursor:"pointer",fontFamily:"inherit",fontSize:"13px",fontWeight:600,background:genTopic===t?`${T.accentV}20`:"transparent",color:genTopic===t?T.accentV:T.textMuted,transition:"all 0.15s"}}>
+                  {t}
+                </button>
               ))}
             </div>
-            <Btn onClick={generateNewQ} disabled={genLoad} color={T.accentV} style={{width:"100%",padding:"11px"}}>{genLoad?"⏳ Generating...":"⚡ Generate New HR Question"}</Btn>
+            <Btn onClick={generateNewQ} disabled={genLoad} color={T.accentV} style={{width:"100%",padding:"11px"}}>
+              {genLoad?"⏳ Generating...":"⚡ Generate New HR Question"}
+            </Btn>
           </GCard>
 
           {genLoad && <div style={{textAlign:"center",padding:"40px"}}><div style={{fontSize:"36px",animation:"pulse 1s infinite"}}>💼</div><p style={{color:T.textMuted,marginTop:"10px"}}>Generating {genTopic} question...</p></div>}
 
           {genQ && !genLoad && (
             <Card className="fin">
-              <div style={{display:"flex",gap:"8px",alignItems:"flex-start",marginBottom:"14px",flexWrap:"wrap"}}>
-                <Badge2 color={T.accentV}>{genQ.category||genTopic}</Badge2>
-              </div>
-              <h3 style={{fontSize:"19px",fontWeight:700,color:T.text,marginBottom:"10px",lineHeight:1.6}}>"{genQ.q}"</h3>
+              <Badge2 color={T.accentV}>{genQ.category||genTopic}</Badge2>
+              <h3 style={{fontSize:"19px",fontWeight:700,color:T.text,margin:"12px 0 10px",lineHeight:1.6}}>"{genQ.q}"</h3>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"10px",marginBottom:"16px"}}>
-                <div style={{padding:"12px",background:"#000000",borderRadius:"9px",border:`1px solid ${T.border2}`}}>
-                  <div style={{fontSize:"14px",color:T.accentV,fontWeight:700,marginBottom:"5px"}}>FOCUS</div>
-                  <p style={{fontSize:"16px",color:T.textSub}}>{genQ.hint}</p>
+                <div style={{padding:"12px",background:"#000",borderRadius:"9px",border:`1px solid ${T.border2}`}}>
+                  <div style={{fontSize:"12px",color:T.accentV,fontWeight:700,marginBottom:"5px",letterSpacing:"0.08em"}}>FOCUS ON</div>
+                  <p style={{fontSize:"14px",color:T.textSub}}>{genQ.hint}</p>
                 </div>
-                <div style={{padding:"12px",background:"#000000",borderRadius:"9px",border:`1px solid ${T.border2}`}}>
-                  <div style={{fontSize:"14px",color:T.cyan,fontWeight:700,marginBottom:"5px"}}>WHY ASKED</div>
-                  <p style={{fontSize:"16px",color:T.textSub}}>{genQ.why}</p>
+                <div style={{padding:"12px",background:"#000",borderRadius:"9px",border:`1px solid ${T.border2}`}}>
+                  <div style={{fontSize:"12px",color:T.cyan,fontWeight:700,marginBottom:"5px",letterSpacing:"0.08em"}}>WHY ASKED</div>
+                  <p style={{fontSize:"14px",color:T.textSub}}>{genQ.why}</p>
                 </div>
               </div>
-              <div style={{display:"flex",gap:"6px",marginBottom:"12px"}}>
+              <div style={{display:"flex",gap:"8px",marginBottom:"12px"}}>
                 <Btn onClick={()=>getStrategy(genQ.q)} outline color={T.accentV} disabled={loading}>{loading?"⏳...":"💡 Strategy"}</Btn>
                 <Btn onClick={generateNewQ} outline color={T.textMuted}>🔄 New Question</Btn>
               </div>
               <TA value={answer} onChange={e=>setAns(e.target.value)} placeholder="Write your answer here..." rows={6}/>
-              <Btn onClick={()=>getFeedback(genQ.q)} disabled={loading||!answer.trim()} color={T.accentV} style={{marginTop:"10px",width:"100%"}}>{loading?"⏳ Getting feedback...":"🤖 Get AI Feedback (+25 XP)"}</Btn>
+              <Btn onClick={()=>getFeedback(genQ.q)} disabled={loading||!answer.trim()} color={T.accentV} style={{marginTop:"10px",width:"100%"}}>
+                {loading?"⏳ Getting feedback...":"🤖 Get AI Feedback (+25 XP)"}
+              </Btn>
               {strategy&&<AIBox title="Best Strategy" content={strategy} color={T.cyan}/>}
               {feedback&&<AIBox title="AI Feedback" content={feedback} color={T.accentV}/>}
             </Card>
           )}
-          {!genQ && !genLoad && <EmptyState icon="🤖" title="Generate unlimited HR questions" sub="Click 'Generate New HR Question' to get started"/>}
+          {!genQ&&!genLoad&&<EmptyState icon="🤖" title="Generate unlimited HR questions" sub="Select a topic and click Generate"/>}
         </div>
       )}
     </div>
